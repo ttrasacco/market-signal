@@ -6,7 +6,7 @@
 
 ## Ce que ça fait
 
-market-signal ingère des news financières chaque jour, classifie chaque article via un LLM, et calcule un score par secteur économique qui évolue dans le temps. L'objectif n'est pas de réagir à l'actualité immédiate — les marchés l'intègrent déjà en millisecondes — mais de détecter des **tendances structurelles de moyen terme** en accumulant des signaux sur plusieurs jours et semaines.
+market-signal ingère des news financières chaque jour, classifie chaque article via un LLM, et calcule un score par secteur économique qui évolue dans le temps. L'objectif n'est pas de réagir à l'actualité immédiate, mais de détecter des **tendances structurelles à moyen terme** en accumulant des signaux sur plusieurs jours/semaines.
 
 Un secteur qui reçoit régulièrement des signaux positifs structurels verra son score progresser. Un événement ponctuel décroît naturellement sans laisser de trace durable.
 
