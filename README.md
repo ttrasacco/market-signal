@@ -1,106 +1,42 @@
-# market-signal
+# sv
 
-> AI-powered financial news analysis to detect mid-term sector trends using event sourcing and decay scoring.
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
----
+## Creating a project
 
-## What it does
+If you're seeing this, you've probably already done this step. Congrats!
 
-market-signal ingests financial news daily, classifies each article using an LLM, and computes a score per economic sector that evolves over time. The goal is not to react to breaking news — markets already price that in milliseconds — but to detect **structural, mid-term trends** by accumulating signals over days and weeks.
-
-A sector that consistently receives positive structural signals will see its score rise progressively. A one-off event decays naturally and leaves no lasting trace.
-
----
-
-## How it works
-
-```
-[Daily cron]
-     ↓
-[News fetch — RSS / APIs]
-     ↓
-[LLM classification]                  ← sector, impact score [-1, 1], type (structural / punctual)
-     ↓
-[Append to event store]               ← immutable, append-only
-     ↓
-[Daily score computation]             ← exponential decay model applied to event store
-     ↓
-[Snapshot stored]                     ← one row per sector per day
-     ↓
-[Dashboard]                           ← reads snapshots directly, no computation at query time
+```sh
+# create a new project
+npx sv create my-app
 ```
 
-### Decay scoring model
+To recreate this project with the same configuration:
 
-Each sector score is computed as a weighted sum of past impacts, where older signals lose influence over time:
-
-```
-Score(sector, T) = Σ impact(newsᵢ) × e^(-λ × (T - tᵢ))
-```
-
-- Structural news (regulation changes, supply chain shifts, long-term policy) decay slowly — low `λ`
-- Punctual news (earnings, one-off events) decay faster — high `λ`
-- Multiple signals of the same type accumulating in a short period reinforce each other naturally before decaying
-
----
-
-## Architecture
-
-The project follows **hexagonal architecture** (ports & adapters) with **DDD** principles, implemented on top of **SvelteKit** as a full-stack TypeScript framework.
-
-```
-src/
-├── lib/
-│   └── server/
-│       ├── domain/           ← entities, value objects, domain services, port interfaces
-│       ├── application/      ← use cases (ingest, compute, query)
-│       └── infrastructure/   ← DB adapters, Anthropic LLM adapter
-└── routes/                   ← interface layer (SvelteKit pages and API endpoints)
+```sh
+# recreate this project
+npx sv@0.12.7 create --template minimal --types ts --add prettier eslint vitest="usages:unit" playwright tailwindcss="plugins:none" --install npm .
 ```
 
-Dependency rule: **inward only**. Domain has zero knowledge of infrastructure or SvelteKit.
+## Developing
 
-Data follows **Event Sourcing + CQRS**:
-- `news_impacts` — append-only event store, never mutated
-- `sector_scores` — materialized read model, recomputed daily by a scheduled job
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
----
-
-## Tech stack
-
-| Layer | Technology |
-|---|---|
-| Framework | SvelteKit |
-| Language | TypeScript (strict) |
-| Database | PostgreSQL |
-| LLM | Anthropic API (claude-sonnet) |
-| Unit / integration tests | Vitest |
-| E2E tests | Playwright |
-
----
-
-## Getting started
-
-```bash
-# Install dependencies
-npm install
-
-# Copy environment variables
-cp .env.example .env
-
-# Start development server
+```sh
 npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
 ```
 
-### Environment variables
+## Building
 
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/market_signal
-ANTHROPIC_API_KEY=your_api_key_here
+To create a production version of your app:
+
+```sh
+npm run build
 ```
 
----
+You can preview the production build with `npm run preview`.
 
-## Project status
-
-🚧 Work in progress
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
