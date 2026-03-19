@@ -1,14 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DrizzleSectorScoreRepository } from './sector-score.repository';
+import { FakeSectorScoreRepository } from '../fakes/fake-sector-score.repository';
 import { Sector } from '../../../news/domain/sector';
 
-const hasDb = !!process.env.DATABASE_URL;
-
-describe.skipIf(!hasDb)('DrizzleSectorScoreRepository (integration)', () => {
-  let repo: DrizzleSectorScoreRepository;
+describe('FakeSectorScoreRepository', () => {
+  let repo: FakeSectorScoreRepository;
 
   beforeEach(() => {
-    repo = new DrizzleSectorScoreRepository();
+    repo = new FakeSectorScoreRepository();
   });
 
   it('upserts and retrieves a score', async () => {

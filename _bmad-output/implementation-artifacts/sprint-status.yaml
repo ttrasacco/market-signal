@@ -54,8 +54,8 @@ development_status:
   # Epic 2: Autonomous Daily Ingestion Pipeline
   epic-2: in-progress
   2-1-rss-fetcher-port-and-adapter: review
-  2-2-anthropic-classifier-port-and-adapter: ready-for-dev
-  2-3-ingest-news-use-case: ready-for-dev
+  2-2-anthropic-classifier-port-and-adapter: review
+  2-3-ingest-news-use-case: review
   2-4-cron-endpoint-and-run-daily-pipeline-use-case: backlog
   epic-2-retrospective: optional
 

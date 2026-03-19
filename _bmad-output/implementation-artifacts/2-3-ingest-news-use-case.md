@@ -1,6 +1,6 @@
 # Story 2.3: IngestNewsUseCase — orchestration fetch → classify → persist
 
-**Status:** ready-for-dev
+**Status:** review
 **Epic:** 2 — Autonomous Daily Ingestion Pipeline
 **Story ID:** 2-3
 
@@ -41,35 +41,35 @@ So that a single use case call triggers the full ingestion pipeline for all conf
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Define `NewsClassification` type and `NewsClassifierPort` interface (AC: #1)
-  - [ ] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (EXISTS AS EMPTY STUB — fill it)
-  - [ ] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
-  - [ ] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
-  - [ ] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
-  - [ ] No external imports — application layer only
+- [x] Task 1: Define `NewsClassification` type and `NewsClassifierPort` interface (AC: #1)
+  - [x] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (EXISTS AS EMPTY STUB — fill it)
+  - [x] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
+  - [x] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
+  - [x] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
+  - [x] No external imports — application layer only
 
-- [ ] Task 2: Implement `FakeNewsClassifier` (AC: #4)
-  - [ ] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory exists)
-  - [ ] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
-  - [ ] `public classifications: NewsClassification[]` — configurable per-call return value
-  - [ ] `public shouldThrow = false` — simulate Anthropic API failure
-  - [ ] `classify()` returns `[...this.classifications]` (copy), throws if `shouldThrow = true`
-  - [ ] No HTTP call — pure in-memory
+- [x] Task 2: Implement `FakeNewsClassifier` (AC: #4)
+  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory exists)
+  - [x] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
+  - [x] `public classifications: NewsClassification[]` — configurable per-call return value
+  - [x] `public shouldThrow = false` — simulate Anthropic API failure
+  - [x] `classify()` returns `[...this.classifications]` (copy), throws if `shouldThrow = true`
+  - [x] No HTTP call — pure in-memory
 
-- [ ] Task 3: Implement `IngestNewsUseCase` (AC: #1, #2, #3)
-  - [ ] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.ts` (EXISTS AS EMPTY STUB — fill it)
-  - [ ] Constructor: `(fetcher: RssFetcherPort, classifier: NewsClassifierPort, repository: NewsImpactRepositoryPort, feedUrls: string[])`
-  - [ ] `execute()`: iterate `feedUrls`, catch per-feed errors (log + continue)
-  - [ ] For each article from a feed: call `classify(headline)`, catch per-article errors (log + continue)
-  - [ ] For each classification result: create `News` + `NewsImpact` with `crypto.randomUUID()` IDs
-  - [ ] `analyzedAt = new Date()` at classify time; `publishedAt` from `RawArticle.publishedAt`
-  - [ ] Call `repository.save(news, impacts)` once per article (news + all its impacts atomically)
-  - [ ] Return `{ articlesIngested: number; impactsStored: number }` summary
-  - [ ] Log `[PIPELINE] ingest: X articles fetched, Y impacts stored` on completion
+- [x] Task 3: Implement `IngestNewsUseCase` (AC: #1, #2, #3)
+  - [x] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.ts` (EXISTS AS EMPTY STUB — fill it)
+  - [x] Constructor: `(fetcher: RssFetcherPort, classifier: NewsClassifierPort, repository: NewsImpactRepositoryPort, feedUrls: string[])`
+  - [x] `execute()`: iterate `feedUrls`, catch per-feed errors (log + continue)
+  - [x] For each article from a feed: call `classify(headline)`, catch per-article errors (log + continue)
+  - [x] For each classification result: create `News` + `NewsImpact` with `crypto.randomUUID()` IDs
+  - [x] `analyzedAt = new Date()` at classify time; `publishedAt` from `RawArticle.publishedAt`
+  - [x] Call `repository.save(news, impacts)` once per article (news + all its impacts atomically)
+  - [x] Return `{ articlesIngested: number; impactsStored: number }` summary
+  - [x] Log `[PIPELINE] ingest: X articles fetched, Y impacts stored` on completion
 
-- [ ] Task 4: Write unit tests for `IngestNewsUseCase` (AC: #4)
-  - [ ] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.test.ts` (CREATE NEW)
-  - [ ] Tests: see Dev Notes for exact test cases
+- [x] Task 4: Write unit tests for `IngestNewsUseCase` (AC: #4)
+  - [x] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.test.ts` (CREATE NEW)
+  - [x] Tests: see Dev Notes for exact test cases
 
 ---
 
@@ -461,20 +461,27 @@ Do NOT catch errors at the `execute()` function level — let the caller (`RunDa
 
 ### Agent Model Used
 
-_to be filled_
+claude-sonnet-4-6
 
 ### Debug Log References
 
-_none_
+- `FakeNewsClassifier` existait déjà avec `ApiError` (convention projet). Story spec disait `new Error(...)` mais le projet utilise `ApiError` comme wrapper standard dans `src/lib/server/`. L'implémentation suit la convention projet.
 
 ### Completion Notes List
 
-_to be filled_
+- Task 1: `news-classifier.port.ts` était déjà complet (stub pré-rempli lors du scaffold)
+- Task 2: `FakeNewsClassifier` aligné sur la convention `ApiError` du projet (non `Error` simple comme indiqué dans la story spec)
+- Task 3: `IngestNewsUseCase` implémenté avec double isolation d'erreur (per-feed + per-article)
+- Task 4: 7 tests unitaires couvrent tous les ACs — 53 tests passent, 0 régression
 
 ### File List
 
-_to be filled_
+- `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (vérifié — déjà complet)
+- `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (modifié — aligné convention projet)
+- `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.ts` (créé)
+- `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.test.ts` (créé)
 
 ## Change Log
 
 - 2026-03-19: Story created by create-story workflow
+- 2026-03-19: Story implemented by dev agent — IngestNewsUseCase + FakeNewsClassifier + 7 unit tests (53 tests pass)

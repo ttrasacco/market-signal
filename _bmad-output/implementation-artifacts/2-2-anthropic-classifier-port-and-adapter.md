@@ -1,6 +1,6 @@
 # Story 2.2: Anthropic Classifier — Port & Adapter
 
-**Status:** ready-for-dev
+**Status:** review
 **Epic:** 2 — Autonomous Daily Ingestion Pipeline
 **Story ID:** 2-2
 
@@ -39,36 +39,36 @@ So that the ingestion use case can classify articles without depending on the An
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Define `NewsClassification` type and `NewsClassifierPort` interface (AC: #1)
-  - [ ] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (REPLACE EMPTY STUB — file exists but is empty)
-  - [ ] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
-  - [ ] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
-  - [ ] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
-  - [ ] No imports outside own `domain/` folder — `Sector` and `ImpactType` are domain types, allowed
+- [x] Task 1: Define `NewsClassification` type and `NewsClassifierPort` interface (AC: #1)
+  - [x] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (REPLACE EMPTY STUB — file exists but is empty)
+  - [x] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
+  - [x] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
+  - [x] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
+  - [x] No imports outside own `domain/` folder — `Sector` and `ImpactType` are domain types, allowed
 
-- [ ] Task 2: Install Anthropic SDK and implement `AnthropicClassifier` (AC: #2, #3)
-  - [ ] Install `@anthropic-ai/sdk` (npm) — see Dev Notes for exact command
-  - [ ] File: `src/lib/server/contexts/news/infrastructure/llm/anthropic-classifier.ts` (REPLACE EMPTY STUB — file exists but is empty)
-  - [ ] Class `AnthropicClassifier` implementing `NewsClassifierPort`
-  - [ ] Inject `apiKey: string` via constructor — never hardcode the key
-  - [ ] Use `claude-sonnet-4-6` model (current production model, see Dev Notes)
-  - [ ] Send prompt requesting JSON array; parse and validate response
-  - [ ] Validate: `impactScore` clamped to [-1, 1], `sector` must be valid `Sector` value
-  - [ ] On API error: wrap with `createApiError()` and throw — never swallow silently
-  - [ ] See Dev Notes for exact prompt structure, SDK usage pattern, and response parsing
+- [x] Task 2: Install Anthropic SDK and implement `AnthropicClassifier` (AC: #2, #3)
+  - [x] Install `@anthropic-ai/sdk` (npm) — see Dev Notes for exact command
+  - [x] File: `src/lib/server/contexts/news/infrastructure/llm/anthropic-classifier.ts` (REPLACE EMPTY STUB — file exists but is empty)
+  - [x] Class `AnthropicClassifier` implementing `NewsClassifierPort`
+  - [x] Inject `apiKey: string` via constructor — never hardcode the key
+  - [x] Use `claude-sonnet-4-6` model (current production model, see Dev Notes)
+  - [x] Send prompt requesting JSON array; parse and validate response
+  - [x] Validate: `impactScore` clamped to [-1, 1], `sector` must be valid `Sector` value
+  - [x] On API error: wrap with `createApiError()` and throw — never swallow silently
+  - [x] See Dev Notes for exact prompt structure, SDK usage pattern, and response parsing
 
-- [ ] Task 3: Implement `FakeNewsClassifier` (AC: #4)
-  - [ ] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory already exists)
-  - [ ] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
-  - [ ] Constructor takes optional `classifications: NewsClassification[]` — defaults to `[]`
-  - [ ] Expose `public classifications: NewsClassification[]` for test assertions
-  - [ ] `classify()` returns `[...this.classifications]` — no HTTP call
-  - [ ] Support configuring a `shouldThrow` flag to simulate API failure in tests (throws `ApiError`)
-  - [ ] Mirror the `FakeRssFetcher` pattern exactly (see Dev Notes)
+- [x] Task 3: Implement `FakeNewsClassifier` (AC: #4)
+  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory already exists)
+  - [x] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
+  - [x] Constructor takes optional `classifications: NewsClassification[]` — defaults to `[]`
+  - [x] Expose `public classifications: NewsClassification[]` for test assertions
+  - [x] `classify()` returns `[...this.classifications]` — no HTTP call
+  - [x] Support configuring a `shouldThrow` flag to simulate API failure in tests (throws `ApiError`)
+  - [x] Mirror the `FakeRssFetcher` pattern exactly (see Dev Notes)
 
-- [ ] Task 4: Write unit tests for `FakeNewsClassifier` (no DB, no API calls required)
-  - [ ] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.test.ts` (CREATE NEW)
-  - [ ] Tests: returns configured classifications, returns empty array by default, throws when `shouldThrow = true`, returns a copy (mutation test), ignores headline argument
+- [x] Task 4: Write unit tests for `FakeNewsClassifier` (no DB, no API calls required)
+  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.test.ts` (CREATE NEW)
+  - [x] Tests: returns configured classifications, returns empty array by default, throws when `shouldThrow = true`, returns a copy (mutation test), ignores headline argument
 
 ---
 
@@ -414,7 +414,7 @@ Per architecture (NFR6), error isolation for Anthropic failures happens in the *
 
 ### Agent Model Used
 
-_to be filled by dev agent_
+claude-sonnet-4-6
 
 ### Debug Log References
 
@@ -422,7 +422,10 @@ _none_
 
 ### Completion Notes List
 
-_to be filled by dev agent_
+- Task 1: `NewsClassification` et `NewsClassifierPort` définis dans `application/ports/news-classifier.port.ts` — imports uniquement des types domain (`Sector`, `ImpactType`), zéro dépendance externe.
+- Task 2: `@anthropic-ai/sdk@0.80.0` installé. `AnthropicClassifier` créé dans `infrastructure/llm/anthropic-classifier.ts` — client instancié via constructeur (injection de clé), `impactScore` clampé à [-1, 1], validation via `isRawClassification`, toutes les erreurs wrappées avec `createApiError()`.
+- Task 3: `FakeNewsClassifier` créé dans `infrastructure/fakes/fake-news-classifier.ts` — miroir exact du pattern `FakeRssFetcher`, `public classifications` + `public shouldThrow`, throws `ApiError` quand `shouldThrow = true`.
+- Task 4: 5 tests unitaires écrits et passants pour `FakeNewsClassifier`. Suite complète: 46 passed, 0 failures, 0 regressions. TypeScript strict: 0 erreurs.
 
 ### File List
 
@@ -436,3 +439,4 @@ _to be filled by dev agent_
 ## Change Log
 
 - 2026-03-19: Story created by create-story workflow
+- 2026-03-19: Story implemented by dev agent — all tasks complete, 46 unit tests passing
