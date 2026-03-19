@@ -21,21 +21,47 @@ Règle absolue : **dépendances vers l'intérieur uniquement**. Le domain n'impo
 
 ```
 src/lib/server/
-├── domain/
-│   ├── news/           news-impact.ts · impact-type.ts · sector.ts
-│   ├── scoring/        sector-score.ts · decay-model.ts
-│   └── ports/          news-impact.repository.port.ts · sector-score.repository.port.ts · news-classifier.port.ts
-├── application/
-│   └── use-cases/      ingest-news · compute-daily-scores · get-sector-dashboard
-└── infrastructure/
-    ├── db/             news-impact.repository.ts · sector-score.repository.ts
-    └── llm/            anthropic-classifier.ts
+├── contexts/
+│   ├── news/
+│   │   ├── domain/         news-impact.ts · impact-type.ts · sector.ts
+│   │   ├── application/
+│   │   │   ├── ports/      news-impact.repository.port.ts · news-classifier.port.ts
+│   │   │   └── use-cases/  ingest-news.use-case.ts
+│   │   └── infrastructure/
+│   │       ├── db/         news-impact.repository.ts · news-impact.schema.ts
+│   │       ├── llm/        anthropic-classifier.ts
+│   │       └── fakes/      fake-news-impact.repository.ts · fake-news-classifier.ts
+│   └── scoring/
+│       ├── domain/         sector-score.ts · decay-model.ts
+│       ├── application/
+│       │   ├── ports/      sector-score.repository.port.ts · news-impact.read.port.ts
+│       │   └── use-cases/  compute-daily-scores.use-case.ts
+│       └── infrastructure/
+│           ├── db/         sector-score.repository.ts · sector-score.schema.ts
+│           └── fakes/      fake-sector-score.repository.ts
+├── cross-context/
+│   └── pipeline/
+│       ├── application/    run-daily-pipeline.use-case.ts
+│       └── interface/      cron-handler.ts
+├── middleware/             rate-limiter.ts
+├── decorators/             (post-MVP : retry, timing, circuit-breaker)
+└── shared/
+    └── db/                 client.ts (instance Drizzle partagée)
 
-src/routes/             ← couche Interface (câblage uniquement)
-├── api/news/+server.ts
-├── api/scores/+server.ts
-└── dashboard/+page.svelte · +page.server.ts
+src/routes/                 ← couche Interface (câblage uniquement)
+├── dashboard/              +page.svelte · +page.server.ts
+└── api/
+    ├── sector-scores/      +server.ts
+    ├── news-impacts/       +server.ts (debug/ops)
+    └── cron/daily/         +server.ts (Vercel Cron → CRON_SECRET)
 ```
+
+**Règles de dépendance :**
+- `contexts/*/domain/` — zéro import externe
+- `contexts/*/application/` — importe uniquement son propre domaine
+- `cross-context/*/application/` — seul endroit autorisé à importer plusieurs domaines
+- `middleware/` et `decorators/` — n'importent rien de `contexts/`
+- `src/routes/` — câblage uniquement, instancie les adapters et injecte dans les use cases
 
 ---
 

@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>market-signal — UX Design Direction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:               #0F0F11;
+      --surface:          #1A1A1F;
+      --surface-elevated: #242429;
+      --border:           #2E2E35;
+      --text-primary:     #F0F0F2;
+      --text-secondary:   #8A8A96;
+      --green:            #22C55E;
+      --orange:           #F59E0B;
+      --red:              #EF4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    /* ─── Topbar ─────────────────────────────────────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 17, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: -24px -16px 32px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(34,197,94,0.5);
+    }
+
+    .topbar-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+
+    .topbar-right {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    /* ─── Layout ─────────────────────────────────────────── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
+    }
+
+    .page-date {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ─── Section headers ────────────────────────────────── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-label .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .section-label .dot.green { background: var(--green); }
+    .section-label .dot.red   { background: var(--red); }
+
+    /* ─── Divider ─────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    /* ─── Highlight grid ─────────────────────────────────── */
+    .highlight-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .highlight-column { display: flex; flex-direction: column; gap: 12px; }
+
+    /* ─── Ripple Card ────────────────────────────────────── */
+    .ripple-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ripple-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .sector-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .narrative-label {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ─── Ripple visual ──────────────────────────────────── */
+    .ripple-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 0 4px;
+    }
+
+    .ripple {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Outer ripple ring = STRUCTURAL (previsionnel) */
+    .ripple-outer {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      opacity: 0.35;
+      animation: ripple-pulse 3s ease-in-out infinite;
+    }
+
+    .ripple-outer-2 {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 0.5px solid transparent;
+      opacity: 0.2;
+      animation: ripple-pulse 3s ease-in-out infinite;
+    }
+
+    /* Inner ring = PUNCTUAL (actuel) */
+    .ripple-inner {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Color variants */
+    .ripple-outer.green   { border-color: var(--green);  box-shadow: 0 0 12px rgba(34,197,94,0.2); }
+    .ripple-outer.orange  { border-color: var(--orange); box-shadow: 0 0 12px rgba(245,158,11,0.2); }
+    .ripple-outer.red     { border-color: var(--red);    box-shadow: 0 0 12px rgba(239,68,68,0.2); }
+
+    .ripple-outer-2.green  { border-color: var(--green); }
+    .ripple-outer-2.orange { border-color: var(--orange); }
+    .ripple-outer-2.red    { border-color: var(--red); }
+
+    .ripple-inner.green   { border-color: var(--green);  background: rgba(34,197,94,0.08); }
+    .ripple-inner.orange  { border-color: var(--orange); background: rgba(245,158,11,0.08); }
+    .ripple-inner.red     { border-color: var(--red);    background: rgba(239,68,68,0.08); }
+
+    @keyframes ripple-pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.04); }
+    }
+
+    /* ─── Reliability icon ───────────────────────────────── */
+    .reliability-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .reliability-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .reliability-dot.green  { background: var(--green); }
+    .reliability-dot.orange { background: var(--orange); }
+    .reliability-dot.red    { background: var(--red); }
+
+    /* Dropdown */
+    .reliability-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 16px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      width: 200px;
+      z-index: 10;
+      gap: 6px;
+      flex-direction: column;
+    }
+
+    .reliability-btn:hover .reliability-dropdown,
+    .reliability-btn:focus .reliability-dropdown {
+      display: flex;
+    }
+
+    .reliability-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .reliability-row .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .reliability-row .dot.green  { background: var(--green); }
+    .reliability-row .dot.orange { background: var(--orange); }
+    .reliability-row .dot.red    { background: var(--red); }
+
+    /* ─── Empty zone ─────────────────────────────────────── */
+    .empty-zone {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    /* ─── Full sector table ──────────────────────────────── */
+    .sector-table { display: flex; flex-direction: column; gap: 8px; }
+
+    .sector-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sector-row.low-reliability {
+      opacity: 0.45;
+    }
+
+    .sector-row-name {
+      font-size: 14px;
+      font-weight: 500;
+      flex: 1;
+      color: var(--text-primary);
+    }
+
+    .sector-row-label {
+      font-size: 11px;
+      text-transform: none;
+      letter-spacing: 0.01em;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    /* Mini ripple for table rows */
+    .mini-ripple {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mini-ripple-outer {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      opacity: 0.6;
+    }
+
+    .mini-ripple-inner {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-ripple-outer.green  { border-color: var(--green); }
+    .mini-ripple-outer.orange { border-color: var(--orange); }
+    .mini-ripple-outer.red    { border-color: var(--red); }
+
+    .mini-ripple-inner.green  { border-color: var(--green); }
+    .mini-ripple-inner.orange { border-color: var(--orange); }
+    .mini-ripple-inner.red    { border-color: var(--red); }
+
+    /* ─── Legend ─────────────────────────────────────────── */
+    .legend {
+      margin-top: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .legend-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    .legend-rows { display: flex; flex-direction: column; gap: 6px; }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Icône fixe 22px pour toutes les lignes */
+    .legend-icon {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .legend-ripple {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .legend-outer {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text-secondary);
+      opacity: 0.4;
+    }
+
+    .legend-inner {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-dot.green  { background: var(--green); }
+    .legend-dot.orange { background: var(--orange); }
+    .legend-dot.red    { background: var(--red); }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 720px) {
+      .highlight-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .highlight-grid {
+        grid-template-columns: 1fr;
+      }
+      .ripple-card { padding: 12px; }
+      .sector-row  { padding: 10px 12px; }
+      .sector-row-label { display: none; }
+      .topbar { margin: -24px -16px 24px; padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo-dot"></div>
+      <span class="topbar-name">market-signal</span>
+    </div>
+    <div class="topbar-right">Sector signals</div>
+  </nav>
+
+  <div class="page">
+
+    <!-- Header -->
+    <header class="page-header">
+      <div class="page-date">Thursday, March 19 · Scores computed at 02:14</div>
+    </header>
+
+    <!-- ── BULLISH HIGHLIGHTS ── -->
+    <div class="section-label">
+      <span class="dot green"></span>
+      Momentum
+    </div>
+
+    <div class="highlight-grid">
+      <div class="highlight-column">
+
+        <!-- Technology: green now, green structural -->
+        <div class="ripple-card">
+          <div class="ripple-card-header">
+            <div>
+              <div class="sector-name">Technology</div>
+              <div class="narrative-label">Confirmed momentum</div>
+            </div>
+            <div class="reliability-btn" tabindex="0">
+              <span class="reliability-dot green"></span>
+              <div class="reliability-dropdown">
+                <div class="reliability-row">
+                  <span>Total articles</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Recent (7d)</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Source diversity</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>PUNCTUAL ratio</span>
+                  <span class="dot green"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ripple-wrapper">
+            <div class="ripple">
+              <div class="ripple-outer green"></div>
+              <div class="ripple-outer-2 green"></div>
+              <div class="ripple-inner green"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Finance: orange now, green structural -->
+        <div class="ripple-card">
+          <div class="ripple-card-header">
+            <div>
+              <div class="sector-name">Finance</div>
+              <div class="narrative-label">Turbulence · rebound expected</div>
+            </div>
+            <div class="reliability-btn" tabindex="0">
+              <span class="reliability-dot green"></span>
+              <div class="reliability-dropdown">
+                <div class="reliability-row">
+                  <span>Total articles</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Recent (7d)</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Source diversity</span>
+                  <span class="dot orange"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>PUNCTUAL ratio</span>
+                  <span class="dot green"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ripple-wrapper">
+            <div class="ripple">
+              <div class="ripple-outer green"></div>
+              <div class="ripple-outer-2 green"></div>
+              <div class="ripple-inner orange"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="highlight-column">
+
+        <!-- Healthcare: green now, orange structural -->
+        <div class="ripple-card">
+          <div class="ripple-card-header">
+            <div>
+              <div class="sector-name">Healthcare</div>
+              <div class="narrative-label">Healthy · caution ahead</div>
+            </div>
+            <div class="reliability-btn" tabindex="0">
+              <span class="reliability-dot orange"></span>
+              <div class="reliability-dropdown">
+                <div class="reliability-row">
+                  <span>Total articles</span>
+                  <span class="dot orange"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Recent (7d)</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Source diversity</span>
+                  <span class="dot orange"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>PUNCTUAL ratio</span>
+                  <span class="dot green"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ripple-wrapper">
+            <div class="ripple">
+              <div class="ripple-outer orange"></div>
+              <div class="ripple-outer-2 orange"></div>
+              <div class="ripple-inner green"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="highlight-column">
+
+        <!-- Industrials: green now, green structural -->
+        <div class="ripple-card">
+          <div class="ripple-card-header">
+            <div>
+              <div class="sector-name">Industrials</div>
+              <div class="narrative-label">Confirmed momentum</div>
+            </div>
+            <div class="reliability-btn" tabindex="0">
+              <span class="reliability-dot green"></span>
+              <div class="reliability-dropdown">
+                <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+                <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+                <div class="reliability-row"><span>Source diversity</span><span class="dot green"></span></div>
+                <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="ripple-wrapper">
+            <div class="ripple">
+              <div class="ripple-outer green"></div>
+              <div class="ripple-outer-2 green"></div>
+              <div class="ripple-inner green"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── BEARISH HIGHLIGHTS ── -->
+    <div class="section-label">
+      <span class="dot red"></span>
+      Pressure
+    </div>
+
+    <div class="highlight-grid">
+      <div class="highlight-column">
+
+        <!-- Energy: red now, red structural -->
+        <div class="ripple-card">
+          <div class="ripple-card-header">
+            <div>
+              <div class="sector-name">Energy</div>
+              <div class="narrative-label">Widespread deterioration</div>
+            </div>
+            <div class="reliability-btn" tabindex="0">
+              <span class="reliability-dot green"></span>
+              <div class="reliability-dropdown">
+                <div class="reliability-row">
+                  <span>Total articles</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Recent (7d)</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Source diversity</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>PUNCTUAL ratio</span>
+                  <span class="dot orange"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ripple-wrapper">
+            <div class="ripple">
+              <div class="ripple-outer red"></div>
+              <div class="ripple-outer-2 red"></div>
+              <div class="ripple-inner red"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="highlight-column">
+
+        <!-- Real Estate: red now, orange structural -->
+        <div class="ripple-card">
+          <div class="ripple-card-header">
+            <div>
+              <div class="sector-name">Real Estate</div>
+              <div class="narrative-label">Crisis · uncertain stabilization</div>
+            </div>
+            <div class="reliability-btn" tabindex="0">
+              <span class="reliability-dot green"></span>
+              <div class="reliability-dropdown">
+                <div class="reliability-row">
+                  <span>Total articles</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Recent (7d)</span>
+                  <span class="dot orange"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>Source diversity</span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="reliability-row">
+                  <span>PUNCTUAL ratio</span>
+                  <span class="dot green"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ripple-wrapper">
+            <div class="ripple">
+              <div class="ripple-outer orange"></div>
+              <div class="ripple-outer-2 orange"></div>
+              <div class="ripple-inner red"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="highlight-column">
+
+        <!-- Consumer: red now, orange structural -->
+        <div class="ripple-card">
+          <div class="ripple-card-header">
+            <div>
+              <div class="sector-name">Consumer</div>
+              <div class="narrative-label">Growing pressure</div>
+            </div>
+            <div class="reliability-btn" tabindex="0">
+              <span class="reliability-dot green"></span>
+              <div class="reliability-dropdown">
+                <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+                <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+                <div class="reliability-row"><span>Source diversity</span><span class="dot green"></span></div>
+                <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="ripple-wrapper">
+            <div class="ripple">
+              <div class="ripple-outer orange"></div>
+              <div class="ripple-outer-2 orange"></div>
+              <div class="ripple-inner red"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ── FULL SECTOR TABLE ── -->
+    <div class="section-label">All sectors</div>
+
+    <div class="sector-table">
+
+      <!-- Reliable sectors, ordered by score -->
+      <div class="sector-row">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer green"></div>
+          <div class="mini-ripple-inner green"></div>
+        </div>
+        <div class="sector-row-name">Technology</div>
+        <div class="sector-row-label">Confirmed momentum</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot green"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sector-row">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer green"></div>
+          <div class="mini-ripple-inner orange"></div>
+        </div>
+        <div class="sector-row-name">Finance</div>
+        <div class="sector-row-label">Turbulence · rebound expected</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot orange"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot orange"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sector-row">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer orange"></div>
+          <div class="mini-ripple-inner green"></div>
+        </div>
+        <div class="sector-row-name">Healthcare</div>
+        <div class="sector-row-label">Healthy · caution ahead</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot orange"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot orange"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot orange"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sector-row">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer orange"></div>
+          <div class="mini-ripple-inner orange"></div>
+        </div>
+        <div class="sector-row-name">Industry</div>
+        <div class="sector-row-label">Mixed signal</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot green"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot orange"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sector-row">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer orange"></div>
+          <div class="mini-ripple-inner red"></div>
+        </div>
+        <div class="sector-row-name">Consumer</div>
+        <div class="sector-row-label">Growing pressure</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot green"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sector-row">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer orange"></div>
+          <div class="mini-ripple-inner red"></div>
+        </div>
+        <div class="sector-row-name">Real Estate</div>
+        <div class="sector-row-label">Crisis · uncertain stabilization</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot green"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot orange"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sector-row">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer red"></div>
+          <div class="mini-ripple-inner red"></div>
+        </div>
+        <div class="sector-row-name">Energy</div>
+        <div class="sector-row-label">Widespread deterioration</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot green"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot green"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot orange"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Low reliability sectors — dimmed, at bottom -->
+      <div class="sector-row low-reliability">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer orange"></div>
+          <div class="mini-ripple-inner green"></div>
+        </div>
+        <div class="sector-row-name">Utilities</div>
+        <div class="sector-row-label">Mixed signal</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot red"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot red"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot red"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot red"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sector-row low-reliability">
+        <div class="mini-ripple">
+          <div class="mini-ripple-outer red"></div>
+          <div class="mini-ripple-inner orange"></div>
+        </div>
+        <div class="sector-row-name">Materials</div>
+        <div class="sector-row-label">Growing pressure</div>
+        <div class="reliability-btn" tabindex="0">
+          <span class="reliability-dot red"></span>
+          <div class="reliability-dropdown">
+            <div class="reliability-row"><span>Total articles</span><span class="dot red"></span></div>
+            <div class="reliability-row"><span>Recent (7d)</span><span class="dot red"></span></div>
+            <div class="reliability-row"><span>Source diversity</span><span class="dot orange"></span></div>
+            <div class="reliability-row"><span>PUNCTUAL ratio</span><span class="dot green"></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── LEGEND ── -->
+    <div class="legend">
+      <div class="legend-title">How to read the Ripple Cast</div>
+      <div class="legend-rows">
+        <div class="legend-row">
+          <div class="legend-icon">
+            <div class="legend-ripple">
+              <div class="legend-outer"></div>
+              <div class="legend-inner"></div>
+            </div>
+          </div>
+          <span><strong style="color:var(--text-primary)">Outer ring</strong> — Structural signal (7–30 day forecast)</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-icon">
+            <div class="legend-inner"></div>
+          </div>
+          <span><strong style="color:var(--text-primary)">Inner ring</strong> — Current signal (recent events)</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-icon"><div class="legend-dot green"></div></div>
+          <span>Building momentum</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-icon"><div class="legend-dot orange"></div></div>
+          <span>Mixed or transitional</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-icon"><div class="legend-dot red"></div></div>
+          <span>Sustained pressure</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

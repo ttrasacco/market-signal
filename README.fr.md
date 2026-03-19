@@ -52,13 +52,28 @@ Le projet suit une **architecture hexagonale** (ports & adapters) avec les princ
 src/
 ├── lib/
 │   └── server/
-│       ├── domain/           ← entités, value objects, domain services, interfaces des ports
-│       ├── application/      ← use cases (ingestion, calcul, consultation)
-│       └── infrastructure/   ← adapters DB, adapter LLM Anthropic
-└── routes/                   ← couche interface (pages et endpoints API SvelteKit)
+│       ├── contexts/             ← bounded contexts isolés (news, scoring)
+│       │   ├── news/
+│       │   │   ├── domain/       ← entités, value objects
+│       │   │   ├── application/  ← ports + use cases single-context
+│       │   │   └── infrastructure/ ← adapters DB, LLM, fakes de test
+│       │   └── scoring/
+│       │       ├── domain/
+│       │       ├── application/
+│       │       └── infrastructure/
+│       ├── cross-context/        ← orchestration multi-domaine (pipeline cron)
+│       ├── middleware/           ← rate-limiter, logging
+│       ├── decorators/           ← retry, circuit-breaker (post-MVP)
+│       └── shared/               ← client DB partagé
+└── routes/                       ← couche interface (pages et endpoints API SvelteKit)
+    ├── dashboard/
+    └── api/
+        ├── sector-scores/
+        ├── news-impacts/         ← debug/ops
+        └── cron/daily/           ← déclenché par Vercel Cron
 ```
 
-Règle de dépendance : **vers l'intérieur uniquement**. Le domaine n'a aucune connaissance de l'infrastructure ou de SvelteKit.
+Règle de dépendance : **vers l'intérieur uniquement**. Le domaine n'a aucune connaissance de l'infrastructure ou de SvelteKit. `cross-context/` est le seul endroit autorisé à importer depuis plusieurs contextes.
 
 Les données suivent le pattern **Event Sourcing + CQRS** :
 - `news_impacts` — event store append-only, jamais muté
