@@ -1,7 +1,8 @@
 import type { NewsImpactReadPort, NewsImpactForScoring } from '../ports/news-impact.read.port';
 import type { SectorScoreRepositoryPort } from '$lib/server/contexts/scoring/application/ports/sector-score.repository.port';
-import { computeDecay } from '$lib/server/contexts/scoring/domain/decay-model';
-import { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
+import { ImpactType } from "$lib/server/contexts/news/domain/impact-type";
+import { computeDecay } from "$lib/server/contexts/scoring/domain/decay-model";
+
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
 
 export class ComputeDailyScoresUseCase {
@@ -20,7 +21,7 @@ export class ComputeDailyScoresUseCase {
     }
 
     for (const [sector, sectorImpacts] of bySector) {
-      let punctualScore = 0;
+	  let punctualScore = 0;
       let structuralScore = 0;
 
       for (const impact of sectorImpacts) {
@@ -34,8 +35,15 @@ export class ComputeDailyScoresUseCase {
         }
       }
 
-      const score = punctualScore + structuralScore;
-      await this.sectorScoreRepo.upsert({ date, sector, score, punctualScore, structuralScore });
+      //const score = (punctualScore + structuralScore) / sectorImpacts.length;
+	  //TODO: score devient computed dans le front/dans l'objet renvoyé pour le useCase
+      await this.sectorScoreRepo.upsert({
+		date,
+		sector,
+		punctualScore,
+		structuralScore,
+		newsCount: sectorImpacts.length
+	});
     }
 
     console.log(`[PIPELINE] scoring: ${bySector.size} sector scores computed`);

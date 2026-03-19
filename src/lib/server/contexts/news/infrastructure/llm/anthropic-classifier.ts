@@ -61,16 +61,61 @@ function buildBatchPrompt(headlines: string[]): string {
 Headlines:
 ${numbered}
 
-Rules:
-- Ignore duplicate or near-duplicate headlines — include only one entry for them
-- Each entry must have: headline (exact string from the list), classifications (array of sector impacts)
-- Each classification must have: sector (one of: ${Object.values(Sector).join(', ')}), impactScore (number between -1 and 1), impactType (STRUCTURAL or PUNCTUAL)
-- STRUCTURAL: fundamental, long-lasting change (months/years)
-- PUNCTUAL: temporary, short-lived event (days/weeks)
-- Include ALL sectors meaningfully impacted per headline
-- Return only valid JSON array, no explanation
+SECTOR DEFINITIONS:
+${Object.values(Sector).map(s => `- ${s}`).join('\n')}
 
-Example: [{"headline":"Fed raises rates","classifications":[{"sector":"FINANCE","impactScore":-0.7,"impactType":"PUNCTUAL"}]}]`;
+IMPACT TYPE:
+- STRUCTURAL: affects fundamentals for months or years (regulation, geopolitical shift, major merger, central bank policy change)
+- PUNCTUAL: temporary event resolving within days or weeks (earnings beat, strike, natural disaster, political statement)
+
+IMPACT SCORE — score between -1 and 1, derived from these criteria:
+- Scope: global or multi-country (+0.3), national (+0.2), regional (+0.1)
+- Certainty: confirmed fact (+0.2), official announcement (+0.15), rumor or forecast (+0.05)
+- Magnitude: market-moving or systemic (+0.3), moderate (+0.2), minor (+0.1)
+- Direction: multiply final absolute score by +1 (positive for sector) or -1 (negative for sector)
+
+Example scoring: confirmed global regulation hurting finance = -(0.3 + 0.2 + 0.3) = -0.8
+
+RULES:
+- Ignore duplicate or near-duplicate headlines — include only one entry for them
+- Include ALL sectors meaningfully impacted (minimum relevance threshold: scope score >= 0.2)
+- If a headline does not meaningfully impact any sector, return an empty classifications array
+- Return only valid JSON array, no explanation
+- - Ignore headlines using conditional or speculative language: 
+  "could", "might", "may", "would", "should", "is expected to", "is likely to", "analysts say", "sources suggest". A forecast or rumor without confirmed facts → empty classifications array.
+
+SECTOR DEFINITIONS (classify ONLY into these sectors):
+- TECHNOLOGY: software, hardware, semiconductors, AI, cybersecurity — NOT telecoms or media
+- ENERGY: oil, gas, renewables, electricity production, energy transition, nuclear
+- HEALTHCARE: pharma, biotech, medical devices, public health policy, epidemics
+- FINANCIALS: banks, insurance, investment funds, interest rates, credit, financial regulation — NOT general economy or inflation
+- CONSUMER_STAPLES: food, beverages, household products, tobacco — non-cyclical, recession-resistant
+- CONSUMER_DISCRETIONARY: retail, luxury, automotive, tourism, entertainment — cyclical, tied to economic confidence
+- INDUSTRIALS: manufacturing, aerospace, defense, construction, logistics, supply chain
+- MATERIALS: raw materials, chemicals, steel, mining, paper, packaging — NOT energy commodities
+- UTILITIES: electricity distribution, water, gas networks, waste management — NOT energy production
+- REAL_ESTATE: property markets, REITs, urban planning — NOT construction (→ INDUSTRIALS)
+- COMMUNICATION: telecoms, media, streaming, social networks, advertising, publishing
+
+IMPORTANT: There is no geopolitical or macro sector. 
+For geopolitical or macroeconomic news, classify into the sectors most impacted by the event.
+A Middle East conflict → ENERGY. US-China trade sanctions → TECHNOLOGY, INDUSTRIALS. 
+Central bank rate decision → FINANCIALS, REAL_ESTATE.
+If the impact is too diffuse to assign meaningful sectors, return an empty classifications array.
+
+RESPONSE FORMAT:
+[{
+  "headline": "exact string from the list",
+  "classifications": [{
+    "sector": "one of: ${Object.values(Sector).join(', ')}",
+    "impactScore": number between -1 and 1,
+    "impactType": "STRUCTURAL or PUNCTUAL",
+    "scoring": { "scope": number, "certainty": number, "magnitude": number }
+  }]
+}]
+
+Example:
+[{"headline":"Fed raises rates 0.5 points amid inflation concerns","classifications":[{"sector":"FINANCE","impactScore":-0.7,"impactType":"PUNCTUAL","scoring":{"scope":0.3,"certainty":0.2,"magnitude":0.2}}]}]`;
 }
 
 interface RawClassification {
