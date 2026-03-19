@@ -52,9 +52,9 @@ export function computeReliabilityColor(data: ReliabilityData): SignalColor {
 
 export function computeAllCriteria(data: ReliabilityData): CriterionResult[] {
 	return [
-		{ label: 'Total articles', color: totalArticlesColor(data.totalArticles) },
-		{ label: 'Recent articles (7d)', color: recentArticlesColor(data.recentArticles) },
+		{ label: 'Coverage', color: totalArticlesColor(data.totalArticles) },
+		{ label: 'Freshness', color: recentArticlesColor(data.recentArticles) },
 		{ label: 'Source diversity', color: sourceDiversityColor(data.sourceCount) },
-		{ label: 'Punctual proportion', color: punctualProportionColor(data.punctualProportion) }
+		{ label: 'Signal stability', color: punctualProportionColor(data.punctualProportion) }
 	];
 }
