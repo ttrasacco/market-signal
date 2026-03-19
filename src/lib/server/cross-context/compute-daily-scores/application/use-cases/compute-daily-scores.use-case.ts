@@ -1,9 +1,8 @@
-import type { NewsImpactReadPort } from '../ports/news-impact.read.port';
-import type { SectorScoreRepositoryPort } from '../ports/sector-score.repository.port';
-import { computeDecay } from '../../domain/decay-model';
+import type { NewsImpactReadPort, NewsImpactForScoring } from '../ports/news-impact.read.port';
+import type { SectorScoreRepositoryPort } from '$lib/server/contexts/scoring/application/ports/sector-score.repository.port';
+import { computeDecay } from '$lib/server/contexts/scoring/domain/decay-model';
 import { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
-import type { NewsImpactForScoring } from '../ports/news-impact.read.port';
 
 export class ComputeDailyScoresUseCase {
   constructor(

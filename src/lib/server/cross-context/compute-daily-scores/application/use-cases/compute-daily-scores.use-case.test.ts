@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ComputeDailyScoresUseCase } from './compute-daily-scores.use-case';
 import { FakeNewsImpactReadAdapter } from '../../infrastructure/fakes/fake-news-impact-read.adapter';
-import { FakeSectorScoreAdapter } from '../../infrastructure/fakes/fake-sector-score.adapter';
+import { FakeSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.adapter';
 import { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 import { Sector } from '$lib/server/contexts/news/domain/sector';
-import { computeDecay } from '../../domain/decay-model';
+import { computeDecay } from '$lib/server/contexts/scoring/domain/decay-model';
 
 describe('ComputeDailyScoresUseCase', () => {
   let newsRepo: FakeNewsImpactReadAdapter;

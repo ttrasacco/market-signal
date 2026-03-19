@@ -6,7 +6,7 @@ import { RssFetcher } from '$lib/server/contexts/news/infrastructure/rss/rss-fet
 import { IngestNewsUseCase } from '$lib/server/contexts/news/application/use-cases/ingest-news.use-case';
 import { DrizzleNewsImpactReadAdapter } from '$lib/server/contexts/scoring/infrastructure/db/news-impact.read.adapter';
 import { DrizzleSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.adapter';
-import { ComputeDailyScoresUseCase } from '$lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case';
+import { ComputeDailyScoresUseCase } from '$lib/server/cross-context/compute-daily-scores/application/use-cases/compute-daily-scores.use-case';
 import { RunDailyPipelineUseCase } from '$lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case';
 import { handleCronRequest } from '$lib/server/cross-context/pipeline/interface/cron-handler';
 
