@@ -1,0 +1,19 @@
+import { pgTable, text, real, timestamp } from 'drizzle-orm/pg-core';
+
+export const newsTable = pgTable('news', {
+	id: text('id').primaryKey(),
+	publishedAt: timestamp('published_at').notNull(),
+	analyzedAt: timestamp('analyzed_at').notNull(),
+	source: text('source').notNull(),
+	headline: text('headline').notNull(),
+});
+
+export const newsImpactsTable = pgTable('news_impacts', {
+	id: text('id').primaryKey(),
+	newsId: text('news_id')
+		.notNull()
+		.references(() => newsTable.id),
+	sector: text('sector').notNull(),
+	impactScore: real('impact_score').notNull(),
+	impactType: text('impact_type').notNull(),
+});
