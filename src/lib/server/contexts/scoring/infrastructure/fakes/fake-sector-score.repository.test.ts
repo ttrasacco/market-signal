@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { FakeSectorScoreRepository } from './fake-sector-score.repository';
+import { FakeSectorScoreAdapter } from './fake-sector-score.adapter';
 import { Sector } from '../../../news/domain/sector';
 
-describe('FakeSectorScoreRepository', () => {
-  let repo: FakeSectorScoreRepository;
+describe('FakeSectorScoreAdapter', () => {
+  let repo: FakeSectorScoreAdapter;
   const today = new Date('2026-03-19');
   const yesterday = new Date('2026-03-18');
 
   beforeEach(() => {
-    repo = new FakeSectorScoreRepository();
+    repo = new FakeSectorScoreAdapter();
   });
 
   it('starts empty', async () => {

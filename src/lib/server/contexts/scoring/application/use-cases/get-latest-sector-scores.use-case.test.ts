@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { GetSectorDashboardUseCase } from './get-sector-dashboard.use-case';
-import { FakeSectorScoreRepository } from '../../infrastructure/fakes/fake-sector-score.repository';
+import { GetLatestSectorScoresUseCase } from './get-latest-sector-scores.use-case';
+import { FakeSectorScoreAdapter } from '../../infrastructure/fakes/fake-sector-score.adapter';
 
-describe('GetSectorDashboardUseCase', () => {
-  let fake: FakeSectorScoreRepository;
-  let useCase: GetSectorDashboardUseCase;
+describe('GetLatestSectorScoresUseCase', () => {
+  let fake: FakeSectorScoreAdapter;
+  let useCase: GetLatestSectorScoresUseCase;
 
   beforeEach(() => {
-    fake = new FakeSectorScoreRepository();
-    useCase = new GetSectorDashboardUseCase(fake);
+    fake = new FakeSectorScoreAdapter();
+    useCase = new GetLatestSectorScoresUseCase(fake);
   });
 
   it('returns empty array when no scores exist', async () => {

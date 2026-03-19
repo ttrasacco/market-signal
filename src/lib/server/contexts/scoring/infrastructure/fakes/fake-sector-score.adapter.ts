@@ -1,7 +1,7 @@
 import type { SectorScoreRepositoryPort } from '../../application/ports/sector-score.repository.port';
 import type { SectorScore } from '../../domain/sector-score';
 
-export class FakeSectorScoreRepository implements SectorScoreRepositoryPort {
+export class FakeSectorScoreAdapter implements SectorScoreRepositoryPort {
   public scores: Map<string, SectorScore> = new Map();
 
   private key(score: SectorScore): string {

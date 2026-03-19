@@ -1,6 +1,6 @@
 # Story 4.2: SectorScoreCard Component — Ripple Cast Visual + Narrative Label
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -29,25 +29,25 @@ so that I can read sector conviction state at a glance without understanding the
 
 ## Tasks / Subtasks
 
-- [ ] Task 1 — Define `SectorScoreCardProps` type and scoring-to-color logic (AC: #1, #2)
-  - [ ] Create `src/lib/components/SectorScoreCard.svelte`
-  - [ ] Define prop type: `SectorScoreCardData = Pick<SectorScore, 'sector' | 'score' | 'punctualScore' | 'structuralScore'>` (see Dev Notes — Story 3.4 provides real sub-scores)
-  - [ ] Implement `scoreToColor(score: number): 'green' | 'orange' | 'red'` pure function
-  - [ ] Implement `getNarrativeLabel(punctualColor, structuralColor): string` 9-state lookup table
+- [x] Task 1 — Define `SectorScoreCardProps` type and scoring-to-color logic (AC: #1, #2)
+  - [x] Create `src/lib/components/SectorScoreCard.svelte`
+  - [x] Define prop type: `SectorScoreCardData = Pick<SectorScore, 'sector' | 'score' | 'punctualScore' | 'structuralScore'>` (see Dev Notes — Story 3.4 provides real sub-scores)
+  - [x] Implement `scoreToColor(score: number): 'green' | 'orange' | 'red'` pure function
+  - [x] Implement `getNarrativeLabel(punctualColor, structuralColor): string` 9-state lookup table
 
-- [ ] Task 2 — Implement Ripple Cast SVG/CSS structure (AC: #1)
-  - [ ] Outer ring (`.ripple-outer` + `.ripple-outer-2`) colored by structural color
-  - [ ] Inner ring (`.ripple-inner`) colored by punctual color
-  - [ ] Apply `ripple-pulse` animation (3s ease-in-out infinite)
-  - [ ] Card header: sector name (`.type-sector-name`) + narrative label below
+- [x] Task 2 — Implement Ripple Cast SVG/CSS structure (AC: #1)
+  - [x] Outer ring (`.ripple-outer` + `.ripple-outer-2`) colored by structural color
+  - [x] Inner ring (`.ripple-inner`) colored by punctual color
+  - [x] Apply `ripple-pulse` animation (3s ease-in-out infinite)
+  - [x] Card header: sector name (`.type-sector-name`) + narrative label below
 
-- [ ] Task 3 — Mobile responsiveness (AC: #3)
-  - [ ] Card padding: 16px desktop → 12px at ≤480px breakpoint
-  - [ ] Match HTML mockup responsive behavior
+- [x] Task 3 — Mobile responsiveness (AC: #3)
+  - [x] Card padding: 16px desktop → 12px at ≤480px breakpoint
+  - [x] Match HTML mockup responsive behavior
 
-- [ ] Task 4 — Unit test for pure logic (no DOM)
-  - [ ] Test `scoreToColor`: boundary values (score > 0.2 → green, -0.2 to 0.2 → orange, < -0.2 → red — see Dev Notes for exact thresholds)
-  - [ ] Test `getNarrativeLabel`: all 9 combinations
+- [x] Task 4 — Unit test for pure logic (no DOM)
+  - [x] Test `scoreToColor`: boundary values (score > 0.2 → green, -0.2 to 0.2 → orange, < -0.2 → red — see Dev Notes for exact thresholds)
+  - [x] Test `getNarrativeLabel`: all 9 combinations
 
 ## Dev Notes
 
@@ -254,6 +254,24 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+None.
+
 ### Completion Notes List
 
+- Extracted pure logic (`scoreToColor`, `getNarrativeLabel`, `SectorScoreCardData`) into `sector-score-card.utils.ts` to keep tests free of DOM setup
+- `SectorScoreCard.svelte` uses Svelte 5 runes (`$props`, `$derived`) — no `export let`
+- Ripple Cast built with CSS classes + `class:color={...}` bindings; `box-shadow` via inline `style` for dynamic outer glow
+- Mobile breakpoint `@media (max-width: 480px)` reduces padding 16px → 12px (AC #3)
+- `ripple-pulse` keyframes embedded in component `<style>` (3s ease-in-out infinite)
+- Slot placeholder `<div></div>` left for Story 4.3 reliability indicator
+- 12 unit tests (all pass), 78 total suite (0 regressions)
+
 ### File List
+
+- `src/lib/components/sector-score-card.utils.ts` (CREATED)
+- `src/lib/components/sector-score-card.utils.test.ts` (CREATED)
+- `src/lib/components/SectorScoreCard.svelte` (CREATED)
+
+## Change Log
+
+- 2026-03-19: Implemented SectorScoreCard component with Ripple Cast visual, narrative label, and mobile responsiveness (all 4 tasks complete, 12 unit tests added)

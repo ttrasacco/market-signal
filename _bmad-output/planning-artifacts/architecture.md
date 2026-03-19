@@ -387,9 +387,17 @@ market-signal/
     │
     ├── lib/
     │   ├── components/                  ← Svelte UI components
-    │   │   ├── SectorScoreCard.svelte
-    │   │   ├── SectorScoreGrid.svelte
-    │   │   └── DashboardLayout.svelte
+    │   │   ├── sector-score-card/       ← 1 dossier par composant
+    │   │   │   ├── SectorScoreCard.svelte
+    │   │   │   ├── sector-score-card.utils.ts
+    │   │   │   └── sector-score-card.utils.test.ts
+    │   │   ├── reliability-indicator/
+    │   │   │   ├── ReliabilityIndicator.svelte
+    │   │   │   ├── reliability-indicator.utils.ts
+    │   │   │   └── reliability-indicator.utils.test.ts
+    │   │   ├── dashboard-layout/        ← Story 4.4
+    │   │   │   └── DashboardLayout.svelte
+    │   │   └── ui/                     ← shadcn-svelte primitives
     │   │
     │   └── server/
     │       ├── contexts/

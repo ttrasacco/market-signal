@@ -8,7 +8,7 @@ import type { NewsImpactReadPort, NewsImpactForScoring } from '../../application
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
 import type { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 
-export class DrizzleNewsImpactReadRepository implements NewsImpactReadPort {
+export class DrizzleNewsImpactReadAdapter implements NewsImpactReadPort {
   async findAllImpacts(): Promise<NewsImpactForScoring[]> {
     const rows = await db
       .select({

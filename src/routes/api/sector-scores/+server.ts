@@ -1,12 +1,12 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { GetSectorDashboardUseCase } from '$lib/server/contexts/scoring/application/use-cases/get-sector-dashboard.use-case';
-import { DrizzleSectorScoreRepository } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.repository';
+import { GetLatestSectorScoresUseCase } from '$lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case';
+import { DrizzleSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.adapter';
 
 export const GET: RequestHandler = async () => {
   try {
-    const repo = new DrizzleSectorScoreRepository();
-    const useCase = new GetSectorDashboardUseCase(repo);
+    const repo = new DrizzleSectorScoreAdapter();
+    const useCase = new GetLatestSectorScoresUseCase(repo);
     const sectors = await useCase.execute();
     return json({ sectors });
   } catch (error) {

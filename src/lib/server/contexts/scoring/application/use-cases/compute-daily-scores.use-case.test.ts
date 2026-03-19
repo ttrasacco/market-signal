@@ -1,21 +1,21 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ComputeDailyScoresUseCase } from './compute-daily-scores.use-case';
-import { FakeNewsImpactReadRepository } from '../../infrastructure/fakes/fake-news-impact-read.repository';
-import { FakeSectorScoreRepository } from '../../infrastructure/fakes/fake-sector-score.repository';
+import { FakeNewsImpactReadAdapter } from '../../infrastructure/fakes/fake-news-impact-read.adapter';
+import { FakeSectorScoreAdapter } from '../../infrastructure/fakes/fake-sector-score.adapter';
 import { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 import { Sector } from '$lib/server/contexts/news/domain/sector';
 import { computeDecay } from '../../domain/decay-model';
 
 describe('ComputeDailyScoresUseCase', () => {
-  let newsRepo: FakeNewsImpactReadRepository;
-  let scoreRepo: FakeSectorScoreRepository;
+  let newsRepo: FakeNewsImpactReadAdapter;
+  let scoreRepo: FakeSectorScoreAdapter;
   let useCase: ComputeDailyScoresUseCase;
 
   const today = new Date('2025-01-10T00:00:00.000Z');
 
   beforeEach(() => {
-    newsRepo = new FakeNewsImpactReadRepository();
-    scoreRepo = new FakeSectorScoreRepository();
+    newsRepo = new FakeNewsImpactReadAdapter();
+    scoreRepo = new FakeSectorScoreAdapter();
     useCase = new ComputeDailyScoresUseCase(newsRepo, scoreRepo);
   });
 

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { IngestNewsUseCase } from './ingest-news.use-case';
 import { FakeRssFetcher } from '../../infrastructure/fakes/fake-rss-fetcher';
 import { FakeNewsClassifier } from '../../infrastructure/fakes/fake-news-classifier';
-import { FakeNewsImpactRepository } from '../../infrastructure/fakes/fake-news-impact.repository';
+import { FakeNewsImpactAdapter } from '../../infrastructure/fakes/fake-news-impact.adapter';
 import type { RawArticle } from '../ports/rss-fetcher.port';
 import type { NewsClassification } from '../ports/news-classifier.port';
 import { Sector } from '../../domain/sector';
@@ -25,13 +25,13 @@ const makeClassification = (overrides?: Partial<NewsClassification>): NewsClassi
 describe('IngestNewsUseCase', () => {
 	let fetcher: FakeRssFetcher;
 	let classifier: FakeNewsClassifier;
-	let repository: FakeNewsImpactRepository;
+	let repository: FakeNewsImpactAdapter;
 	let useCase: IngestNewsUseCase;
 
 	beforeEach(() => {
 		fetcher = new FakeRssFetcher();
 		classifier = new FakeNewsClassifier();
-		repository = new FakeNewsImpactRepository();
+		repository = new FakeNewsImpactAdapter();
 		useCase = new IngestNewsUseCase(fetcher, classifier, repository, ['https://feed.com/rss']);
 	});
 

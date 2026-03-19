@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { FakeNewsImpactRepository } from './fake-news-impact.repository';
+import { FakeNewsImpactAdapter } from './fake-news-impact.adapter';
 import type { News } from '../../domain/news';
 import type { NewsImpact } from '../../domain/news-impact';
 import { Sector } from '../../domain/sector';
 import { ImpactType } from '../../domain/impact-type';
 
-describe('FakeNewsImpactRepository', () => {
-	let repo: FakeNewsImpactRepository;
+describe('FakeNewsImpactAdapter', () => {
+	let repo: FakeNewsImpactAdapter;
 
 	const makeNews = (overrides?: Partial<News>): News => ({
 		id: crypto.randomUUID(),
@@ -27,7 +27,7 @@ describe('FakeNewsImpactRepository', () => {
 	});
 
 	beforeEach(() => {
-		repo = new FakeNewsImpactRepository();
+		repo = new FakeNewsImpactAdapter();
 	});
 
 	it('starts empty', async () => {

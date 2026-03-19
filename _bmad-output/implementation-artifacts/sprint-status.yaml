@@ -70,9 +70,9 @@ development_status:
   # Epic 4: Dashboard — Sector Conviction at a Glance
   epic-4: in-progress
   4-1-design-system-setup: review
-  4-2-sector-score-card-component: ready-for-dev
-  4-3-reliability-indicator: backlog
-  4-4-dashboard-layout: backlog
+  4-2-sector-score-card-component: review
+  4-3-reliability-indicator: review
+  4-4-dashboard-layout: review
   epic-4-retrospective: optional
 
   # Epic 5: Observability & Production Readiness

@@ -1,16 +1,11 @@
-import { db } from "$lib/server/shared/db/client";
-import {
-	eq,
-	sql
-} from "drizzle-orm";
-
-import { sectorScoresTable } from "./sector-score.schema";
-
+import { db } from '$lib/server/shared/db/client';
+import { sectorScoresTable } from './sector-score.schema';
+import { eq, sql } from 'drizzle-orm';
 import type { SectorScoreRepositoryPort } from '../../application/ports/sector-score.repository.port';
 import type { SectorScore } from '../../domain/sector-score';
 import type { Sector } from '../../../news/domain/sector';
 
-export class DrizzleSectorScoreRepository implements SectorScoreRepositoryPort {
+export class DrizzleSectorScoreAdapter implements SectorScoreRepositoryPort {
   async upsert(score: SectorScore): Promise<void> {
     const dateStr = score.date.toISOString().split('T')[0];
     await db

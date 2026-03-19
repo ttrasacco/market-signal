@@ -1,16 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { FakeSectorScoreRepository } from '../fakes/fake-sector-score.repository';
+import { FakeSectorScoreAdapter } from '../fakes/fake-sector-score.adapter';
 import { Sector } from '../../../news/domain/sector';
 
-describe('FakeSectorScoreRepository', () => {
-  let repo: FakeSectorScoreRepository;
+describe('FakeSectorScoreAdapter', () => {
+  let repo: FakeSectorScoreAdapter;
 
   beforeEach(() => {
-    repo = new FakeSectorScoreRepository();
+    repo = new FakeSectorScoreAdapter();
   });
 
   it('upserts and retrieves a score', async () => {
-    const score = { date: new Date('2026-03-19'), sector: Sector.TECHNOLOGY, score: 0.7 };
+    const score = { date: new Date('2026-03-19'), sector: Sector.TECHNOLOGY, score: 0.7, punctualScore: 0.4, structuralScore: 0.3 };
     await repo.upsert(score);
     const result = await repo.findLatest();
     const found = result.find((s) => s.sector === Sector.TECHNOLOGY);
@@ -18,7 +18,7 @@ describe('FakeSectorScoreRepository', () => {
   });
 
   it('upsert twice same key = one row', async () => {
-    const score = { date: new Date('2026-03-19'), sector: Sector.ENERGY, score: 0.5 };
+    const score = { date: new Date('2026-03-19'), sector: Sector.ENERGY, score: 0.5, punctualScore: 0.3, structuralScore: 0.2 };
     await repo.upsert(score);
     await repo.upsert({ ...score, score: 0.9 });
     const result = await repo.findLatest();
