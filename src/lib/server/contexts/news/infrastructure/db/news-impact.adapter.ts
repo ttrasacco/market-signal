@@ -8,13 +8,20 @@ import type { NewsImpact } from '../../domain/news-impact';
 export class DrizzleNewsImpactAdapter implements NewsImpactRepositoryPort {
 	async save(news: News, impacts: NewsImpact[]): Promise<void> {
 		await db.transaction(async (tx) => {
-			await tx.insert(newsTable).values({
-				id: news.id,
-				publishedAt: news.publishedAt,
-				analyzedAt: news.analyzedAt,
-				source: news.source,
-				headline: news.headline,
-			});
+			const inserted = await tx
+				.insert(newsTable)
+				.values({
+					id: news.id,
+					publishedAt: news.publishedAt,
+					analyzedAt: news.analyzedAt,
+					source: news.source,
+					headline: news.headline,
+				})
+				.onConflictDoNothing()
+				.returning({ id: newsTable.id });
+
+			if (inserted.length === 0) return; // duplicate — skip impacts
+
 			if (impacts.length > 0) {
 				await tx.insert(newsImpactsTable).values(
 					impacts.map((impact) => ({

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "news_source_headline_idx" ON "news" USING btree ("source","headline");
