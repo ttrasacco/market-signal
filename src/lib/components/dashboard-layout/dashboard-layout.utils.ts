@@ -39,8 +39,7 @@ export function getBullishHighlights(
 	sectors: SectorScoreWithReliability[]
 ): SectorScoreWithReliability[] {
 	return sectors
-		.filter((s) => s.innerScore > 0 && computeReliabilityColor(s.reliabilityData) !== 'red')
-		.sort((a, b) => b.innerScore - a.innerScore)
+		.filter((s) => s.outerColor === 'green' && computeReliabilityColor(s.reliabilityData) !== 'red')
 		.slice(0, 3);
 }
 
@@ -48,8 +47,7 @@ export function getBearishHighlights(
 	sectors: SectorScoreWithReliability[]
 ): SectorScoreWithReliability[] {
 	return sectors
-		.filter((s) => s.innerScore < 0 && computeReliabilityColor(s.reliabilityData) !== 'red')
-		.sort((a, b) => a.innerScore - b.innerScore)
+		.filter((s) => s.innerColor === 'red' && computeReliabilityColor(s.reliabilityData) !== 'red')
 		.slice(0, 3);
 }
 
@@ -57,10 +55,8 @@ export function sortForTable(
 	sectors: SectorScoreWithReliability[]
 ): SectorScoreWithReliability[] {
 	const reliable = sectors
-		.filter((s) => computeReliabilityColor(s.reliabilityData) !== 'red')
-		.sort((a, b) => b.innerScore - a.innerScore);
+		.filter((s) => computeReliabilityColor(s.reliabilityData) !== 'red');
 	const unreliable = sectors
-		.filter((s) => computeReliabilityColor(s.reliabilityData) === 'red')
-		.sort((a, b) => b.innerScore - a.innerScore);
+		.filter((s) => computeReliabilityColor(s.reliabilityData) === 'red');
 	return [...reliable, ...unreliable];
 }

@@ -29,6 +29,7 @@ export const load: PageServerLoad = async () => {
 			const outerColor = scoreToColor(s.outerScore);
 			return {
 				sector: s.sector,
+				innerScore: s.innerScore,
 				innerColor,
 				outerColor,
 				narrativeLabel: getNarrativeLabel(innerColor, outerColor),
