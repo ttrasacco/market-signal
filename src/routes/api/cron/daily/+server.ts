@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import type { Config } from '@sveltejs/adapter-vercel';
 
-export const config: Config = { maxDuration: 600 };
+export const config: Config = { maxDuration: 300 };
 import { ANTHROPIC_API_KEY } from "$env/static/private";
 import { IngestNewsUseCase } from "$lib/server/contexts/news/application/use-cases/ingest-news.use-case";
 import { DrizzleNewsImpactAdapter } from "$lib/server/contexts/news/infrastructure/db/news-impact.adapter";
