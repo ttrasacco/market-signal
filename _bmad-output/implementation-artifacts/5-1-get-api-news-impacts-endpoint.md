@@ -26,12 +26,12 @@ so that I can inspect classification results directly from a browser or curl wit
 ## Tasks / Subtasks
 
 - [x] Task 1 — Create the route file at the correct path (AC: #1, #2, #3)
-  - [x] Create `src/routes/api/news-impacts/+server.ts`
-  - [x] Wire `DrizzleNewsImpactAdapter` (existing class)
-  - [x] Call `findAllImpacts()` and return `{ impacts }` JSON
-  - [x] Read optional `?sector=` query param; if present, filter the result array in-handler
-  - [x] Wrap in `try/catch` — return `{ error, code }` on failure with appropriate HTTP status
-  - [x] Verify rate limiter applies automatically (no extra code needed — `hooks.server.ts` covers all `/api/*`)
+    - [x] Create `src/routes/api/news-impacts/+server.ts`
+    - [x] Wire `DrizzleNewsImpactAdapter` (existing class)
+    - [x] Call `findAllImpacts()` and return `{ impacts }` JSON
+    - [x] Read optional `?sector=` query param; if present, filter the result array in-handler
+    - [x] Wrap in `try/catch` — return `{ error, code }` on failure with appropriate HTTP status
+    - [x] Verify rate limiter applies automatically (no extra code needed — `hooks.server.ts` covers all `/api/*`)
 
 ## Dev Notes
 
@@ -55,15 +55,15 @@ import { GetLatestSectorScoresUseCase } from '$lib/server/contexts/scoring/appli
 import { DrizzleSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.adapter';
 
 export const GET: RequestHandler = async () => {
-  try {
-    const repo = new DrizzleSectorScoreAdapter();
-    const useCase = new GetLatestSectorScoresUseCase(repo);
-    const sectors = await useCase.execute();
-    return json({ sectors });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return json({ error: message, code: 500 }, { status: 500 });
-  }
+    try {
+        const repo = new DrizzleSectorScoreAdapter();
+        const useCase = new GetLatestSectorScoresUseCase(repo);
+        const sectors = await useCase.execute();
+        return json({ sectors });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return json({ error: message, code: 500 }, { status: 500 });
+    }
 };
 ```
 
@@ -76,31 +76,32 @@ import type { RequestHandler } from './$types';
 import { DrizzleNewsImpactAdapter } from '$lib/server/contexts/news/infrastructure/db/news-impact.adapter';
 
 export const GET: RequestHandler = async ({ url }) => {
-  try {
-    const adapter = new DrizzleNewsImpactAdapter();
-    const impacts = await adapter.findAllImpacts();
-    const sector = url.searchParams.get('sector');
-    const filtered = sector ? impacts.filter((i) => i.sector === sector) : impacts;
-    return json({ impacts: filtered });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return json({ error: message, code: 500 }, { status: 500 });
-  }
+    try {
+        const adapter = new DrizzleNewsImpactAdapter();
+        const impacts = await adapter.findAllImpacts();
+        const sector = url.searchParams.get('sector');
+        const filtered = sector ? impacts.filter((i) => i.sector === sector) : impacts;
+        return json({ impacts: filtered });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return json({ error: message, code: 500 }, { status: 500 });
+    }
 };
 ```
 
 ### Key Files
 
-| File | Action | Notes |
-|---|---|---|
-| `src/routes/api/news-impacts/+server.ts` | **CREATE** | New route — the only deliverable |
-| `src/lib/server/contexts/news/infrastructure/db/news-impact.adapter.ts` | **READ ONLY** | `DrizzleNewsImpactAdapter` with `findAllImpacts()` already implemented |
-| `src/lib/server/contexts/news/application/ports/news-impact.repository.port.ts` | **READ ONLY** | Port interface — `NewsImpactRepositoryPort` with `findAllImpacts()` |
-| `src/hooks.server.ts` | **NO TOUCH** | Rate limiter already covers `/api/*` |
+| File                                                                            | Action        | Notes                                                                  |
+| ------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------- |
+| `src/routes/api/news-impacts/+server.ts`                                        | **CREATE**    | New route — the only deliverable                                       |
+| `src/lib/server/contexts/news/infrastructure/db/news-impact.adapter.ts`         | **READ ONLY** | `DrizzleNewsImpactAdapter` with `findAllImpacts()` already implemented |
+| `src/lib/server/contexts/news/application/ports/news-impact.repository.port.ts` | **READ ONLY** | Port interface — `NewsImpactRepositoryPort` with `findAllImpacts()`    |
+| `src/hooks.server.ts`                                                           | **NO TOUCH**  | Rate limiter already covers `/api/*`                                   |
 
 ### Domain Types
 
 `NewsImpact` (from `src/lib/server/contexts/news/domain/news-impact.ts`):
+
 - `id: string`
 - `newsId: string`
 - `sector: Sector` (e.g. `"TECHNOLOGY"`, `"ENERGY"`, ...)
@@ -112,6 +113,7 @@ export const GET: RequestHandler = async ({ url }) => {
 ### Error Response Format
 
 Follow the existing convention (from architecture):
+
 ```json
 { "error": "message string", "code": 500 }
 ```

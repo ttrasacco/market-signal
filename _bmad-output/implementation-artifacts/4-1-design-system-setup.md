@@ -20,11 +20,12 @@ So that all dashboard components share a consistent visual foundation from the s
 **Given** `src/routes/layout.css` (the existing Tailwind entry point) is updated
 **When** the app builds
 **Then** the 9 custom color tokens are available as Tailwind utilities:
+
 - `bg-color-bg`, `bg-color-surface`, `bg-color-surface-elevated`
 - `border-color-border`
 - `text-color-text-primary`, `text-color-text-secondary`
 - `text-color-green`, `text-color-orange`, `text-color-red`
-**And** `bg-color-bg` (`#0F0F11`) is applied to `body` via `+layout.svelte`
+  **And** `bg-color-bg` (`#0F0F11`) is applied to `body` via `+layout.svelte`
 
 **Given** shadcn-svelte is installed
 **When** components are scaffolded with `npx shadcn-svelte@latest add <component>`
@@ -56,19 +57,20 @@ These are the **exact values** from `_bmad-output/planning-artifacts/ux-design-d
 @import 'tailwindcss';
 
 @theme {
-  --color-bg:               #0F0F11;
-  --color-surface:          #1A1A1F;
-  --color-surface-elevated: #242429;
-  --color-border:           #2E2E35;
-  --color-text-primary:     #F0F0F2;
-  --color-text-secondary:   #8A8A96;
-  --color-green:            #22C55E;
-  --color-orange:           #F59E0B;
-  --color-red:              #EF4444;
+    --color-bg: #0f0f11;
+    --color-surface: #1a1a1f;
+    --color-surface-elevated: #242429;
+    --color-border: #2e2e35;
+    --color-text-primary: #f0f0f2;
+    --color-text-secondary: #8a8a96;
+    --color-green: #22c55e;
+    --color-orange: #f59e0b;
+    --color-red: #ef4444;
 }
 ```
 
 **Tailwind v4 `@theme` behavior:** variables defined here automatically generate utilities:
+
 - `--color-bg` → `bg-bg`, `text-bg`, `border-bg` etc. (Tailwind v4 prefixes with `color-` from the CSS var name minus `--color-`)
 - Access as: `bg-bg`, `bg-surface`, `bg-surface-elevated`, `text-text-primary`, `text-green`, `border-border`, etc.
 
@@ -79,11 +81,13 @@ These are the **exact values** from `_bmad-output/planning-artifacts/ux-design-d
 **Approach:** Use `@fontsource/inter` (npm package) to avoid external network requests, OR use the Google Fonts link from the HTML mockup.
 
 **Recommended:** Add `@fontsource/inter` to avoid network dependency:
+
 ```bash
 npm install @fontsource/inter
 ```
 
 Then import in `src/routes/layout.css`:
+
 ```css
 @import '@fontsource/inter/400.css';
 @import '@fontsource/inter/500.css';
@@ -93,16 +97,17 @@ Then import in `src/routes/layout.css`:
 **Alternative (simpler, matches mockup):** Add Google Fonts link in `src/routes/+layout.svelte` inside `<svelte:head>`.
 
 Apply font globally in `layout.css`:
+
 ```css
 @layer base {
-  body {
-    background-color: theme(--color-bg);
-    color: theme(--color-text-primary);
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
+    body {
+        background-color: theme(--color-bg);
+        color: theme(--color-text-primary);
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 100vh;
+    }
 }
 ```
 
@@ -115,11 +120,13 @@ npx shadcn-svelte@latest init
 ```
 
 During init, choose:
+
 - Style: **Default** (we'll override all colors via Tailwind theme)
 - Base color: select any (will be overridden)
 - CSS variables: **Yes** (use CSS variables for theming)
 
 This will:
+
 - Create `src/lib/components/ui/` directory
 - Add `src/lib/utils.ts` with `cn()` helper (tailwind-merge + clsx)
 - Potentially modify `svelte.config.ts` and `package.json`
@@ -128,16 +135,17 @@ This will:
 **After init, customize the generated CSS** to match the dark theme tokens rather than shadcn defaults. Map shadcn's CSS variables (`--background`, `--foreground`, etc.) to our tokens in `layout.css`.
 
 Typical shadcn-svelte dark theme mapping:
+
 ```css
 :root {
-  --background: #0F0F11;      /* --color-bg */
-  --foreground: #F0F0F2;      /* --color-text-primary */
-  --card: #1A1A1F;            /* --color-surface */
-  --card-foreground: #F0F0F2;
-  --border: #2E2E35;          /* --color-border */
-  --muted: #242429;           /* --color-surface-elevated */
-  --muted-foreground: #8A8A96;/* --color-text-secondary */
-  --radius: 0.75rem;          /* 12px — matches ripple-card border-radius */
+    --background: #0f0f11; /* --color-bg */
+    --foreground: #f0f0f2; /* --color-text-primary */
+    --card: #1a1a1f; /* --color-surface */
+    --card-foreground: #f0f0f2;
+    --border: #2e2e35; /* --color-border */
+    --muted: #242429; /* --color-surface-elevated */
+    --muted-foreground: #8a8a96; /* --color-text-secondary */
+    --radius: 0.75rem; /* 12px — matches ripple-card border-radius */
 }
 ```
 
@@ -147,41 +155,42 @@ Define reusable typography classes in `layout.css` for consistency:
 
 ```css
 @layer components {
-  .type-sector-name {
-    font-size: 16px;       /* 15px in mockup, AC says 16px — use AC */
-    font-weight: 500;
-  }
-  .type-narrative-label {
-    font-size: 12px;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.01em;
-    color: theme(--color-text-secondary);
-  }
-  .type-section-heading {
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: theme(--color-text-secondary);
-  }
+    .type-sector-name {
+        font-size: 16px; /* 15px in mockup, AC says 16px — use AC */
+        font-weight: 500;
+    }
+    .type-narrative-label {
+        font-size: 12px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.01em;
+        color: theme(--color-text-secondary);
+    }
+    .type-section-heading {
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: theme(--color-text-secondary);
+    }
 }
 ```
 
 ### 6. Files to Create/Modify
 
-| File | Action | Notes |
-|---|---|---|
-| `src/routes/layout.css` | **MODIFY** | Add `@theme` block + font imports + base styles |
+| File                        | Action     | Notes                                                                          |
+| --------------------------- | ---------- | ------------------------------------------------------------------------------ |
+| `src/routes/layout.css`     | **MODIFY** | Add `@theme` block + font imports + base styles                                |
 | `src/routes/+layout.svelte` | **MODIFY** | Apply `bg-bg min-h-screen` to body wrapper or add font link in `<svelte:head>` |
-| `src/routes/+page.svelte` | **MODIFY** | Remove default SvelteKit welcome content, replace with minimal placeholder |
-| `components.json` | **CREATE** | Generated by shadcn-svelte init |
-| `src/lib/utils.ts` | **CREATE** | Generated by shadcn-svelte init (cn() helper) |
-| `src/lib/components/ui/` | **CREATE** | shadcn-svelte generated component folder |
+| `src/routes/+page.svelte`   | **MODIFY** | Remove default SvelteKit welcome content, replace with minimal placeholder     |
+| `components.json`           | **CREATE** | Generated by shadcn-svelte init                                                |
+| `src/lib/utils.ts`          | **CREATE** | Generated by shadcn-svelte init (cn() helper)                                  |
+| `src/lib/components/ui/`    | **CREATE** | shadcn-svelte generated component folder                                       |
 
 ### 7. Architecture Note — Frontend Components Location
 
 Per architecture (`src/lib/components/`), Svelte UI components live at:
+
 ```
 src/lib/components/
 ├── SectorScoreCard.svelte       ← Story 4.2
@@ -196,6 +205,7 @@ shadcn-svelte generated primitives go in `src/lib/components/ui/` (shadcn conven
 ### 8. No Tests Required
 
 This story is pure configuration — Tailwind setup, shadcn-svelte init, font setup. No domain logic, no ports, no use cases. No unit tests needed. Verify visually that:
+
 - `bg-bg` background applies (dark `#0F0F11`)
 - Inter font loads
 - shadcn-svelte `cn()` helper is importable

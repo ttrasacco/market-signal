@@ -31,44 +31,46 @@ so that the app deploys cleanly to Vercel with Neon PostgreSQL and all required 
 ## Tasks / Subtasks
 
 - [x] Task 1 — Switch adapter from `adapter-auto` to `adapter-vercel` (AC: #1)
-  - [x] Install `@sveltejs/adapter-vercel`: `npm install -D @sveltejs/adapter-vercel`
-  - [x] Update `svelte.config.js`: replace `@sveltejs/adapter-auto` import with `@sveltejs/adapter-vercel`
-  - [x] Keep adapter configuration minimal (no custom options needed)
+    - [x] Install `@sveltejs/adapter-vercel`: `npm install -D @sveltejs/adapter-vercel`
+    - [x] Update `svelte.config.js`: replace `@sveltejs/adapter-auto` import with `@sveltejs/adapter-vercel`
+    - [x] Keep adapter configuration minimal (no custom options needed)
 
 - [x] Task 2 — Update `vercel.json` with correct structure (AC: #1)
-  - [x] `vercel.json` already exists at project root with cron schedule — verify it's correct
-  - [x] Ensure the file contains only the cron config: `{ "crons": [{ "path": "/api/cron/daily", "schedule": "0 6 * * *" }] }`
-  - [x] Confirm no hardcoded secrets or credentials
+    - [x] `vercel.json` already exists at project root with cron schedule — verify it's correct
+    - [x] Ensure the file contains only the cron config: `{ "crons": [{ "path": "/api/cron/daily", "schedule": "0 6 * * *" }] }`
+    - [x] Confirm no hardcoded secrets or credentials
 
 - [x] Task 3 — Create `.env.example` (AC: #2)
-  - [x] Create `.env.example` at project root documenting all 3 required env vars with placeholder values
-  - [x] Verify `.env.example` is NOT listed in `.gitignore` (it should be committed)
-  - [x] Verify `.env` (actual secrets) IS listed in `.gitignore`
+    - [x] Create `.env.example` at project root documenting all 3 required env vars with placeholder values
+    - [x] Verify `.env.example` is NOT listed in `.gitignore` (it should be committed)
+    - [x] Verify `.env` (actual secrets) IS listed in `.gitignore`
 
 - [x] Task 4 — Update `src/app.d.ts` to type env vars (AC: #3)
-  - [x] Add `App.Env` interface inside the `namespace App` block
-  - [x] Declare `DATABASE_URL: string`, `ANTHROPIC_API_KEY: string`, `CRON_SECRET: string`
-  - [x] Confirm TypeScript compiles: `npm run check`
+    - [x] Add `App.Env` interface inside the `namespace App` block
+    - [x] Declare `DATABASE_URL: string`, `ANTHROPIC_API_KEY: string`, `CRON_SECRET: string`
+    - [x] Confirm TypeScript compiles: `npm run check`
 
 - [x] Task 5 — Validate overall TypeScript + build (AC: #3, #4)
-  - [x] Run `npm run check` — 0 errors
-  - [x] Run `npm run build` — successful build with `adapter-vercel`
+    - [x] Run `npm run check` — 0 errors
+    - [x] Run `npm run build` — successful build with `adapter-vercel`
 
 ## Dev Notes
 
 ### Current State of Files
 
 **`vercel.json`** — already exists with correct content:
+
 ```json
 {
-  "crons": [
-    {
-      "path": "/api/cron/daily",
-      "schedule": "0 6 * * *"
-    }
-  ]
+    "crons": [
+        {
+            "path": "/api/cron/daily",
+            "schedule": "0 6 * * *"
+        }
+    ]
 }
 ```
+
 → No change required unless validation reveals an issue.
 
 **`.env.example`** — does NOT exist yet. Create it.
@@ -98,15 +100,16 @@ import adapter from '@sveltejs/adapter-vercel';
 ```
 
 No other changes to `svelte.config.js` — keep the existing `vitePlugin` config intact:
+
 ```javascript
 const config = {
-  kit: {
-    adapter: adapter()  // no options needed
-  },
-  vitePlugin: {
-    dynamicCompileOptions: ({ filename }) =>
-      filename.includes('node_modules') ? undefined : { runes: true }
-  }
+    kit: {
+        adapter: adapter() // no options needed
+    },
+    vitePlugin: {
+        dynamicCompileOptions: ({ filename }) =>
+            filename.includes('node_modules') ? undefined : { runes: true }
+    }
 };
 ```
 
@@ -128,6 +131,7 @@ CRON_SECRET=your-cron-secret-here
 ```
 
 **Important checks:**
+
 - `.env.example` must be committed to git (it documents required vars — contains no real secrets)
 - `.env` must remain in `.gitignore` (contains real credentials — never commit)
 - Verify `.gitignore` already has `.env` listed (it should from project init)
@@ -141,24 +145,25 @@ SvelteKit uses `App.Env` in `app.d.ts` to type private environment variables (th
 ```typescript
 // src/app.d.ts
 declare global {
-  namespace App {
-    interface Env {
-      DATABASE_URL: string;
-      ANTHROPIC_API_KEY: string;
-      CRON_SECRET: string;
+    namespace App {
+        interface Env {
+            DATABASE_URL: string;
+            ANTHROPIC_API_KEY: string;
+            CRON_SECRET: string;
+        }
+        // interface Error {}
+        // interface Locals {}
+        // interface PageData {}
+        // interface PageState {}
+        // interface Platform {}
     }
-    // interface Error {}
-    // interface Locals {}
-    // interface PageData {}
-    // interface PageState {}
-    // interface Platform {}
-  }
 }
 
 export {};
 ```
 
 **Why this matters:**
+
 - SvelteKit's type system uses `App.Env` to validate that env vars imported from `$env/static/private` or `$env/dynamic/private` are properly declared
 - Variables in `App.Env` are NOT accessible from client-side Svelte files — TypeScript will error if you try
 - This is a SvelteKit convention, not a runtime guard — it's compile-time safety
@@ -176,13 +181,13 @@ export {};
 
 ### Key Files
 
-| File | Action | Notes |
-|---|---|---|
-| `svelte.config.js` | **MODIFY** | Replace `adapter-auto` with `adapter-vercel` |
-| `vercel.json` | **VERIFY (no change expected)** | Already has correct cron config |
-| `.env.example` | **CREATE** | 3 env vars with placeholder values |
-| `src/app.d.ts` | **MODIFY** | Add `App.Env` interface with 3 typed vars |
-| `package.json` | **MODIFY** (via npm install) | Add `@sveltejs/adapter-vercel` to devDependencies |
+| File               | Action                          | Notes                                             |
+| ------------------ | ------------------------------- | ------------------------------------------------- |
+| `svelte.config.js` | **MODIFY**                      | Replace `adapter-auto` with `adapter-vercel`      |
+| `vercel.json`      | **VERIFY (no change expected)** | Already has correct cron config                   |
+| `.env.example`     | **CREATE**                      | 3 env vars with placeholder values                |
+| `src/app.d.ts`     | **MODIFY**                      | Add `App.Env` interface with 3 typed vars         |
+| `package.json`     | **MODIFY** (via npm install)    | Add `@sveltejs/adapter-vercel` to devDependencies |
 
 ---
 

@@ -1,4 +1,8 @@
-import type { NewsClassifierPort, NewsClassification, HeadlineClassification } from '../../application/ports/news-classifier.port';
+import type {
+	NewsClassifierPort,
+	NewsClassification,
+	HeadlineClassification
+} from '../../application/ports/news-classifier.port';
 import { ApiError } from '../../../../infrastructure/errors/api-error';
 
 export class FakeNewsClassifier implements NewsClassifierPort {
@@ -18,7 +22,7 @@ export class FakeNewsClassifier implements NewsClassifierPort {
 		}
 		return headlines.map((headline) => ({
 			headline,
-			classifications: [...this.classifications],
+			classifications: [...this.classifications]
 		}));
 	}
 }

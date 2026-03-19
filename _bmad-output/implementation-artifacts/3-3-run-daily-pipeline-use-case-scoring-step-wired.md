@@ -27,26 +27,26 @@ so that the daily cron triggers the complete pipeline: ingest → score — in a
 ## Tasks / Subtasks
 
 - [x] Task 1: Extend `RunDailyPipelineUseCase` to accept and call `ComputeDailyScoresUseCase` (AC: #1, #2, #3)
-  - [x] File: `src/lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case.ts` — modify existing
-  - [x] Add `computeDailyScoresUseCase: ComputeDailyScoresUseCase` as second constructor parameter
-  - [x] Update `RunDailyPipelineResult` interface: add `scoresComputed: number`
-  - [x] After ingestion (success or failure), always call `computeDailyScoresUseCase.execute(new Date())`
-  - [x] `ComputeDailyScoresUseCase.execute()` returns `void` and already logs `[PIPELINE] scoring: N sector scores computed` — do NOT add another log here
-  - [x] Since `execute(date)` returns `void`, `scoresComputed` cannot come from its return value — read `bySector.size` as a count OR change `ComputeDailyScoresUseCase.execute()` to return `{ scoresComputed: number }` (preferred — see Dev Notes)
-  - [x] Handle ingest error isolation: wrap `ingestNewsUseCase.execute()` in try/catch, log error, continue to scoring
-  - [x] Handle scoring error: if `computeDailyScoresUseCase.execute()` throws, log `[PIPELINE] scoring error: <message>` and re-throw
+    - [x] File: `src/lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case.ts` — modify existing
+    - [x] Add `computeDailyScoresUseCase: ComputeDailyScoresUseCase` as second constructor parameter
+    - [x] Update `RunDailyPipelineResult` interface: add `scoresComputed: number`
+    - [x] After ingestion (success or failure), always call `computeDailyScoresUseCase.execute(new Date())`
+    - [x] `ComputeDailyScoresUseCase.execute()` returns `void` and already logs `[PIPELINE] scoring: N sector scores computed` — do NOT add another log here
+    - [x] Since `execute(date)` returns `void`, `scoresComputed` cannot come from its return value — read `bySector.size` as a count OR change `ComputeDailyScoresUseCase.execute()` to return `{ scoresComputed: number }` (preferred — see Dev Notes)
+    - [x] Handle ingest error isolation: wrap `ingestNewsUseCase.execute()` in try/catch, log error, continue to scoring
+    - [x] Handle scoring error: if `computeDailyScoresUseCase.execute()` throws, log `[PIPELINE] scoring error: <message>` and re-throw
 
 - [x] Task 2: Update `GET /api/cron/daily` route handler wiring (AC: #3)
-  - [x] File: `src/routes/api/cron/daily/+server.ts` — modify existing
-  - [x] Import `ComputeDailyScoresUseCase` from scoring use cases
-  - [x] Import `DrizzleNewsImpactReadRepository` from scoring infrastructure
-  - [x] Import `DrizzleSectorScoreRepository` from scoring infrastructure
-  - [x] Instantiate: `DrizzleNewsImpactReadRepository`, `DrizzleSectorScoreRepository`, `ComputeDailyScoresUseCase`
-  - [x] Pass `computeDailyScoresUseCase` as second arg to `RunDailyPipelineUseCase`
+    - [x] File: `src/routes/api/cron/daily/+server.ts` — modify existing
+    - [x] Import `ComputeDailyScoresUseCase` from scoring use cases
+    - [x] Import `DrizzleNewsImpactReadRepository` from scoring infrastructure
+    - [x] Import `DrizzleSectorScoreRepository` from scoring infrastructure
+    - [x] Instantiate: `DrizzleNewsImpactReadRepository`, `DrizzleSectorScoreRepository`, `ComputeDailyScoresUseCase`
+    - [x] Pass `computeDailyScoresUseCase` as second arg to `RunDailyPipelineUseCase`
 
 - [x] Task 3: Update `cron-handler.ts` to forward `scoresComputed` in the response (AC: #3)
-  - [x] File: `src/lib/server/cross-context/pipeline/interface/cron-handler.ts`
-  - [x] No logic change — result already flows through; response body `{ articlesIngested, impactsStored, scoresComputed }` is returned as-is from `useCase.execute()`
+    - [x] File: `src/lib/server/cross-context/pipeline/interface/cron-handler.ts`
+    - [x] No logic change — result already flows through; response body `{ articlesIngested, impactsStored, scoresComputed }` is returned as-is from `useCase.execute()`
 
 ## Dev Notes
 
@@ -83,6 +83,7 @@ src/routes/api/cron/daily/
 ```
 
 **Do NOT touch:**
+
 - Any file in `contexts/news/` — Epic 2 complete
 - `compute-daily-scores.use-case.ts` — Story 3.1 complete
 - `DrizzleNewsImpactReadRepository` / `DrizzleSectorScoreRepository` — no changes needed
@@ -95,6 +96,7 @@ src/routes/api/cron/daily/
 This is a targeted, minimal change to the use case. The alternative (reading sector count from a separate query) adds complexity without value.
 
 **Updated `ComputeDailyScoresUseCase.execute()` return:**
+
 ```typescript
 async execute(date: Date): Promise<{ scoresComputed: number }> {
   // ... existing logic unchanged ...
@@ -109,43 +111,47 @@ async execute(date: Date): Promise<{ scoresComputed: number }> {
 
 ```typescript
 // src/lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case.ts
-import type { IngestNewsUseCase, IngestNewsResult } from '$lib/server/contexts/news/application/use-cases/ingest-news.use-case';
+import type {
+    IngestNewsUseCase,
+    IngestNewsResult
+} from '$lib/server/contexts/news/application/use-cases/ingest-news.use-case';
 import type { ComputeDailyScoresUseCase } from '$lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case';
 
 export interface RunDailyPipelineResult {
-  articlesIngested: number;
-  impactsStored: number;
-  scoresComputed: number;
+    articlesIngested: number;
+    impactsStored: number;
+    scoresComputed: number;
 }
 
 export class RunDailyPipelineUseCase {
-  constructor(
-    private readonly ingestNewsUseCase: IngestNewsUseCase,
-    private readonly computeDailyScoresUseCase: ComputeDailyScoresUseCase
-  ) {}
+    constructor(
+        private readonly ingestNewsUseCase: IngestNewsUseCase,
+        private readonly computeDailyScoresUseCase: ComputeDailyScoresUseCase
+    ) {}
 
-  async execute(): Promise<RunDailyPipelineResult> {
-    let articlesIngested = 0;
-    let impactsStored = 0;
+    async execute(): Promise<RunDailyPipelineResult> {
+        let articlesIngested = 0;
+        let impactsStored = 0;
 
-    try {
-      const ingestResult: IngestNewsResult = await this.ingestNewsUseCase.execute();
-      articlesIngested = ingestResult.articlesIngested;
-      impactsStored = ingestResult.impactsStored;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error(`[PIPELINE] ingest error: ${message}`);
-      // Continue to scoring — it can run on existing event store data
+        try {
+            const ingestResult: IngestNewsResult = await this.ingestNewsUseCase.execute();
+            articlesIngested = ingestResult.articlesIngested;
+            impactsStored = ingestResult.impactsStored;
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            console.error(`[PIPELINE] ingest error: ${message}`);
+            // Continue to scoring — it can run on existing event store data
+        }
+
+        const { scoresComputed } = await this.computeDailyScoresUseCase.execute(new Date());
+
+        return { articlesIngested, impactsStored, scoresComputed };
     }
-
-    const { scoresComputed } = await this.computeDailyScoresUseCase.execute(new Date());
-
-    return { articlesIngested, impactsStored, scoresComputed };
-  }
 }
 ```
 
 **Key design decisions:**
+
 - Ingest errors are caught, logged, and do NOT abort scoring (AC #2)
 - Scoring errors propagate up — `cron-handler.ts` already handles unhandled throws with HTTP 500
 - `[PIPELINE] scoring: N sector scores computed` is already logged inside `ComputeDailyScoresUseCase` — do NOT add a duplicate log here
@@ -168,27 +174,28 @@ import { RunDailyPipelineUseCase } from '$lib/server/cross-context/pipeline/appl
 import { handleCronRequest } from '$lib/server/cross-context/pipeline/interface/cron-handler';
 
 const FEED_URLS = [
-  'https://feeds.reuters.com/reuters/businessNews',
-  'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',
+    'https://feeds.reuters.com/reuters/businessNews',
+    'https://feeds.a.dj.com/rss/RSSMarketsMain.xml'
 ];
 
 export const GET: RequestHandler = async ({ request }) => {
-  const newsRepo = new DrizzleNewsImpactRepository();
-  const classifier = new AnthropicClassifier(ANTHROPIC_API_KEY);
-  const fetcher = new RssFetcher();
-  const ingestUseCase = new IngestNewsUseCase(fetcher, classifier, newsRepo, FEED_URLS);
+    const newsRepo = new DrizzleNewsImpactRepository();
+    const classifier = new AnthropicClassifier(ANTHROPIC_API_KEY);
+    const fetcher = new RssFetcher();
+    const ingestUseCase = new IngestNewsUseCase(fetcher, classifier, newsRepo, FEED_URLS);
 
-  const newsReadRepo = new DrizzleNewsImpactReadRepository();
-  const sectorScoreRepo = new DrizzleSectorScoreRepository();
-  const computeUseCase = new ComputeDailyScoresUseCase(newsReadRepo, sectorScoreRepo);
+    const newsReadRepo = new DrizzleNewsImpactReadRepository();
+    const sectorScoreRepo = new DrizzleSectorScoreRepository();
+    const computeUseCase = new ComputeDailyScoresUseCase(newsReadRepo, sectorScoreRepo);
 
-  const pipeline = new RunDailyPipelineUseCase(ingestUseCase, computeUseCase);
+    const pipeline = new RunDailyPipelineUseCase(ingestUseCase, computeUseCase);
 
-  return handleCronRequest(request, pipeline);
+    return handleCronRequest(request, pipeline);
 };
 ```
 
 **Constructor signatures confirmed from codebase:**
+
 - `DrizzleNewsImpactRepository()` — no args (uses imported `db` singleton internally)
 - `DrizzleNewsImpactReadRepository()` — no args (uses imported `db` singleton internally)
 - `DrizzleSectorScoreRepository()` — no args (uses imported `db` singleton internally)
@@ -222,6 +229,7 @@ Use `$lib/server/...` alias for all cross-context imports in `run-daily-pipeline
 ### Existing Test Suite Must Remain Green
 
 After modifications, run `vitest` to verify all existing tests pass:
+
 - `compute-daily-scores.use-case.test.ts` — 5 tests (return type change from `void` to `{ scoresComputed }` is non-breaking)
 - `get-sector-dashboard.use-case.test.ts` — 3 tests (no changes to this use case)
 - Full suite: currently 63 tests passing

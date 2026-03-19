@@ -1,10 +1,14 @@
-import Anthropic from "@anthropic-ai/sdk";
+import Anthropic from '@anthropic-ai/sdk';
 
-import { createApiError } from "../../../../infrastructure/errors/api-error";
-import { ImpactType } from "../../domain/impact-type";
-import { Sector } from "../../domain/sector";
+import { createApiError } from '../../../../infrastructure/errors/api-error';
+import { ImpactType } from '../../domain/impact-type';
+import { Sector } from '../../domain/sector';
 
-import type { NewsClassifierPort, NewsClassification, HeadlineClassification } from '../../application/ports/news-classifier.port';
+import type {
+	NewsClassifierPort,
+	NewsClassification,
+	HeadlineClassification
+} from '../../application/ports/news-classifier.port';
 
 export class AnthropicClassifier implements NewsClassifierPort {
 	private readonly client: Anthropic;
@@ -25,30 +29,31 @@ export class AnthropicClassifier implements NewsClassifierPort {
 			const message = await this.client.messages.create({
 				model: 'claude-haiku-4-5',
 				max_tokens: 15000,
-				messages: [{ role: 'user', content: buildBatchPrompt(headlines) }],
+				messages: [{ role: 'user', content: buildBatchPrompt(headlines) }]
 			});
 
 			const text = (message.content[0] as { type: 'text'; text: string }).text;
-			const json = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+			const json = text
+				.replace(/^```(?:json)?\s*/i, '')
+				.replace(/\s*```$/, '')
+				.trim();
 			const raw: unknown = JSON.parse(json);
 
 			if (!Array.isArray(raw)) {
 				throw new Error('Classifier response is not an array');
 			}
 
-			return raw
-				.filter(isRawHeadlineClassification)
-				.map(({ headline, classifications }) => ({
-					headline,
-					classifications: classifications
-						.filter(isRawClassification)
-						.map(({ sector, impactScore, impactType, scoring }) => ({
-							sector,
-							impactScore: Math.round(impactScore * 10000) / 10000,
-							impactType,
-							scoring
-						})),
-				}));
+			return raw.filter(isRawHeadlineClassification).map(({ headline, classifications }) => ({
+				headline,
+				classifications: classifications
+					.filter(isRawClassification)
+					.map(({ sector, impactScore, impactType, scoring }) => ({
+						sector,
+						impactScore: Math.round(impactScore * 10000) / 10000,
+						impactType,
+						scoring
+					}))
+			}));
 		} catch (error) {
 			throw createApiError(error);
 		}
@@ -63,7 +68,9 @@ Headlines:
 ${numbered}
 
 SECTOR DEFINITIONS:
-${Object.values(Sector).map(s => `- ${s}`).join('\n')}
+${Object.values(Sector)
+	.map((s) => `- ${s}`)
+	.join('\n')}
 
 IMPACT TYPE:
 - STRUCTURAL: affects fundamentals for months or years (regulation, geopolitical shift, major merger, central bank policy change)
@@ -143,8 +150,9 @@ function isRawClassification(item: unknown): item is RawClassification {
 		Object.values(Sector).includes(obj.sector as Sector) &&
 		typeof obj.impactScore === 'number' &&
 		typeof obj.impactType === 'string' &&
-		Object.values(ImpactType).includes(obj.impactType as ImpactType)
-		&& typeof obj.scoring === 'object' && obj.scoring !== null &&
+		Object.values(ImpactType).includes(obj.impactType as ImpactType) &&
+		typeof obj.scoring === 'object' &&
+		obj.scoring !== null &&
 		typeof (obj.scoring as Record<string, unknown>).scope === 'number' &&
 		typeof (obj.scoring as Record<string, unknown>).certainty === 'number' &&
 		typeof (obj.scoring as Record<string, unknown>).magnitude === 'number'

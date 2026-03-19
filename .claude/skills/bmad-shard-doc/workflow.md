@@ -21,7 +21,7 @@
 ### Step 2: Get Destination Folder
 
 - Determine default destination: same location as source file, folder named after source file without .md extension
-  - Example: `/path/to/architecture.md` --> `/path/to/architecture/`
+    - Example: `/path/to/architecture.md` --> `/path/to/architecture/`
 - Ask user for the destination folder path (`[y]` to confirm use of default: `[suggested-path]`, else enter a new path)
 - If user accepts default: use the suggested destination path
 - If user provides custom path: use the custom destination path
@@ -46,11 +46,11 @@
 ### Step 5: Report Completion
 
 - Display completion report to user including:
-  - Source document path and name
-  - Destination folder path
-  - Number of section files created
-  - Confirmation that index.md was created
-  - Any tool output or warnings
+    - Source document path and name
+    - Destination folder path
+    - Number of section files created
+    - Confirmation that index.md was created
+    - Any tool output or warnings
 - Inform user that sharding completed successfully
 
 ### Step 6: Handle Original Document
@@ -62,6 +62,7 @@ Present user with options for the original document:
 > What would you like to do with the original document `[source-document-name]`?
 >
 > Options:
+>
 > - `[d]` Delete - Remove the original (recommended - shards can always be recombined)
 > - `[m]` Move to archive - Move original to a backup/archive location
 > - `[k]` Keep - Leave original in place (NOT recommended - defeats sharding purpose)
@@ -77,7 +78,7 @@ Present user with options for the original document:
 #### If user selects `m` (move)
 
 - Determine default archive location: same directory as source, in an `archive` subfolder
-  - Example: `/path/to/architecture.md` --> `/path/to/archive/architecture.md`
+    - Example: `/path/to/architecture.md` --> `/path/to/archive/architecture.md`
 - Ask: Archive location (`[y]` to use default: `[default-archive-path]`, or provide custom path)
 - If user accepts default: use default archive path
 - If user provides custom path: use custom archive path
@@ -88,11 +89,11 @@ Present user with options for the original document:
 #### If user selects `k` (keep)
 
 - Display warning to user:
-  - Keeping both original and sharded versions is NOT recommended
-  - The discover_inputs protocol may load the wrong version
-  - Updates to one will not reflect in the other
-  - Duplicate content taking up space
-  - Consider deleting or archiving the original document
+    - Keeping both original and sharded versions is NOT recommended
+    - The discover_inputs protocol may load the wrong version
+    - Updates to one will not reflect in the other
+    - Duplicate content taking up space
+    - Consider deleting or archiving the original document
 - Confirm user choice: "Original document kept at: [source-document-path]"
 
 ## HALT CONDITIONS

@@ -9,6 +9,7 @@
 ## Step 1: Polish and Save
 
 Update the product brief document at `{planning_artifacts}/product-brief-{project_name}.md`:
+
 - Update frontmatter `status` to `"complete"`
 - Update `updated` timestamp
 - Ensure formatting is clean and consistent
@@ -25,26 +26,27 @@ Throughout the discovery process, you likely captured detail that doesn't belong
 
 ```yaml
 ---
-title: "Product Brief Distillate: {project_name}"
+title: 'Product Brief Distillate: {project_name}'
 type: llm-distillate
-source: "product-brief-{project_name}.md"
-created: "{timestamp}"
-purpose: "Token-efficient context for downstream PRD creation"
+source: 'product-brief-{project_name}.md'
+created: '{timestamp}'
+purpose: 'Token-efficient context for downstream PRD creation'
 ---
 ```
 
 **Distillate content principles:**
+
 - Dense bullet points, not prose
 - Each bullet carries enough context to be understood standalone (don't assume the reader has the full brief loaded)
 - Group by theme, not by when it was mentioned
 - Include:
-  - **Rejected ideas** — so downstream workflows don't re-propose them, with brief rationale
-  - **Requirements hints** — anything the user mentioned that sounds like a requirement
-  - **Technical context** — platforms, integrations, constraints, preferences
-  - **Detailed user scenarios** — richer than what fits in the exec summary
-  - **Competitive intelligence** — specifics from web research worth preserving
-  - **Open questions** — things surfaced but not resolved during discovery
-  - **Scope signals** — what the user indicated is in/out/maybe for MVP
+    - **Rejected ideas** — so downstream workflows don't re-propose them, with brief rationale
+    - **Requirements hints** — anything the user mentioned that sounds like a requirement
+    - **Technical context** — platforms, integrations, constraints, preferences
+    - **Detailed user scenarios** — richer than what fits in the exec summary
+    - **Competitive intelligence** — specifics from web research worth preserving
+    - **Open questions** — things surfaced but not resolved during discovery
+    - **Scope signals** — what the user indicated is in/out/maybe for MVP
 - Token-conscious: be concise, but give enough context per bullet so an LLM reading this later understands WHY each point matters
 
 **Headless mode:** Always create the distillate automatically — unless the session was too brief to capture meaningful overflow (in that case, note this in the completion output instead of creating an empty file).
@@ -60,13 +62,14 @@ purpose: "Token-efficient context for downstream PRD creation"
 [If distillate created:] "The detail pack contains all the overflow context (requirements hints, rejected ideas, technical constraints) specifically structured for the PRD workflow to consume."
 
 **Headless mode:** Output the file paths as structured JSON and exit:
+
 ```json
 {
-  "status": "complete",
-  "brief": "{planning_artifacts}/product-brief-{project_name}.md",
-  "distillate": "{path or null}",
-  "confidence": "high|medium|low",
-  "open_questions": ["any unresolved items"]
+    "status": "complete",
+    "brief": "{planning_artifacts}/product-brief-{project_name}.md",
+    "distillate": "{path or null}",
+    "confidence": "high|medium|low",
+    "open_questions": ["any unresolved items"]
 }
 ```
 

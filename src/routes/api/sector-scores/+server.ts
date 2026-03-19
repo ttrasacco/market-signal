@@ -4,13 +4,13 @@ import { GetLatestSectorScoresUseCase } from '$lib/server/contexts/scoring/appli
 import { DrizzleSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.adapter';
 
 export const GET: RequestHandler = async () => {
-  try {
-    const repo = new DrizzleSectorScoreAdapter();
-    const useCase = new GetLatestSectorScoresUseCase(repo);
-    const sectors = await useCase.execute();
-    return json({ sectors });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return json({ error: message, code: 500 }, { status: 500 });
-  }
+	try {
+		const repo = new DrizzleSectorScoreAdapter();
+		const useCase = new GetLatestSectorScoresUseCase(repo);
+		const sectors = await useCase.execute();
+		return json({ sectors });
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		return json({ error: message, code: 500 }, { status: 500 });
+	}
 };

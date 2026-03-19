@@ -7,7 +7,7 @@ const makeClassification = (overrides?: Partial<NewsClassification>): NewsClassi
 	sector: 'Technology',
 	impactScore: 0.5,
 	impactType: 'STRUCTURAL',
-	...overrides,
+	...overrides
 });
 
 describe('FakeNewsClassifier', () => {

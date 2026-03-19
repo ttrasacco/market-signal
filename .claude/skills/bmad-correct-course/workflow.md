@@ -30,14 +30,14 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 
 ### Input Files
 
-| Input | Path | Load Strategy |
-|-------|------|---------------|
-| PRD | `{planning_artifacts}/*prd*.md` (whole) or `{planning_artifacts}/*prd*/*.md` (sharded) | FULL_LOAD |
-| Epics | `{planning_artifacts}/*epic*.md` (whole) or `{planning_artifacts}/*epic*/*.md` (sharded) | FULL_LOAD |
-| Architecture | `{planning_artifacts}/*architecture*.md` (whole) or `{planning_artifacts}/*architecture*/*.md` (sharded) | FULL_LOAD |
-| UX Design | `{planning_artifacts}/*ux*.md` (whole) or `{planning_artifacts}/*ux*/*.md` (sharded) | FULL_LOAD |
-| Tech Spec | `{planning_artifacts}/*tech-spec*.md` (whole) | FULL_LOAD |
-| Document Project | `{project_knowledge}/index.md` (sharded) | INDEX_GUIDED |
+| Input            | Path                                                                                                     | Load Strategy |
+| ---------------- | -------------------------------------------------------------------------------------------------------- | ------------- |
+| PRD              | `{planning_artifacts}/*prd*.md` (whole) or `{planning_artifacts}/*prd*/*.md` (sharded)                   | FULL_LOAD     |
+| Epics            | `{planning_artifacts}/*epic*.md` (whole) or `{planning_artifacts}/*epic*/*.md` (sharded)                 | FULL_LOAD     |
+| Architecture     | `{planning_artifacts}/*architecture*.md` (whole) or `{planning_artifacts}/*architecture*/*.md` (sharded) | FULL_LOAD     |
+| UX Design        | `{planning_artifacts}/*ux*.md` (whole) or `{planning_artifacts}/*ux*/*.md` (sharded)                     | FULL_LOAD     |
+| Tech Spec        | `{planning_artifacts}/*tech-spec*.md` (whole)                                                            | FULL_LOAD     |
+| Document Project | `{project_knowledge}/index.md` (sharded)                                                                 | INDEX_GUIDED  |
 
 ### Context
 
@@ -56,9 +56,9 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 1. **Search for whole document first** - Look for files matching the whole-document pattern (e.g., `*prd*.md`, `*epic*.md`, `*architecture*.md`, `*ux*.md`, `*tech-spec*.md`)
 2. **Check for sharded version** - If whole document not found, look for a directory with `index.md` (e.g., `prd/index.md`, `epics/index.md`)
 3. **If sharded version found**:
-   - Read `index.md` to understand the document structure
-   - Read ALL section files listed in the index
-   - Process the combined content as a single document
+    - Read `index.md` to understand the document structure
+    - Read ALL section files listed in the index
+    - Process the combined content as a single document
 4. **Priority**: If both whole and sharded versions exist, use the whole document
 
 **Discovery Process for INDEX_GUIDED documents (Document Project):**
@@ -116,19 +116,19 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 - Provide rationale for each change
 - Example format:
 
-  ```
-  Story: [STORY-123] User Authentication
-  Section: Acceptance Criteria
+    ```
+    Story: [STORY-123] User Authentication
+    Section: Acceptance Criteria
 
-  OLD:
-  - User can log in with email/password
+    OLD:
+    - User can log in with email/password
 
-  NEW:
-  - User can log in with email/password
-  - User can enable 2FA via authenticator app
+    NEW:
+    - User can log in with email/password
+    - User can enable 2FA via authenticator app
 
-  Rationale: Security requirement identified during implementation
-  ```
+    Rationale: Security requirement identified during implementation
+    ```
 
 <action>For PRD modifications:</action>
 
@@ -177,9 +177,9 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 <action>Section 3: Recommended Approach</action>
 
 - Present chosen path forward from checklist evaluation:
-  - Direct Adjustment: Modify/add stories within existing plan
-  - Potential Rollback: Revert completed work to simplify resolution
-  - MVP Review: Reduce scope or modify goals
+    - Direct Adjustment: Modify/add stories within existing plan
+    - Potential Rollback: Revert completed work to simplify resolution
+    - MVP Review: Reduce scope or modify goals
 - Provide clear rationale for recommendation
 - Include effort estimate, risk assessment, and timeline impact
 
@@ -192,9 +192,9 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 <action>Section 5: Implementation Handoff</action>
 
 - Categorize change scope:
-  - Minor: Direct implementation by dev team
-  - Moderate: Backlog reorganization needed (PO/SM)
-  - Major: Fundamental replan required (PM/Architect)
+    - Minor: Direct implementation by dev team
+    - Moderate: Backlog reorganization needed (PO/SM)
+    - Major: Fundamental replan required (PM/Architect)
 - Specify handoff recipients and their responsibilities
 - Define success criteria for implementation
 

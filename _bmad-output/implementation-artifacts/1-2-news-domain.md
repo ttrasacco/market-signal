@@ -36,29 +36,29 @@ so that the domain clearly represents that a single article can impact multiple 
 ## Tasks / Subtasks
 
 - [x] Task 1: Create `impact-type.ts` (AC: #1)
-  - [x] Define `ImpactType` as a TypeScript string enum or const object with `STRUCTURAL` and `PUNCTUAL`
-  - [x] Zero imports
+    - [x] Define `ImpactType` as a TypeScript string enum or const object with `STRUCTURAL` and `PUNCTUAL`
+    - [x] Zero imports
 
 - [x] Task 2: Create `sector.ts` (AC: #2)
-  - [x] Define `Sector` as a TypeScript string enum or const object with all 10 required values
-  - [x] Zero imports
-  - [x] Export both the enum/object and the derived `Sector` type
+    - [x] Define `Sector` as a TypeScript string enum or const object with all 10 required values
+    - [x] Zero imports
+    - [x] Export both the enum/object and the derived `Sector` type
 
 - [x] Task 3: Create `news-impact.ts` (AC: #3)
-  - [x] Define `NewsImpact` interface/type with fields: `id: string`, `newsId: string`, `sector: Sector`, `impactScore: number`, `impactType: ImpactType`
-  - [x] Import only from same `domain/` folder (`impact-type.ts` and `sector.ts`)
-  - [x] No validation logic here — this is a pure value object / data shape
+    - [x] Define `NewsImpact` interface/type with fields: `id: string`, `newsId: string`, `sector: Sector`, `impactScore: number`, `impactType: ImpactType`
+    - [x] Import only from same `domain/` folder (`impact-type.ts` and `sector.ts`)
+    - [x] No validation logic here — this is a pure value object / data shape
 
 - [x] Task 4: Create `news.ts` (AC: #4)
-  - [x] Define `News` interface/type with fields: `id: string`, `publishedAt: Date`, `analyzedAt: Date`, `source: string`, `headline: string`
-  - [x] Zero imports (no Sector, no ImpactType — those are on NewsImpact)
+    - [x] Define `News` interface/type with fields: `id: string`, `publishedAt: Date`, `analyzedAt: Date`, `source: string`, `headline: string`
+    - [x] Zero imports (no Sector, no ImpactType — those are on NewsImpact)
 
 - [x] Task 5: Write unit test `news-impact.test.ts` (AC: #5)
-  - [x] Co-locate next to `news-impact.ts`
-  - [x] Test: `impactScore` > 1 is rejected (validation helper or factory)
-  - [x] Test: `impactScore` < -1 is rejected
-  - [x] Test: empty `headline` is rejected
-  - [x] Use a factory/builder or validation function that throws for invalid data
+    - [x] Co-locate next to `news-impact.ts`
+    - [x] Test: `impactScore` > 1 is rejected (validation helper or factory)
+    - [x] Test: `impactScore` < -1 is rejected
+    - [x] Test: empty `headline` is rejected
+    - [x] Use a factory/builder or validation function that throws for invalid data
 
 ## Dev Notes
 
@@ -79,8 +79,8 @@ Domain files **must have zero imports outside `domain/`**. This is a hard archit
 ```typescript
 // impact-type.ts
 export const ImpactType = {
-  STRUCTURAL: 'STRUCTURAL',
-  PUNCTUAL: 'PUNCTUAL',
+    STRUCTURAL: 'STRUCTURAL',
+    PUNCTUAL: 'PUNCTUAL'
 } as const;
 
 export type ImpactType = (typeof ImpactType)[keyof typeof ImpactType];
@@ -89,16 +89,16 @@ export type ImpactType = (typeof ImpactType)[keyof typeof ImpactType];
 ```typescript
 // sector.ts
 export const Sector = {
-  TECHNOLOGY: 'TECHNOLOGY',
-  ENERGY: 'ENERGY',
-  HEALTHCARE: 'HEALTHCARE',
-  FINANCIALS: 'FINANCIALS',
-  CONSUMER: 'CONSUMER',
-  INDUSTRIALS: 'INDUSTRIALS',
-  MATERIALS: 'MATERIALS',
-  UTILITIES: 'UTILITIES',
-  REAL_ESTATE: 'REAL_ESTATE',
-  COMMUNICATION: 'COMMUNICATION',
+    TECHNOLOGY: 'TECHNOLOGY',
+    ENERGY: 'ENERGY',
+    HEALTHCARE: 'HEALTHCARE',
+    FINANCIALS: 'FINANCIALS',
+    CONSUMER: 'CONSUMER',
+    INDUSTRIALS: 'INDUSTRIALS',
+    MATERIALS: 'MATERIALS',
+    UTILITIES: 'UTILITIES',
+    REAL_ESTATE: 'REAL_ESTATE',
+    COMMUNICATION: 'COMMUNICATION'
 } as const;
 
 export type Sector = (typeof Sector)[keyof typeof Sector];
@@ -116,11 +116,11 @@ import type { Sector } from './sector';
 import type { ImpactType } from './impact-type';
 
 export interface NewsImpact {
-  id: string;
-  newsId: string;
-  sector: Sector;
-  impactScore: number; // range: [-1, 1]
-  impactType: ImpactType;
+    id: string;
+    newsId: string;
+    sector: Sector;
+    impactScore: number; // range: [-1, 1]
+    impactType: ImpactType;
 }
 ```
 
@@ -129,11 +129,11 @@ export interface NewsImpact {
 ```typescript
 // news.ts
 export interface News {
-  id: string;
-  publishedAt: Date;
-  analyzedAt: Date;
-  source: string;
-  headline: string;
+    id: string;
+    publishedAt: Date;
+    analyzedAt: Date;
+    source: string;
+    headline: string;
 }
 ```
 
@@ -144,21 +144,22 @@ export interface News {
 The acceptance criteria require that `impactScore` outside [-1, 1] and empty `headline` are **rejected**. Since domain objects are plain interfaces (no constructor), add a **validation helper** in the test or as a factory function:
 
 **Option A — Test-local validation (simplest):**
+
 ```typescript
 // news-impact.test.ts
 function createNewsImpact(overrides: Partial<NewsImpact>): NewsImpact {
-  const impact: NewsImpact = {
-    id: 'uuid-1',
-    newsId: 'news-1',
-    sector: Sector.TECHNOLOGY,
-    impactScore: 0,
-    impactType: ImpactType.PUNCTUAL,
-    ...overrides,
-  };
-  if (impact.impactScore < -1 || impact.impactScore > 1) {
-    throw new Error('impactScore must be in range [-1, 1]');
-  }
-  return impact;
+    const impact: NewsImpact = {
+        id: 'uuid-1',
+        newsId: 'news-1',
+        sector: Sector.TECHNOLOGY,
+        impactScore: 0,
+        impactType: ImpactType.PUNCTUAL,
+        ...overrides
+    };
+    if (impact.impactScore < -1 || impact.impactScore > 1) {
+        throw new Error('impactScore must be in range [-1, 1]');
+    }
+    return impact;
 }
 ```
 
@@ -168,9 +169,10 @@ Add a `validateNewsImpact(impact: NewsImpact): void` function in `news-impact.ts
 **Option B is preferred** if the validator will be called at the repository boundary in Story 1.3. Otherwise Option A is fine for Story 1.2.
 
 Likewise for `News` headline validation:
+
 ```typescript
 function validateNews(news: News): void {
-  if (!news.headline.trim()) throw new Error('headline must not be empty');
+    if (!news.headline.trim()) throw new Error('headline must not be empty');
 }
 ```
 
@@ -189,6 +191,7 @@ src/lib/server/contexts/news/domain/
 **Note:** `news.ts` is NOT present in the current stubs. It must be created new.
 
 Test file location (co-located unit tests):
+
 ```
 src/lib/server/contexts/news/domain/
 └── news-impact.test.ts   ← does NOT exist yet — create it
@@ -248,6 +251,7 @@ describe('News validation', () => {
 ### Project Structure Notes
 
 Files to fill / create in this story:
+
 ```
 src/lib/server/contexts/news/domain/
 ├── impact-type.ts     ← fill in (currently empty)
@@ -258,6 +262,7 @@ src/lib/server/contexts/news/domain/
 ```
 
 No other files should be touched in this story. The following story (1.3) handles:
+
 - `news-impact.schema.ts` (Drizzle table definitions)
 - `news-impact.repository.port.ts` (port interface — currently an empty stub)
 - `DrizzleNewsImpactRepository`

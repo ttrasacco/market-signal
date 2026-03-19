@@ -4,55 +4,55 @@
 @import '@fontsource/inter/600.css';
 
 @theme {
-  --color-bg:               #0F0F11;
-  --color-surface:          #1A1A1F;
-  --color-surface-elevated: #242429;
-  --color-border:           #2E2E35;
-  --color-text-primary:     #F0F0F2;
-  --color-text-secondary:   #8A8A96;
-  --color-green:            #22C55E;
-  --color-orange:           #F59E0B;
-  --color-red:              #EF4444;
+    --color-bg: #0f0f11;
+    --color-surface: #1a1a1f;
+    --color-surface-elevated: #242429;
+    --color-border: #2e2e35;
+    --color-text-primary: #f0f0f2;
+    --color-text-secondary: #8a8a96;
+    --color-green: #22c55e;
+    --color-orange: #f59e0b;
+    --color-red: #ef4444;
 }
 
 @layer base {
-  :root {
-    --background: #0F0F11;
-    --foreground: #F0F0F2;
-    --card: #1A1A1F;
-    --card-foreground: #F0F0F2;
-    --border: #2E2E35;
-    --muted: #242429;
-    --muted-foreground: #8A8A96;
-    --radius: 0.75rem;
-  }
+    :root {
+        --background: #0f0f11;
+        --foreground: #f0f0f2;
+        --card: #1a1a1f;
+        --card-foreground: #f0f0f2;
+        --border: #2e2e35;
+        --muted: #242429;
+        --muted-foreground: #8a8a96;
+        --radius: 0.75rem;
+    }
 
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
+    body {
+        background-color: var(--background);
+        color: var(--foreground);
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 100vh;
+    }
 }
 
 @layer components {
-  .type-sector-name {
-    font-size: 16px;
-    font-weight: 500;
-  }
-  .type-narrative-label {
-    font-size: 12px;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    color: var(--muted-foreground);
-  }
-  .type-section-heading {
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted-foreground);
-  }
+    .type-sector-name {
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .type-narrative-label {
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.01em;
+        color: var(--muted-foreground);
+    }
+    .type-section-heading {
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted-foreground);
+    }
 }

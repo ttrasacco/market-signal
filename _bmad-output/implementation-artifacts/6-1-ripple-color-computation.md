@@ -33,38 +33,41 @@ so that the inner ring and outer ripples accurately encode the magnitude and his
 ## Tasks / Subtasks
 
 - [x] Task 1 — Update `outerScore` formula in `GetLatestSectorScoresUseCase` (AC: #2, #3)
-  - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.ts`
-  - [x] Change `outerScore = sum / historical.length` → `outerScore = sum` (remove the division)
-  - [x] Keep `innerScore` formula unchanged: `(punctualScore + structuralScore) / newsCount`
+    - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.ts`
+    - [x] Change `outerScore = sum / historical.length` → `outerScore = sum` (remove the division)
+    - [x] Keep `innerScore` formula unchanged: `(punctualScore + structuralScore) / newsCount`
 
 - [x] Task 2 — Update unit tests (AC: #4)
-  - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.test.ts`
-  - [x] Update existing test `'computes outerScore as historical mean...'` to reflect sum semantics
-  - [x] Add test: single snapshot → `outerScore === innerScore`
-  - [x] Add test: two snapshots → `outerScore === normalizedScore(day1) + normalizedScore(day2)`
+    - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.test.ts`
+    - [x] Update existing test `'computes outerScore as historical mean...'` to reflect sum semantics
+    - [x] Add test: single snapshot → `outerScore === innerScore`
+    - [x] Add test: two snapshots → `outerScore === normalizedScore(day1) + normalizedScore(day2)`
 
 ## Dev Notes
 
 ### 1. Current vs target formula
 
 **Current** (`get-latest-sector-scores.use-case.ts`):
+
 ```typescript
 const outerScore =
-  historical.length > 0
-    ? historical.reduce((sum, s) => sum + normalizedScore(s), 0) / historical.length
-    : 0;
+    historical.length > 0
+        ? historical.reduce((sum, s) => sum + normalizedScore(s), 0) / historical.length
+        : 0;
 ```
 
 **Target:**
+
 ```typescript
 const outerScore = historical.reduce((sum, s) => sum + normalizedScore(s), 0);
 ```
 
 `innerScore` formula is unchanged:
+
 ```typescript
 function normalizedScore(score: SectorScore): number {
-  if (score.newsCount === 0) return 0;
-  return (score.punctualScore + score.structuralScore) / score.newsCount;
+    if (score.newsCount === 0) return 0;
+    return (score.punctualScore + score.structuralScore) / score.newsCount;
 }
 ```
 
@@ -80,23 +83,25 @@ function normalizedScore(score: SectorScore): number {
 
 ### 3. File to edit
 
-| File | Action |
-|---|---|
-| `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.ts` | EDIT — remove `/ historical.length` |
-| `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.test.ts` | EDIT — update + add tests |
+| File                                                                                              | Action                              |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.ts`      | EDIT — remove `/ historical.length` |
+| `src/lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case.test.ts` | EDIT — update + add tests           |
 
 ### 4. Test update example
 
 Current test to update:
+
 ```typescript
 it('computes outerScore as historical mean of normalized scores', async () => {
-  // yesterday: (0.1+0.1)/2 = 0.1, today: (0.2+0.3)/2 = 0.25
-  // current assertion: outerScore ≈ (0.1 + 0.25) / 2 = 0.175
-  expect(result.outerScore).toBeCloseTo(0.175, 10);
+    // yesterday: (0.1+0.1)/2 = 0.1, today: (0.2+0.3)/2 = 0.25
+    // current assertion: outerScore ≈ (0.1 + 0.25) / 2 = 0.175
+    expect(result.outerScore).toBeCloseTo(0.175, 10);
 });
 ```
 
 Updated assertion:
+
 ```typescript
 // outerScore = 0.1 + 0.25 = 0.35 (sum, not mean)
 expect(result.outerScore).toBeCloseTo(0.35, 10);

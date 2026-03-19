@@ -2,14 +2,14 @@ import type { PageServerLoad } from './$types';
 import {
 	computeReliabilityDataPerSector,
 	defaultReliabilityData
-} from "$lib/components/dashboard-layout/dashboard-layout.utils";
+} from '$lib/components/dashboard-layout/dashboard-layout.utils';
 import {
 	getNarrativeLabel,
 	scoreToColor
-} from "$lib/components/sector-score-card/sector-score-card.utils";
-import { DrizzleNewsImpactAdapter } from "$lib/server/contexts/news/infrastructure/db/news-impact.adapter";
-import { GetLatestSectorScoresUseCase } from "$lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case";
-import { DrizzleSectorScoreAdapter } from "$lib/server/contexts/scoring/infrastructure/db/sector-score.adapter";
+} from '$lib/components/sector-score-card/sector-score-card.utils';
+import { DrizzleNewsImpactAdapter } from '$lib/server/contexts/news/infrastructure/db/news-impact.adapter';
+import { GetLatestSectorScoresUseCase } from '$lib/server/contexts/scoring/application/use-cases/get-latest-sector-scores.use-case';
+import { DrizzleSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.adapter';
 
 export const load: PageServerLoad = async () => {
 	const sectorScoreRepo = new DrizzleSectorScoreAdapter();

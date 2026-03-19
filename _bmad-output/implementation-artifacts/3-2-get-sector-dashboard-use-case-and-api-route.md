@@ -31,26 +31,26 @@ so that the dashboard can retrieve the latest pre-computed sector scores with ze
 ## Tasks / Subtasks
 
 - [x] Task 1: Implement `GetSectorDashboardUseCase` (AC: #1, #3)
-  - [x] File: `src/lib/server/contexts/scoring/application/use-cases/get-sector-dashboard.use-case.ts` (currently empty — 1 line — implement it)
-  - [x] Constructor: `(sectorScoreRepo: SectorScoreRepositoryPort)`
-  - [x] `execute(): Promise<SectorScore[]>` — calls `sectorScoreRepo.findLatest()` and returns the result
-  - [x] No filtering, no transformation — pure delegation to the port
+    - [x] File: `src/lib/server/contexts/scoring/application/use-cases/get-sector-dashboard.use-case.ts` (currently empty — 1 line — implement it)
+    - [x] Constructor: `(sectorScoreRepo: SectorScoreRepositoryPort)`
+    - [x] `execute(): Promise<SectorScore[]>` — calls `sectorScoreRepo.findLatest()` and returns the result
+    - [x] No filtering, no transformation — pure delegation to the port
 
 - [x] Task 2: Write unit tests for `GetSectorDashboardUseCase` (AC: #1, #3)
-  - [x] File: `src/lib/server/contexts/scoring/application/use-cases/get-sector-dashboard.use-case.test.ts` (create new)
-  - [x] Use existing `FakeSectorScoreRepository` from `contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts`
-  - [x] Test: returns all `SectorScore[]` from the latest date
-  - [x] Test: empty repository → returns `[]`
-  - [x] Test: multiple dates → returns only scores from the most recent date (delegates to fake which already handles this)
+    - [x] File: `src/lib/server/contexts/scoring/application/use-cases/get-sector-dashboard.use-case.test.ts` (create new)
+    - [x] Use existing `FakeSectorScoreRepository` from `contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts`
+    - [x] Test: returns all `SectorScore[]` from the latest date
+    - [x] Test: empty repository → returns `[]`
+    - [x] Test: multiple dates → returns only scores from the most recent date (delegates to fake which already handles this)
 
 - [x] Task 3: Wire `GET /api/sector-scores` route handler (AC: #2, #4)
-  - [x] File: `src/routes/api/sector-scores/+server.ts` (currently empty — 1 line — implement it)
-  - [x] Import `GetSectorDashboardUseCase` from scoring use cases
-  - [x] Import `DrizzleSectorScoreRepository` from scoring infrastructure
-  - [x] Instantiate `DrizzleSectorScoreRepository`, inject into `GetSectorDashboardUseCase`, call `execute()`
-  - [x] Return `json({ sectors })` with HTTP 200 on success
-  - [x] Wrap in `try/catch` → return `json({ error: message, code: 500 }, { status: 500 })` on error
-  - [x] Rate limiting is handled automatically by `hooks.server.ts` — do not add it here
+    - [x] File: `src/routes/api/sector-scores/+server.ts` (currently empty — 1 line — implement it)
+    - [x] Import `GetSectorDashboardUseCase` from scoring use cases
+    - [x] Import `DrizzleSectorScoreRepository` from scoring infrastructure
+    - [x] Instantiate `DrizzleSectorScoreRepository`, inject into `GetSectorDashboardUseCase`, call `execute()`
+    - [x] Return `json({ sectors })` with HTTP 200 on success
+    - [x] Wrap in `try/catch` → return `json({ error: message, code: 500 }, { status: 500 })` on error
+    - [x] Rate limiting is handled automatically by `hooks.server.ts` — do not add it here
 
 ## Dev Notes
 
@@ -80,6 +80,7 @@ src/routes/api/sector-scores/
 ```
 
 **Do NOT touch:**
+
 - `compute-daily-scores.use-case.ts` — Story 3.1, complete
 - `fake-sector-score.repository.ts` — no changes needed
 - `sector-score.repository.port.ts` — interface already correct
@@ -93,11 +94,11 @@ import type { SectorScoreRepositoryPort } from '../ports/sector-score.repository
 import type { SectorScore } from '../../domain/sector-score';
 
 export class GetSectorDashboardUseCase {
-  constructor(private readonly sectorScoreRepo: SectorScoreRepositoryPort) {}
+    constructor(private readonly sectorScoreRepo: SectorScoreRepositoryPort) {}
 
-  async execute(): Promise<SectorScore[]> {
-    return this.sectorScoreRepo.findLatest();
-  }
+    async execute(): Promise<SectorScore[]> {
+        return this.sectorScoreRepo.findLatest();
+    }
 }
 ```
 
@@ -113,15 +114,15 @@ import { GetSectorDashboardUseCase } from '$lib/server/contexts/scoring/applicat
 import { DrizzleSectorScoreRepository } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.repository';
 
 export const GET: RequestHandler = async () => {
-  try {
-    const repo = new DrizzleSectorScoreRepository();
-    const useCase = new GetSectorDashboardUseCase(repo);
-    const sectors = await useCase.execute();
-    return json({ sectors });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return json({ error: message, code: 500 }, { status: 500 });
-  }
+    try {
+        const repo = new DrizzleSectorScoreRepository();
+        const useCase = new GetSectorDashboardUseCase(repo);
+        const sectors = await useCase.execute();
+        return json({ sectors });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return json({ error: message, code: 500 }, { status: 500 });
+    }
 };
 ```
 
@@ -132,9 +133,9 @@ export const GET: RequestHandler = async () => {
 import type { Sector } from '../../news/domain/sector';
 
 export interface SectorScore {
-  date: Date;
-  sector: Sector;
-  score: number; // unbounded — sum of decayed impacts
+    date: Date;
+    sector: Sector;
+    score: number; // unbounded — sum of decayed impacts
 }
 ```
 
@@ -145,8 +146,8 @@ export interface SectorScore {
 ```typescript
 // sector-score.repository.port.ts — already exists, do not modify
 export interface SectorScoreRepositoryPort {
-  upsert(score: SectorScore): Promise<void>;
-  findLatest(): Promise<SectorScore[]>;
+    upsert(score: SectorScore): Promise<void>;
+    findLatest(): Promise<SectorScore[]>;
 }
 ```
 
@@ -171,6 +172,7 @@ export interface SectorScoreRepositoryPort {
 ### Route Handler Pattern — Follow Existing Routes
 
 The route handler pattern follows what exists in the codebase for other API routes:
+
 - Import `json` from `@sveltejs/kit`
 - Import `RequestHandler` from `./$types`
 - Use `export const GET: RequestHandler = async () => { ... }`
@@ -205,42 +207,43 @@ import { GetSectorDashboardUseCase } from './get-sector-dashboard.use-case';
 import { FakeSectorScoreRepository } from '../../infrastructure/fakes/fake-sector-score.repository';
 
 describe('GetSectorDashboardUseCase', () => {
-  let fake: FakeSectorScoreRepository;
-  let useCase: GetSectorDashboardUseCase;
+    let fake: FakeSectorScoreRepository;
+    let useCase: GetSectorDashboardUseCase;
 
-  beforeEach(() => {
-    fake = new FakeSectorScoreRepository();
-    useCase = new GetSectorDashboardUseCase(fake);
-  });
+    beforeEach(() => {
+        fake = new FakeSectorScoreRepository();
+        useCase = new GetSectorDashboardUseCase(fake);
+    });
 
-  it('returns empty array when no scores exist', async () => {
-    const result = await useCase.execute();
-    expect(result).toEqual([]);
-  });
+    it('returns empty array when no scores exist', async () => {
+        const result = await useCase.execute();
+        expect(result).toEqual([]);
+    });
 
-  it('returns all scores for the latest date', async () => {
-    const today = new Date('2026-03-19');
-    await fake.upsert({ date: today, sector: 'TECHNOLOGY', score: 0.5 });
-    await fake.upsert({ date: today, sector: 'ENERGY', score: -0.2 });
-    const result = await useCase.execute();
-    expect(result).toHaveLength(2);
-  });
+    it('returns all scores for the latest date', async () => {
+        const today = new Date('2026-03-19');
+        await fake.upsert({ date: today, sector: 'TECHNOLOGY', score: 0.5 });
+        await fake.upsert({ date: today, sector: 'ENERGY', score: -0.2 });
+        const result = await useCase.execute();
+        expect(result).toHaveLength(2);
+    });
 
-  it('returns only latest date scores when multiple dates exist', async () => {
-    const yesterday = new Date('2026-03-18');
-    const today = new Date('2026-03-19');
-    await fake.upsert({ date: yesterday, sector: 'TECHNOLOGY', score: 0.3 });
-    await fake.upsert({ date: today, sector: 'TECHNOLOGY', score: 0.5 });
-    const result = await useCase.execute();
-    expect(result).toHaveLength(1);
-    expect(result[0].date.toISOString()).toContain('2026-03-19');
-  });
+    it('returns only latest date scores when multiple dates exist', async () => {
+        const yesterday = new Date('2026-03-18');
+        const today = new Date('2026-03-19');
+        await fake.upsert({ date: yesterday, sector: 'TECHNOLOGY', score: 0.3 });
+        await fake.upsert({ date: today, sector: 'TECHNOLOGY', score: 0.5 });
+        const result = await useCase.execute();
+        expect(result).toHaveLength(1);
+        expect(result[0].date.toISOString()).toContain('2026-03-19');
+    });
 });
 ```
 
 ### Import Alias Convention
 
 Use `$lib/server/...` alias for cross-layer imports in route handlers (established in Story 2.4 and used throughout the codebase):
+
 - `$lib/server/contexts/scoring/application/use-cases/get-sector-dashboard.use-case`
 - `$lib/server/contexts/scoring/infrastructure/db/sector-score.repository`
 

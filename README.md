@@ -63,6 +63,7 @@ src/
 Dependency rule: **inward only**. Domain has zero knowledge of infrastructure or SvelteKit.
 
 Data follows **Event Sourcing + CQRS**:
+
 - `news_impacts` — append-only event store, never mutated
 - `sector_scores` — materialized read model, recomputed daily by a scheduled job
 
@@ -70,14 +71,14 @@ Data follows **Event Sourcing + CQRS**:
 
 ## Tech stack
 
-| Layer | Technology |
-|---|---|
-| Framework | SvelteKit |
-| Language | TypeScript (strict) |
-| Database | PostgreSQL |
-| LLM | Anthropic API (claude-sonnet) |
-| Unit / integration tests | Vitest |
-| E2E tests | Playwright |
+| Layer                    | Technology                    |
+| ------------------------ | ----------------------------- |
+| Framework                | SvelteKit                     |
+| Language                 | TypeScript (strict)           |
+| Database                 | PostgreSQL                    |
+| LLM                      | Anthropic API (claude-sonnet) |
+| Unit / integration tests | Vitest                        |
+| E2E tests                | Playwright                    |
 
 ---
 

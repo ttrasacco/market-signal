@@ -40,35 +40,35 @@ So that the ingestion use case can classify articles without depending on the An
 ## Tasks / Subtasks
 
 - [x] Task 1: Define `NewsClassification` type and `NewsClassifierPort` interface (AC: #1)
-  - [x] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (REPLACE EMPTY STUB — file exists but is empty)
-  - [x] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
-  - [x] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
-  - [x] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
-  - [x] No imports outside own `domain/` folder — `Sector` and `ImpactType` are domain types, allowed
+    - [x] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (REPLACE EMPTY STUB — file exists but is empty)
+    - [x] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
+    - [x] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
+    - [x] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
+    - [x] No imports outside own `domain/` folder — `Sector` and `ImpactType` are domain types, allowed
 
 - [x] Task 2: Install Anthropic SDK and implement `AnthropicClassifier` (AC: #2, #3)
-  - [x] Install `@anthropic-ai/sdk` (npm) — see Dev Notes for exact command
-  - [x] File: `src/lib/server/contexts/news/infrastructure/llm/anthropic-classifier.ts` (REPLACE EMPTY STUB — file exists but is empty)
-  - [x] Class `AnthropicClassifier` implementing `NewsClassifierPort`
-  - [x] Inject `apiKey: string` via constructor — never hardcode the key
-  - [x] Use `claude-sonnet-4-6` model (current production model, see Dev Notes)
-  - [x] Send prompt requesting JSON array; parse and validate response
-  - [x] Validate: `impactScore` clamped to [-1, 1], `sector` must be valid `Sector` value
-  - [x] On API error: wrap with `createApiError()` and throw — never swallow silently
-  - [x] See Dev Notes for exact prompt structure, SDK usage pattern, and response parsing
+    - [x] Install `@anthropic-ai/sdk` (npm) — see Dev Notes for exact command
+    - [x] File: `src/lib/server/contexts/news/infrastructure/llm/anthropic-classifier.ts` (REPLACE EMPTY STUB — file exists but is empty)
+    - [x] Class `AnthropicClassifier` implementing `NewsClassifierPort`
+    - [x] Inject `apiKey: string` via constructor — never hardcode the key
+    - [x] Use `claude-sonnet-4-6` model (current production model, see Dev Notes)
+    - [x] Send prompt requesting JSON array; parse and validate response
+    - [x] Validate: `impactScore` clamped to [-1, 1], `sector` must be valid `Sector` value
+    - [x] On API error: wrap with `createApiError()` and throw — never swallow silently
+    - [x] See Dev Notes for exact prompt structure, SDK usage pattern, and response parsing
 
 - [x] Task 3: Implement `FakeNewsClassifier` (AC: #4)
-  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory already exists)
-  - [x] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
-  - [x] Constructor takes optional `classifications: NewsClassification[]` — defaults to `[]`
-  - [x] Expose `public classifications: NewsClassification[]` for test assertions
-  - [x] `classify()` returns `[...this.classifications]` — no HTTP call
-  - [x] Support configuring a `shouldThrow` flag to simulate API failure in tests (throws `ApiError`)
-  - [x] Mirror the `FakeRssFetcher` pattern exactly (see Dev Notes)
+    - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory already exists)
+    - [x] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
+    - [x] Constructor takes optional `classifications: NewsClassification[]` — defaults to `[]`
+    - [x] Expose `public classifications: NewsClassification[]` for test assertions
+    - [x] `classify()` returns `[...this.classifications]` — no HTTP call
+    - [x] Support configuring a `shouldThrow` flag to simulate API failure in tests (throws `ApiError`)
+    - [x] Mirror the `FakeRssFetcher` pattern exactly (see Dev Notes)
 
 - [x] Task 4: Write unit tests for `FakeNewsClassifier` (no DB, no API calls required)
-  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.test.ts` (CREATE NEW)
-  - [x] Tests: returns configured classifications, returns empty array by default, throws when `shouldThrow = true`, returns a copy (mutation test), ignores headline argument
+    - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.test.ts` (CREATE NEW)
+    - [x] Tests: returns configured classifications, returns empty array by default, throws when `shouldThrow = true`, returns a copy (mutation test), ignores headline argument
 
 ---
 
@@ -110,6 +110,7 @@ src/lib/server/contexts/news/
 ### Anthropic SDK — Installation & Usage
 
 **Install command:**
+
 ```bash
 npm install @anthropic-ai/sdk
 ```
@@ -117,14 +118,15 @@ npm install @anthropic-ai/sdk
 **SDK version:** Use latest stable `@anthropic-ai/sdk`. Current production model ID: `claude-sonnet-4-6`.
 
 **Basic usage pattern:**
+
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
 
 const client = new Anthropic({ apiKey });
 const message = await client.messages.create({
-  model: 'claude-sonnet-4-6',
-  max_tokens: 1024,
-  messages: [{ role: 'user', content: prompt }],
+    model: 'claude-sonnet-4-6',
+    max_tokens: 1024,
+    messages: [{ role: 'user', content: prompt }]
 });
 // message.content[0] is a TextBlock: { type: 'text', text: string }
 const text = (message.content[0] as { type: 'text'; text: string }).text;
@@ -140,13 +142,13 @@ import type { Sector } from '../../domain/sector';
 import type { ImpactType } from '../../domain/impact-type';
 
 export interface NewsClassification {
-  sector: Sector;
-  impactScore: number;
-  impactType: ImpactType;
+    sector: Sector;
+    impactScore: number;
+    impactType: ImpactType;
 }
 
 export interface NewsClassifierPort {
-  classify(headline: string): Promise<NewsClassification[]>;
+    classify(headline: string): Promise<NewsClassification[]>;
 }
 ```
 
@@ -179,45 +181,46 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createApiError } from '../../../shared/errors/api-error'; // adjust path if needed
 import { Sector } from '../../domain/sector';
 import { ImpactType } from '../../domain/impact-type';
-import type { NewsClassifierPort, NewsClassification } from '../../application/ports/news-classifier.port';
+import type {
+    NewsClassifierPort,
+    NewsClassification
+} from '../../application/ports/news-classifier.port';
 
 export class AnthropicClassifier implements NewsClassifierPort {
-  private readonly client: Anthropic;
+    private readonly client: Anthropic;
 
-  constructor(apiKey: string) {
-    this.client = new Anthropic({ apiKey });
-  }
-
-  async classify(headline: string): Promise<NewsClassification[]> {
-    try {
-      const message = await this.client.messages.create({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: buildPrompt(headline) }],
-      });
-
-      const text = (message.content[0] as { type: 'text'; text: string }).text;
-      const raw: unknown = JSON.parse(text);
-
-      if (!Array.isArray(raw)) {
-        throw new Error('Classifier response is not an array');
-      }
-
-      return raw
-        .filter(isRawClassification)
-        .map(({ sector, impactScore, impactType }) => ({
-          sector,
-          impactScore: Math.max(-1, Math.min(1, impactScore)),
-          impactType,
-        }));
-    } catch (error) {
-      throw createApiError(error);
+    constructor(apiKey: string) {
+        this.client = new Anthropic({ apiKey });
     }
-  }
+
+    async classify(headline: string): Promise<NewsClassification[]> {
+        try {
+            const message = await this.client.messages.create({
+                model: 'claude-sonnet-4-6',
+                max_tokens: 1024,
+                messages: [{ role: 'user', content: buildPrompt(headline) }]
+            });
+
+            const text = (message.content[0] as { type: 'text'; text: string }).text;
+            const raw: unknown = JSON.parse(text);
+
+            if (!Array.isArray(raw)) {
+                throw new Error('Classifier response is not an array');
+            }
+
+            return raw.filter(isRawClassification).map(({ sector, impactScore, impactType }) => ({
+                sector,
+                impactScore: Math.max(-1, Math.min(1, impactScore)),
+                impactType
+            }));
+        } catch (error) {
+            throw createApiError(error);
+        }
+    }
 }
 
 function buildPrompt(headline: string): string {
-  return `You are a financial news classifier. Analyze the following news headline and return a JSON array of sector impacts.
+    return `You are a financial news classifier. Analyze the following news headline and return a JSON array of sector impacts.
 
 Headline: "${headline}"
 
@@ -232,25 +235,26 @@ Example: [{"sector":"TECHNOLOGY","impactScore":0.8,"impactType":"STRUCTURAL"}]`;
 }
 
 interface RawClassification {
-  sector: Sector;
-  impactScore: number;
-  impactType: ImpactType;
+    sector: Sector;
+    impactScore: number;
+    impactType: ImpactType;
 }
 
 function isRawClassification(item: unknown): item is RawClassification {
-  if (typeof item !== 'object' || item === null) return false;
-  const obj = item as Record<string, unknown>;
-  return (
-    typeof obj.sector === 'string' &&
-    Object.values(Sector).includes(obj.sector as Sector) &&
-    typeof obj.impactScore === 'number' &&
-    typeof obj.impactType === 'string' &&
-    Object.values(ImpactType).includes(obj.impactType as ImpactType)
-  );
+    if (typeof item !== 'object' || item === null) return false;
+    const obj = item as Record<string, unknown>;
+    return (
+        typeof obj.sector === 'string' &&
+        Object.values(Sector).includes(obj.sector as Sector) &&
+        typeof obj.impactScore === 'number' &&
+        typeof obj.impactType === 'string' &&
+        Object.values(ImpactType).includes(obj.impactType as ImpactType)
+    );
 }
 ```
 
 **Key implementation rules:**
+
 - Instantiate `Anthropic` client in constructor with injected `apiKey` — never `process.env.ANTHROPIC_API_KEY` inside the adapter
 - Clamp `impactScore` to [-1, 1] — LLM can hallucinate values outside range
 - Filter with `isRawClassification` — skip malformed entries silently, throw only on total failure
@@ -260,6 +264,7 @@ function isRawClassification(item: unknown): item is RawClassification {
 ### ApiError Path — Check Existing Implementation
 
 Before implementing: verify the exact import path for `createApiError` by checking:
+
 ```
 src/lib/server/shared/infrastructure/errors/api-error.ts
 # OR
@@ -272,27 +277,31 @@ The architecture doc references `src/lib/server/infrastructure/errors/api-error.
 
 ```typescript
 // src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts
-import type { NewsClassifierPort, NewsClassification } from '../../application/ports/news-classifier.port';
+import type {
+    NewsClassifierPort,
+    NewsClassification
+} from '../../application/ports/news-classifier.port';
 import { ApiError } from '../../../shared/errors/api-error'; // adjust path
 
 export class FakeNewsClassifier implements NewsClassifierPort {
-  public classifications: NewsClassification[];
-  public shouldThrow = false;
+    public classifications: NewsClassification[];
+    public shouldThrow = false;
 
-  constructor(classifications: NewsClassification[] = []) {
-    this.classifications = classifications;
-  }
-
-  async classify(_headline: string): Promise<NewsClassification[]> {
-    if (this.shouldThrow) {
-      throw new ApiError(500, 'Anthropic API unavailable');
+    constructor(classifications: NewsClassification[] = []) {
+        this.classifications = classifications;
     }
-    return [...this.classifications];
-  }
+
+    async classify(_headline: string): Promise<NewsClassification[]> {
+        if (this.shouldThrow) {
+            throw new ApiError(500, 'Anthropic API unavailable');
+        }
+        return [...this.classifications];
+    }
 }
 ```
 
 **Why `public classifications` and `public shouldThrow`?** Tests set and assert on these directly:
+
 ```typescript
 const fake = new FakeNewsClassifier();
 fake.classifications = [{ sector: 'TECHNOLOGY', impactScore: 0.7, impactType: 'STRUCTURAL' }];
@@ -308,50 +317,50 @@ import { FakeNewsClassifier } from './fake-news-classifier';
 import type { NewsClassification } from '../../application/ports/news-classifier.port';
 
 const makeClassification = (overrides?: Partial<NewsClassification>): NewsClassification => ({
-  sector: 'TECHNOLOGY',
-  impactScore: 0.5,
-  impactType: 'STRUCTURAL',
-  ...overrides,
+    sector: 'TECHNOLOGY',
+    impactScore: 0.5,
+    impactType: 'STRUCTURAL',
+    ...overrides
 });
 
 describe('FakeNewsClassifier', () => {
-  let fake: FakeNewsClassifier;
+    let fake: FakeNewsClassifier;
 
-  beforeEach(() => {
-    fake = new FakeNewsClassifier();
-  });
+    beforeEach(() => {
+        fake = new FakeNewsClassifier();
+    });
 
-  it('returns empty array by default', async () => {
-    const result = await fake.classify('Any headline');
-    expect(result).toHaveLength(0);
-  });
+    it('returns empty array by default', async () => {
+        const result = await fake.classify('Any headline');
+        expect(result).toHaveLength(0);
+    });
 
-  it('returns configured classifications', async () => {
-    fake.classifications = [makeClassification(), makeClassification({ sector: 'ENERGY' })];
-    const result = await fake.classify('Any headline');
-    expect(result).toHaveLength(2);
-    expect(result[0].sector).toBe('TECHNOLOGY');
-  });
+    it('returns configured classifications', async () => {
+        fake.classifications = [makeClassification(), makeClassification({ sector: 'ENERGY' })];
+        const result = await fake.classify('Any headline');
+        expect(result).toHaveLength(2);
+        expect(result[0].sector).toBe('TECHNOLOGY');
+    });
 
-  it('returns a copy — mutating result does not affect internal state', async () => {
-    fake.classifications = [makeClassification()];
-    const result = await fake.classify('Any headline');
-    result.pop();
-    expect(fake.classifications).toHaveLength(1);
-  });
+    it('returns a copy — mutating result does not affect internal state', async () => {
+        fake.classifications = [makeClassification()];
+        const result = await fake.classify('Any headline');
+        result.pop();
+        expect(fake.classifications).toHaveLength(1);
+    });
 
-  it('throws ApiError when shouldThrow is true', async () => {
-    fake.shouldThrow = true;
-    await expect(fake.classify('Any headline')).rejects.toThrow();
-  });
+    it('throws ApiError when shouldThrow is true', async () => {
+        fake.shouldThrow = true;
+        await expect(fake.classify('Any headline')).rejects.toThrow();
+    });
 
-  it('ignores the headline argument (any headline returns same classifications)', async () => {
-    fake.classifications = [makeClassification()];
-    const r1 = await fake.classify('Headline A');
-    const r2 = await fake.classify('Headline B');
-    expect(r1).toHaveLength(1);
-    expect(r2).toHaveLength(1);
-  });
+    it('ignores the headline argument (any headline returns same classifications)', async () => {
+        fake.classifications = [makeClassification()];
+        const r1 = await fake.classify('Headline A');
+        const r2 = await fake.classify('Headline B');
+        expect(r1).toHaveLength(1);
+        expect(r2).toHaveLength(1);
+    });
 });
 ```
 
@@ -373,10 +382,16 @@ import type { Sector } from '../../domain/sector';
 import type { ImpactType } from '../../domain/impact-type';
 
 // Adapter — imports from own port (relative path):
-import type { NewsClassifierPort, NewsClassification } from '../../application/ports/news-classifier.port';
+import type {
+    NewsClassifierPort,
+    NewsClassification
+} from '../../application/ports/news-classifier.port';
 
 // Fake — imports from port (same as adapter):
-import type { NewsClassifierPort, NewsClassification } from '../../application/ports/news-classifier.port';
+import type {
+    NewsClassifierPort,
+    NewsClassification
+} from '../../application/ports/news-classifier.port';
 
 // Tests — import from sibling file (relative):
 import { FakeNewsClassifier } from './fake-news-classifier';
@@ -387,6 +402,7 @@ Use `import type` for interfaces (TypeScript-only, no runtime cost). Use regular
 ### Error Handling Contract
 
 Per architecture (NFR6), error isolation for Anthropic failures happens in the **use case** (Story 2.3), not the adapter:
+
 - `AnthropicClassifier.classify()` → throws `ApiError` on API failure, network error, or parse failure
 - Story 2.3 (`IngestNewsUseCase`) wraps each `classify()` call in `try/catch`, logs with `console.error`, and continues with other articles
 - Do NOT silently swallow errors in `AnthropicClassifier` — callers must see them

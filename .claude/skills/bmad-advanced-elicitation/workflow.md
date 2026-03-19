@@ -130,6 +130,6 @@ x. Proceed / No Further Actions
 - Each method application builds upon previous enhancements
 - **Content preservation:** Track all enhancements made during elicitation
 - **Iterative enhancement:** Each selected method (1-5) should:
-  1. Apply to the current enhanced version of the content
-  2. Show the improvements made
-  3. Return to the prompt for additional elicitations or completion
+    1. Apply to the current enhanced version of the content
+    2. Show the improvements made
+    3. Return to the prompt for additional elicitations or completion

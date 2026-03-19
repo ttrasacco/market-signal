@@ -78,6 +78,7 @@ src/
 Règle de dépendance : **vers l'intérieur uniquement**. Le domaine n'a aucune connaissance de l'infrastructure ou de SvelteKit. `cross-context/` est le seul endroit autorisé à importer depuis plusieurs contextes.
 
 Les données suivent le pattern **Event Sourcing + CQRS** :
+
 - `news_impacts` — event store append-only, jamais muté
 - `sector_scores` — read model matérialisé, recalculé chaque jour par un job planifié
 
@@ -85,14 +86,14 @@ Les données suivent le pattern **Event Sourcing + CQRS** :
 
 ## Stack technique
 
-| Couche | Technologie |
-|---|---|
-| Framework | SvelteKit |
-| Langage | TypeScript (strict) |
-| Base de données | PostgreSQL |
-| LLM | API Anthropic (claude-sonnet) |
-| Tests unitaires / intégration | Vitest |
-| Tests E2E | Playwright |
+| Couche                        | Technologie                   |
+| ----------------------------- | ----------------------------- |
+| Framework                     | SvelteKit                     |
+| Langage                       | TypeScript (strict)           |
+| Base de données               | PostgreSQL                    |
+| LLM                           | API Anthropic (claude-sonnet) |
+| Tests unitaires / intégration | Vitest                        |
+| Tests E2E                     | Playwright                    |
 
 ---
 

@@ -30,41 +30,41 @@ So that the scoring engine can persist and retrieve materialized score snapshots
 ## Tasks / Subtasks
 
 - [x] Task 1: Define Drizzle schema `sector-score.schema.ts` (AC: #1)
-  - [x] Define `sectorScoresTable` with: `date` (date column, not timestamp), `sector` (text), `score` (real)
-  - [x] Primary key: composite on `(date, sector)` — upsert semantics require this
-  - [x] All DB columns snake_case; camelCase in Drizzle field names
-  - [x] File location: `src/lib/server/contexts/scoring/infrastructure/db/sector-score.schema.ts` (create new)
+    - [x] Define `sectorScoresTable` with: `date` (date column, not timestamp), `sector` (text), `score` (real)
+    - [x] Primary key: composite on `(date, sector)` — upsert semantics require this
+    - [x] All DB columns snake_case; camelCase in Drizzle field names
+    - [x] File location: `src/lib/server/contexts/scoring/infrastructure/db/sector-score.schema.ts` (create new)
 
 - [x] Task 2: Fill `sector-score.repository.port.ts` (AC: #2)
-  - [x] Define `SectorScoreRepositoryPort` interface
-  - [x] Expose `upsert(score: SectorScore): Promise<void>`
-  - [x] Expose `findLatest(): Promise<SectorScore[]>`
-  - [x] Import `SectorScore` from `../../domain/sector-score` only
-  - [x] File location: `src/lib/server/contexts/scoring/application/ports/sector-score.repository.port.ts` (exists as empty stub — fill it)
+    - [x] Define `SectorScoreRepositoryPort` interface
+    - [x] Expose `upsert(score: SectorScore): Promise<void>`
+    - [x] Expose `findLatest(): Promise<SectorScore[]>`
+    - [x] Import `SectorScore` from `../../domain/sector-score` only
+    - [x] File location: `src/lib/server/contexts/scoring/application/ports/sector-score.repository.port.ts` (exists as empty stub — fill it)
 
 - [x] Task 3: Implement `DrizzleSectorScoreRepository` (AC: #3)
-  - [x] Implement `SectorScoreRepositoryPort`
-  - [x] `upsert()`: insert with `onConflictDoUpdate` on `(date, sector)` — overwrites `score`
-  - [x] `findLatest()`: select all rows WHERE date = (SELECT MAX(date) FROM sector_scores)
-  - [x] Map DB rows ↔ domain `SectorScore` (date as `Date` object, sector as `Sector` type cast)
-  - [x] Import `db` from `$lib/server/shared/db/client`
-  - [x] Import schema from `./sector-score.schema`
-  - [x] File location: `src/lib/server/contexts/scoring/infrastructure/db/sector-score.repository.ts` (exists as empty stub — fill it)
+    - [x] Implement `SectorScoreRepositoryPort`
+    - [x] `upsert()`: insert with `onConflictDoUpdate` on `(date, sector)` — overwrites `score`
+    - [x] `findLatest()`: select all rows WHERE date = (SELECT MAX(date) FROM sector_scores)
+    - [x] Map DB rows ↔ domain `SectorScore` (date as `Date` object, sector as `Sector` type cast)
+    - [x] Import `db` from `$lib/server/shared/db/client`
+    - [x] Import schema from `./sector-score.schema`
+    - [x] File location: `src/lib/server/contexts/scoring/infrastructure/db/sector-score.repository.ts` (exists as empty stub — fill it)
 
 - [x] Task 4: Implement `FakeSectorScoreRepository` (AC: #4)
-  - [x] Implement `SectorScoreRepositoryPort` with in-memory Map
-  - [x] `upsert()`: key = `${date.toISOString()}-${sector}` → overwrites on collision
-  - [x] `findLatest()`: find max date among all stored scores, return all with that date
-  - [x] Expose `scores` public map for test assertions
-  - [x] File location: `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts` (create new — directory may not exist yet)
+    - [x] Implement `SectorScoreRepositoryPort` with in-memory Map
+    - [x] `upsert()`: key = `${date.toISOString()}-${sector}` → overwrites on collision
+    - [x] `findLatest()`: find max date among all stored scores, return all with that date
+    - [x] Expose `scores` public map for test assertions
+    - [x] File location: `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts` (create new — directory may not exist yet)
 
 - [x] Task 5: Write unit tests for `FakeSectorScoreRepository` (AC: #4)
-  - [x] File: `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.test.ts`
-  - [x] Tests: starts empty, upsert stores score, upsert overwrites same sector+date, findLatest returns only max-date scores, accumulates multiple sectors
+    - [x] File: `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.test.ts`
+    - [x] Tests: starts empty, upsert stores score, upsert overwrites same sector+date, findLatest returns only max-date scores, accumulates multiple sectors
 
 - [x] Task 6 (optional): Write integration test `sector-score.repository.integration.test.ts`
-  - [x] Follow the same `describe.skipIf(!hasDb)` pattern from Story 1.3
-  - [x] Tests: upsert inserts row, upsert twice same sector+date = one row, findLatest returns max-date entries
+    - [x] Follow the same `describe.skipIf(!hasDb)` pattern from Story 1.3
+    - [x] Tests: upsert inserts row, upsert twice same sector+date = one row, findLatest returns max-date entries
 
 ## Dev Notes
 
@@ -100,19 +100,20 @@ Do NOT touch `news-impact.read.port.ts`, `compute-daily-scores.use-case.ts`, `ge
 import { pgTable, text, real, date } from 'drizzle-orm/pg-core';
 
 export const sectorScoresTable = pgTable(
-  'sector_scores',
-  {
-    date: date('date').notNull(),
-    sector: text('sector').notNull(),
-    score: real('score').notNull(),
-  },
-  (table) => ({
-    pk: primaryKey({ columns: [table.date, table.sector] }),
-  })
+    'sector_scores',
+    {
+        date: date('date').notNull(),
+        sector: text('sector').notNull(),
+        score: real('score').notNull()
+    },
+    (table) => ({
+        pk: primaryKey({ columns: [table.date, table.sector] })
+    })
 );
 ```
 
 **Import `primaryKey` from `drizzle-orm/pg-core`:**
+
 ```typescript
 import { pgTable, text, real, date, primaryKey } from 'drizzle-orm/pg-core';
 ```
@@ -130,8 +131,8 @@ import { pgTable, text, real, date, primaryKey } from 'drizzle-orm/pg-core';
 import type { SectorScore } from '../../domain/sector-score';
 
 export interface SectorScoreRepositoryPort {
-  upsert(score: SectorScore): Promise<void>;
-  findLatest(): Promise<SectorScore[]>;
+    upsert(score: SectorScore): Promise<void>;
+    findLatest(): Promise<SectorScore[]>;
 }
 ```
 
@@ -149,42 +150,43 @@ import type { SectorScore } from '../../domain/sector-score';
 import type { Sector } from '../../../news/domain/sector';
 
 export class DrizzleSectorScoreRepository implements SectorScoreRepositoryPort {
-  async upsert(score: SectorScore): Promise<void> {
-    const dateStr = score.date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
-    await db
-      .insert(sectorScoresTable)
-      .values({
-        date: dateStr,
-        sector: score.sector,
-        score: score.score,
-      })
-      .onConflictDoUpdate({
-        target: [sectorScoresTable.date, sectorScoresTable.sector],
-        set: { score: score.score },
-      });
-  }
+    async upsert(score: SectorScore): Promise<void> {
+        const dateStr = score.date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+        await db
+            .insert(sectorScoresTable)
+            .values({
+                date: dateStr,
+                sector: score.sector,
+                score: score.score
+            })
+            .onConflictDoUpdate({
+                target: [sectorScoresTable.date, sectorScoresTable.sector],
+                set: { score: score.score }
+            });
+    }
 
-  async findLatest(): Promise<SectorScore[]> {
-    const latestDate = db
-      .select({ maxDate: sql<string>`MAX(${sectorScoresTable.date})` })
-      .from(sectorScoresTable)
-      .as('latest');
+    async findLatest(): Promise<SectorScore[]> {
+        const latestDate = db
+            .select({ maxDate: sql<string>`MAX(${sectorScoresTable.date})` })
+            .from(sectorScoresTable)
+            .as('latest');
 
-    const rows = await db
-      .select()
-      .from(sectorScoresTable)
-      .where(eq(sectorScoresTable.date, sql`(SELECT MAX(date) FROM sector_scores)`));
+        const rows = await db
+            .select()
+            .from(sectorScoresTable)
+            .where(eq(sectorScoresTable.date, sql`(SELECT MAX(date) FROM sector_scores)`));
 
-    return rows.map((row) => ({
-      date: new Date(row.date),
-      sector: row.sector as Sector,
-      score: row.score,
-    }));
-  }
+        return rows.map((row) => ({
+            date: new Date(row.date),
+            sector: row.sector as Sector,
+            score: row.score
+        }));
+    }
 }
 ```
 
 **Critical notes:**
+
 - `date` column stores `'YYYY-MM-DD'` string — convert `Date` to ISO date string before insert: `score.date.toISOString().split('T')[0]`
 - `onConflictDoUpdate` requires explicit `target` (the composite PK columns) and `set` (fields to overwrite)
 - `findLatest()` uses a subquery `(SELECT MAX(date) FROM sector_scores)` to get the most recent date — Drizzle supports inline SQL with `sql\`...\``
@@ -199,22 +201,22 @@ import type { SectorScoreRepositoryPort } from '../../application/ports/sector-s
 import type { SectorScore } from '../../domain/sector-score';
 
 export class FakeSectorScoreRepository implements SectorScoreRepositoryPort {
-  public scores: Map<string, SectorScore> = new Map();
+    public scores: Map<string, SectorScore> = new Map();
 
-  private key(score: SectorScore): string {
-    return `${score.date.toISOString()}-${score.sector}`;
-  }
+    private key(score: SectorScore): string {
+        return `${score.date.toISOString()}-${score.sector}`;
+    }
 
-  async upsert(score: SectorScore): Promise<void> {
-    this.scores.set(this.key(score), score);
-  }
+    async upsert(score: SectorScore): Promise<void> {
+        this.scores.set(this.key(score), score);
+    }
 
-  async findLatest(): Promise<SectorScore[]> {
-    if (this.scores.size === 0) return [];
-    const all = Array.from(this.scores.values());
-    const maxTime = Math.max(...all.map((s) => s.date.getTime()));
-    return all.filter((s) => s.date.getTime() === maxTime);
-  }
+    async findLatest(): Promise<SectorScore[]> {
+        if (this.scores.size === 0) return [];
+        const all = Array.from(this.scores.values());
+        const maxTime = Math.max(...all.map((s) => s.date.getTime()));
+        return all.filter((s) => s.date.getTime() === maxTime);
+    }
 }
 ```
 
@@ -231,46 +233,46 @@ import { FakeSectorScoreRepository } from './fake-sector-score.repository';
 import { Sector } from '../../../news/domain/sector';
 
 describe('FakeSectorScoreRepository', () => {
-  let repo: FakeSectorScoreRepository;
-  const today = new Date('2026-03-19');
-  const yesterday = new Date('2026-03-18');
+    let repo: FakeSectorScoreRepository;
+    const today = new Date('2026-03-19');
+    const yesterday = new Date('2026-03-18');
 
-  beforeEach(() => {
-    repo = new FakeSectorScoreRepository();
-  });
+    beforeEach(() => {
+        repo = new FakeSectorScoreRepository();
+    });
 
-  it('starts empty', async () => {
-    const result = await repo.findLatest();
-    expect(result).toHaveLength(0);
-  });
+    it('starts empty', async () => {
+        const result = await repo.findLatest();
+        expect(result).toHaveLength(0);
+    });
 
-  it('stores a score via upsert', async () => {
-    await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.7 });
-    expect(repo.scores.size).toBe(1);
-  });
+    it('stores a score via upsert', async () => {
+        await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.7 });
+        expect(repo.scores.size).toBe(1);
+    });
 
-  it('overwrites same sector+date on second upsert', async () => {
-    await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.7 });
-    await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.3 });
-    expect(repo.scores.size).toBe(1);
-    const result = await repo.findLatest();
-    expect(result[0].score).toBeCloseTo(0.3);
-  });
+    it('overwrites same sector+date on second upsert', async () => {
+        await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.7 });
+        await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.3 });
+        expect(repo.scores.size).toBe(1);
+        const result = await repo.findLatest();
+        expect(result[0].score).toBeCloseTo(0.3);
+    });
 
-  it('findLatest returns only max-date scores', async () => {
-    await repo.upsert({ date: yesterday, sector: Sector.ENERGY, score: 0.5 });
-    await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.8 });
-    const result = await repo.findLatest();
-    expect(result).toHaveLength(1);
-    expect(result[0].sector).toBe(Sector.TECHNOLOGY);
-  });
+    it('findLatest returns only max-date scores', async () => {
+        await repo.upsert({ date: yesterday, sector: Sector.ENERGY, score: 0.5 });
+        await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.8 });
+        const result = await repo.findLatest();
+        expect(result).toHaveLength(1);
+        expect(result[0].sector).toBe(Sector.TECHNOLOGY);
+    });
 
-  it('returns all sectors for max date', async () => {
-    await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.8 });
-    await repo.upsert({ date: today, sector: Sector.ENERGY, score: -0.3 });
-    const result = await repo.findLatest();
-    expect(result).toHaveLength(2);
-  });
+    it('returns all sectors for max date', async () => {
+        await repo.upsert({ date: today, sector: Sector.TECHNOLOGY, score: 0.8 });
+        await repo.upsert({ date: today, sector: Sector.ENERGY, score: -0.3 });
+        const result = await repo.findLatest();
+        expect(result).toHaveLength(2);
+    });
 });
 ```
 
@@ -286,38 +288,40 @@ import { Sector } from '../../../news/domain/sector';
 const hasDb = !!process.env.DATABASE_URL;
 
 describe.skipIf(!hasDb)('DrizzleSectorScoreRepository (integration)', () => {
-  let repo: DrizzleSectorScoreRepository;
+    let repo: DrizzleSectorScoreRepository;
 
-  beforeEach(() => {
-    repo = new DrizzleSectorScoreRepository();
-  });
+    beforeEach(() => {
+        repo = new DrizzleSectorScoreRepository();
+    });
 
-  it('upserts and retrieves a score', async () => {
-    const score = { date: new Date('2026-03-19'), sector: Sector.TECHNOLOGY, score: 0.7 };
-    await repo.upsert(score);
-    const result = await repo.findLatest();
-    const found = result.find((s) => s.sector === Sector.TECHNOLOGY);
-    expect(found?.score).toBeCloseTo(0.7);
-  });
+    it('upserts and retrieves a score', async () => {
+        const score = { date: new Date('2026-03-19'), sector: Sector.TECHNOLOGY, score: 0.7 };
+        await repo.upsert(score);
+        const result = await repo.findLatest();
+        const found = result.find((s) => s.sector === Sector.TECHNOLOGY);
+        expect(found?.score).toBeCloseTo(0.7);
+    });
 
-  it('upsert twice same key = one row', async () => {
-    const score = { date: new Date('2026-03-19'), sector: Sector.ENERGY, score: 0.5 };
-    await repo.upsert(score);
-    await repo.upsert({ ...score, score: 0.9 });
-    const result = await repo.findLatest();
-    const found = result.filter((s) => s.sector === Sector.ENERGY);
-    expect(found).toHaveLength(1);
-    expect(found[0].score).toBeCloseTo(0.9);
-  });
+    it('upsert twice same key = one row', async () => {
+        const score = { date: new Date('2026-03-19'), sector: Sector.ENERGY, score: 0.5 };
+        await repo.upsert(score);
+        await repo.upsert({ ...score, score: 0.9 });
+        const result = await repo.findLatest();
+        const found = result.filter((s) => s.sector === Sector.ENERGY);
+        expect(found).toHaveLength(1);
+        expect(found[0].score).toBeCloseTo(0.9);
+    });
 });
 ```
 
 ### drizzle.config.ts — Already Updated
 
 `drizzle.config.ts` was updated in Story 1.3 to use glob:
+
 ```typescript
 schema: './src/lib/server/contexts/**/infrastructure/db/*.schema.ts',
 ```
+
 This already matches `sector-score.schema.ts` — **no change needed**.
 
 ### Architecture Compliance Checklist

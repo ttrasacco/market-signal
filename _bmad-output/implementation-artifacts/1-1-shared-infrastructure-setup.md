@@ -37,44 +37,44 @@ So that all future use cases and route handlers can rely on a consistent, tested
 ## Tasks / Subtasks
 
 - [x] Task 1: Install Drizzle ORM dependencies (AC: #1, #5)
-  - [x] Run `npm install drizzle-orm postgres` and `npm install -D drizzle-kit`
-  - [x] Verify no conflicting DB packages exist in package.json
+    - [x] Run `npm install drizzle-orm postgres` and `npm install -D drizzle-kit`
+    - [x] Verify no conflicting DB packages exist in package.json
 
 - [x] Task 2: Create shared DB client (AC: #1)
-  - [x] Create `src/lib/server/shared/db/client.ts` — exports singleton `db` via `drizzle(sql)` with `postgres` driver
-  - [x] Import from `$env/static/private` (SvelteKit private env — server-side only, never client-exposed)
-  - [x] Throw a clear error at import time if `DATABASE_URL` is missing
+    - [x] Create `src/lib/server/shared/db/client.ts` — exports singleton `db` via `drizzle(sql)` with `postgres` driver
+    - [x] Import from `$env/static/private` (SvelteKit private env — server-side only, never client-exposed)
+    - [x] Throw a clear error at import time if `DATABASE_URL` is missing
 
 - [x] Task 3: Create `drizzle.config.ts` at project root (AC: #5)
-  - [x] Use `defineConfig` from `drizzle-kit`
-  - [x] `schema: './src/lib/server/contexts/**/infrastructure/db/schema.ts'` (glob — all context schemas)
-  - [x] `out: './drizzle/migrations'`
-  - [x] `dialect: 'postgresql'`, `dbCredentials: { url: process.env.DATABASE_URL! }`
+    - [x] Use `defineConfig` from `drizzle-kit`
+    - [x] `schema: './src/lib/server/contexts/**/infrastructure/db/schema.ts'` (glob — all context schemas)
+    - [x] `out: './drizzle/migrations'`
+    - [x] `dialect: 'postgresql'`, `dbCredentials: { url: process.env.DATABASE_URL! }`
 
 - [x] Task 4: Create ApiError class (AC: #2)
-  - [x] Create `src/lib/server/infrastructure/errors/api-error.ts`
-  - [x] `ApiError extends Error` with `statusCode: number` and optional `cause?: unknown`
-  - [x] `createApiError(error: unknown): ApiError` — identity if already ApiError, wraps Error, wraps unknown
-  - [x] No external imports
+    - [x] Create `src/lib/server/infrastructure/errors/api-error.ts`
+    - [x] `ApiError extends Error` with `statusCode: number` and optional `cause?: unknown`
+    - [x] `createApiError(error: unknown): ApiError` — identity if already ApiError, wraps Error, wraps unknown
+    - [x] No external imports
 
 - [x] Task 5: Create rate limiter (AC: #3)
-  - [x] Create `src/lib/server/middleware/rate-limiter.ts`
-  - [x] In-memory `Map<string, number[]>` — key = IP, value = array of request timestamps
-  - [x] Sliding window: keep only timestamps within `windowMs`, block if count >= limit
-  - [x] Export `rateLimiter` singleton configured for 60 req/min
+    - [x] Create `src/lib/server/middleware/rate-limiter.ts`
+    - [x] In-memory `Map<string, number[]>` — key = IP, value = array of request timestamps
+    - [x] Sliding window: keep only timestamps within `windowMs`, block if count >= limit
+    - [x] Export `rateLimiter` singleton configured for 60 req/min
 
 - [x] Task 6: Wire rate limiter in hooks.server.ts (AC: #4)
-  - [x] Create `src/hooks.server.ts`
-  - [x] In the `handle` hook: check `event.url.pathname.startsWith('/api/')` before applying limiter
-  - [x] Return `new Response('Too Many Requests', { status: 429 })` when blocked
-  - [x] Otherwise call `resolve(event)`
+    - [x] Create `src/hooks.server.ts`
+    - [x] In the `handle` hook: check `event.url.pathname.startsWith('/api/')` before applying limiter
+    - [x] Return `new Response('Too Many Requests', { status: 429 })` when blocked
+    - [x] Otherwise call `resolve(event)`
 
 - [x] Task 7: Update `src/app.d.ts` for env typing (prerequisite for Story 5.2, but add DATABASE_URL now)
-  - [x] Add `DATABASE_URL` to `App.Platform` or use SvelteKit `$env/static/private` convention (no `app.d.ts` change needed for private env — just document the pattern)
+    - [x] Add `DATABASE_URL` to `App.Platform` or use SvelteKit `$env/static/private` convention (no `app.d.ts` change needed for private env — just document the pattern)
 
 - [x] Task 8: Write unit tests (co-located)
-  - [x] `src/lib/server/infrastructure/errors/api-error.test.ts` — tests: unknown error → 500, Error → preserves message, ApiError → identity
-  - [x] `src/lib/server/middleware/rate-limiter.test.ts` — tests: under limit → not blocked, at limit → not blocked, over limit → blocked, different IPs → independent counters, window expiry → resets
+    - [x] `src/lib/server/infrastructure/errors/api-error.test.ts` — tests: unknown error → 500, Error → preserves message, ApiError → identity
+    - [x] `src/lib/server/middleware/rate-limiter.test.ts` — tests: under limit → not blocked, at limit → not blocked, over limit → blocked, different IPs → independent counters, window expiry → resets
 
 ## Dev Notes
 
@@ -124,12 +124,12 @@ The config must discover schemas across ALL contexts. Use glob pattern:
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: './src/lib/server/contexts/**/infrastructure/db/schema.ts',
-  out: './drizzle/migrations',
-  dialect: 'postgresql',
-  dbCredentials: {
-    url: process.env.DATABASE_URL!,
-  },
+    schema: './src/lib/server/contexts/**/infrastructure/db/schema.ts',
+    out: './drizzle/migrations',
+    dialect: 'postgresql',
+    dbCredentials: {
+        url: process.env.DATABASE_URL!
+    }
 });
 ```
 
@@ -142,20 +142,20 @@ Note: `drizzle.config.ts` uses `process.env` (not `$env/static/private`) because
 ```typescript
 // src/lib/server/infrastructure/errors/api-error.ts
 export class ApiError extends Error {
-  constructor(
-    public readonly statusCode: number,
-    message: string,
-    public readonly cause?: unknown
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
+    constructor(
+        public readonly statusCode: number,
+        message: string,
+        public readonly cause?: unknown
+    ) {
+        super(message);
+        this.name = 'ApiError';
+    }
 }
 
 export function createApiError(error: unknown): ApiError {
-  if (error instanceof ApiError) return error;
-  if (error instanceof Error) return new ApiError(500, error.message, error);
-  return new ApiError(500, 'Unknown error', error);
+    if (error instanceof ApiError) return error;
+    if (error instanceof Error) return new ApiError(500, error.message, error);
+    return new ApiError(500, 'Unknown error', error);
 }
 ```
 
@@ -168,17 +168,17 @@ type Timestamps = number[];
 const store = new Map<string, Timestamps>();
 
 export function createRateLimiter(limit: number, windowMs: number) {
-  return function isRateLimited(ip: string): boolean {
-    const now = Date.now();
-    const timestamps = (store.get(ip) ?? []).filter(t => now - t < windowMs);
-    if (timestamps.length >= limit) {
-      store.set(ip, timestamps);
-      return true;
-    }
-    timestamps.push(now);
-    store.set(ip, timestamps);
-    return false;
-  };
+    return function isRateLimited(ip: string): boolean {
+        const now = Date.now();
+        const timestamps = (store.get(ip) ?? []).filter((t) => now - t < windowMs);
+        if (timestamps.length >= limit) {
+            store.set(ip, timestamps);
+            return true;
+        }
+        timestamps.push(now);
+        store.set(ip, timestamps);
+        return false;
+    };
 }
 
 export const rateLimiter = createRateLimiter(60, 60_000); // 60 req/min
@@ -194,13 +194,13 @@ import { rateLimiter } from '$lib/server/middleware/rate-limiter';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-  if (event.url.pathname.startsWith('/api/')) {
-    const ip = event.getClientAddress();
-    if (rateLimiter(ip)) {
-      return new Response('Too Many Requests', { status: 429 });
+    if (event.url.pathname.startsWith('/api/')) {
+        const ip = event.getClientAddress();
+        if (rateLimiter(ip)) {
+            return new Response('Too Many Requests', { status: 429 });
+        }
     }
-  }
-  return resolve(event);
+    return resolve(event);
 };
 ```
 
@@ -209,6 +209,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 ### Project Structure Notes
 
 Files to create in this story:
+
 ```
 src/
 ├── hooks.server.ts                              ← NEW

@@ -18,7 +18,12 @@ function makeReliable(sector: string, innerScore: number): SectorScoreWithReliab
 		innerColor: innerScore > 0.2 ? 'green' : innerScore < -0.2 ? 'red' : 'orange',
 		outerColor: 'orange',
 		narrativeLabel: 'Mixed signal',
-		reliabilityData: { totalArticles: 25, recentArticles: 8, sourceCount: 5, punctualProportion: 0.2 }
+		reliabilityData: {
+			totalArticles: 25,
+			recentArticles: 8,
+			sourceCount: 5,
+			punctualProportion: 0.2
+		}
 	};
 }
 
@@ -26,7 +31,12 @@ function makeUnreliable(sector: string, innerScore: number): SectorScoreWithReli
 	return {
 		...makeReliable(sector, innerScore),
 		// triggers red: totalArticles < 5 → red, recentArticles = 0 → red
-		reliabilityData: { totalArticles: 2, recentArticles: 0, sourceCount: 1, punctualProportion: 0 }
+		reliabilityData: {
+			totalArticles: 2,
+			recentArticles: 0,
+			sourceCount: 1,
+			punctualProportion: 0
+		}
 	};
 }
 
@@ -76,10 +86,7 @@ describe('getBullishHighlights', () => {
 	});
 
 	it('returns empty when no qualifying sectors', () => {
-		const sectors = [
-			makeUnreliable('Technology', 0.5),
-			makeReliable('Finance', -0.3)
-		];
+		const sectors = [makeUnreliable('Technology', 0.5), makeReliable('Finance', -0.3)];
 		expect(getBullishHighlights(sectors)).toHaveLength(0);
 	});
 });
@@ -157,10 +164,7 @@ describe('sortForTable', () => {
 	});
 
 	it('returns all sectors when all are red-reliability, sorted descending', () => {
-		const sectors = [
-			makeUnreliable('Finance', 0.2),
-			makeUnreliable('Technology', 0.8)
-		];
+		const sectors = [makeUnreliable('Finance', 0.2), makeUnreliable('Technology', 0.8)];
 		const result = sortForTable(sectors);
 		expect(result[0].sector).toBe('Technology');
 		expect(result[1].sector).toBe('Finance');
@@ -171,11 +175,7 @@ describe('sortForTable', () => {
 	});
 
 	it('handles exactly 3 qualifying sectors correctly', () => {
-		const sectors = [
-			makeReliable('A', 0.9),
-			makeReliable('B', 0.5),
-			makeReliable('C', 0.1)
-		];
+		const sectors = [makeReliable('A', 0.9), makeReliable('B', 0.5), makeReliable('C', 0.1)];
 		const bullish = getBullishHighlights(sectors);
 		expect(bullish).toHaveLength(3);
 	});

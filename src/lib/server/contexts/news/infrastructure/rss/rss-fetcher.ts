@@ -13,7 +13,7 @@ export class RssFetcher implements RssFetcherPort {
 			.map((item) => ({
 				headline: item.title!,
 				publishedAt: new Date(item.isoDate ?? item.pubDate ?? new Date().toISOString()),
-				source,
+				source
 			}));
 	}
 }

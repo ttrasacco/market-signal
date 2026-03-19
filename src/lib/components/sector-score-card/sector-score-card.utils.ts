@@ -1,10 +1,10 @@
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
 
 export type SectorScoreCardData = {
-  sector: Sector;
-  innerColor: SignalColor; // scoreToColor(innerScore)
-  outerColor: SignalColor; // scoreToColor(outerScore)
-  narrativeLabel: string;  // getNarrativeLabel(innerColor, outerColor)
+	sector: Sector;
+	innerColor: SignalColor; // scoreToColor(innerScore)
+	outerColor: SignalColor; // scoreToColor(outerScore)
+	narrativeLabel: string; // getNarrativeLabel(innerColor, outerColor)
 };
 
 export type SignalColor = 'green' | 'orange' | 'red';
@@ -33,6 +33,9 @@ const NARRATIVE_LABELS: Record<SignalColor, Record<SignalColor, string>> = {
 	}
 };
 
-export function getNarrativeLabel(punctualColor: SignalColor, structuralColor: SignalColor): string {
+export function getNarrativeLabel(
+	punctualColor: SignalColor,
+	structuralColor: SignalColor
+): string {
 	return NARRATIVE_LABELS[punctualColor][structuralColor];
 }

@@ -28,20 +28,20 @@ So that the scoring engine has a pure, testable mathematical foundation for Stor
 ## Tasks / Subtasks
 
 - [x] Task 1: Implement `sector-score.ts` (AC: #1)
-  - [x] Define `SectorScore` interface: `date: Date`, `sector: Sector`, `score: number`
-  - [x] Import `Sector` type from `../../news/domain/sector` — this is the ONLY allowed import (same `domain/` family — see note below)
-  - [x] File location: `src/lib/server/contexts/scoring/domain/sector-score.ts` (exists as empty stub — fill it)
+    - [x] Define `SectorScore` interface: `date: Date`, `sector: Sector`, `score: number`
+    - [x] Import `Sector` type from `../../news/domain/sector` — this is the ONLY allowed import (same `domain/` family — see note below)
+    - [x] File location: `src/lib/server/contexts/scoring/domain/sector-score.ts` (exists as empty stub — fill it)
 
 - [x] Task 2: Implement `decay-model.ts` (AC: #2)
-  - [x] Export `LAMBDA_STRUCTURAL` and `LAMBDA_PUNCTUAL` constants (number)
-  - [x] Export `computeDecay(impactScore: number, impactType: ImpactType, ageInDays: number): number`
-  - [x] Formula: `impactScore × Math.exp(-lambda × ageInDays)`
-  - [x] Import `ImpactType` from `../../news/domain/impact-type` — allowed (domain types only)
-  - [x] File location: `src/lib/server/contexts/scoring/domain/decay-model.ts` (exists as empty stub — fill it)
+    - [x] Export `LAMBDA_STRUCTURAL` and `LAMBDA_PUNCTUAL` constants (number)
+    - [x] Export `computeDecay(impactScore: number, impactType: ImpactType, ageInDays: number): number`
+    - [x] Formula: `impactScore × Math.exp(-lambda × ageInDays)`
+    - [x] Import `ImpactType` from `../../news/domain/impact-type` — allowed (domain types only)
+    - [x] File location: `src/lib/server/contexts/scoring/domain/decay-model.ts` (exists as empty stub — fill it)
 
 - [x] Task 3: Write unit tests `decay-model.test.ts` (AC: #3)
-  - [x] File: `src/lib/server/contexts/scoring/domain/decay-model.test.ts` (create new)
-  - [x] Tests: STRUCTURAL decay at day 7 > PUNCTUAL decay at day 7, decay at day 0 = impactScore, negative score decays correctly, ageInDays=30 approaches 0
+    - [x] File: `src/lib/server/contexts/scoring/domain/decay-model.test.ts` (create new)
+    - [x] Tests: STRUCTURAL decay at day 7 > PUNCTUAL decay at day 7, decay at day 0 = impactScore, negative score decays correctly, ageInDays=30 approaches 0
 
 ## Dev Notes
 
@@ -86,9 +86,9 @@ import type { ImpactType } from '../../news/domain/impact-type';
 import type { Sector } from '../../news/domain/sector';
 
 export interface SectorScore {
-  date: Date;
-  sector: Sector;
-  score: number; // unbounded — computed as sum of decayed impacts, can exceed [-1, 1]
+    date: Date;
+    sector: Sector;
+    score: number; // unbounded — computed as sum of decayed impacts, can exceed [-1, 1]
 }
 ```
 
@@ -103,19 +103,20 @@ import { ImpactType } from '../../news/domain/impact-type';
 // λ_STRUCTURAL: slow decay — structural impacts last weeks/months
 // λ_PUNCTUAL: fast decay — punctual impacts fade in days
 export const LAMBDA_STRUCTURAL = 0.05; // ~20-day half-life
-export const LAMBDA_PUNCTUAL = 0.3;   // ~2-day half-life
+export const LAMBDA_PUNCTUAL = 0.3; // ~2-day half-life
 
 export function computeDecay(
-  impactScore: number,
-  impactType: ImpactType,
-  ageInDays: number
+    impactScore: number,
+    impactType: ImpactType,
+    ageInDays: number
 ): number {
-  const lambda = impactType === ImpactType.STRUCTURAL ? LAMBDA_STRUCTURAL : LAMBDA_PUNCTUAL;
-  return impactScore * Math.exp(-lambda * ageInDays);
+    const lambda = impactType === ImpactType.STRUCTURAL ? LAMBDA_STRUCTURAL : LAMBDA_PUNCTUAL;
+    return impactScore * Math.exp(-lambda * ageInDays);
 }
 ```
 
 **Why these λ values?**
+
 - `LAMBDA_STRUCTURAL = 0.05` → half-life ≈ 14 days (`ln(2)/0.05 ≈ 14`) — structural shifts (regulation, mergers) retain relevance for 1–3 weeks
 - `LAMBDA_PUNCTUAL = 0.3` → half-life ≈ 2.3 days (`ln(2)/0.3 ≈ 2.3`) — punctual events (earnings miss, CEO statement) fade quickly
 - These are initial calibration values — can be tuned later without changing the interface
@@ -131,26 +132,26 @@ import { computeDecay, LAMBDA_STRUCTURAL, LAMBDA_PUNCTUAL } from './decay-model'
 import { ImpactType } from '../../news/domain/impact-type';
 
 describe('computeDecay', () => {
-  it('applies no decay at age 0', () => {
-    expect(computeDecay(0.8, ImpactType.STRUCTURAL, 0)).toBeCloseTo(0.8);
-    expect(computeDecay(0.8, ImpactType.PUNCTUAL, 0)).toBeCloseTo(0.8);
-  });
+    it('applies no decay at age 0', () => {
+        expect(computeDecay(0.8, ImpactType.STRUCTURAL, 0)).toBeCloseTo(0.8);
+        expect(computeDecay(0.8, ImpactType.PUNCTUAL, 0)).toBeCloseTo(0.8);
+    });
 
-  it('STRUCTURAL decays slower than PUNCTUAL at day 7', () => {
-    const structural = computeDecay(1.0, ImpactType.STRUCTURAL, 7);
-    const punctual = computeDecay(1.0, ImpactType.PUNCTUAL, 7);
-    expect(structural).toBeGreaterThan(punctual);
-  });
+    it('STRUCTURAL decays slower than PUNCTUAL at day 7', () => {
+        const structural = computeDecay(1.0, ImpactType.STRUCTURAL, 7);
+        const punctual = computeDecay(1.0, ImpactType.PUNCTUAL, 7);
+        expect(structural).toBeGreaterThan(punctual);
+    });
 
-  it('decay approaches 0 for large age', () => {
-    expect(computeDecay(1.0, ImpactType.STRUCTURAL, 200)).toBeCloseTo(0, 5);
-    expect(computeDecay(1.0, ImpactType.PUNCTUAL, 200)).toBeCloseTo(0, 5);
-  });
+    it('decay approaches 0 for large age', () => {
+        expect(computeDecay(1.0, ImpactType.STRUCTURAL, 200)).toBeCloseTo(0, 5);
+        expect(computeDecay(1.0, ImpactType.PUNCTUAL, 200)).toBeCloseTo(0, 5);
+    });
 
-  it('handles negative impact scores', () => {
-    const result = computeDecay(-0.5, ImpactType.STRUCTURAL, 0);
-    expect(result).toBeCloseTo(-0.5);
-  });
+    it('handles negative impact scores', () => {
+        const result = computeDecay(-0.5, ImpactType.STRUCTURAL, 0);
+        expect(result).toBeCloseTo(-0.5);
+    });
 });
 ```
 

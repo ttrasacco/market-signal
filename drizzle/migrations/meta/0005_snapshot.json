@@ -1,195 +1,188 @@
 {
-  "id": "eb6189ca-04d9-4611-9d64-30ae385ca209",
-  "prevId": "48cce40e-bcff-4464-95a8-4bb6e018f523",
-  "version": "7",
-  "dialect": "postgresql",
-  "tables": {
-    "public.news_impacts": {
-      "name": "news_impacts",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "news_id": {
-          "name": "news_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "sector": {
-          "name": "sector",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "impact_score": {
-          "name": "impact_score",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "impact_type": {
-          "name": "impact_type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "news_impacts_news_id_news_id_fk": {
-          "name": "news_impacts_news_id_news_id_fk",
-          "tableFrom": "news_impacts",
-          "tableTo": "news",
-          "columnsFrom": [
-            "news_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.news": {
-      "name": "news",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "published_at": {
-          "name": "published_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "analyzed_at": {
-          "name": "analyzed_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source": {
-          "name": "source",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "headline": {
-          "name": "headline",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "news_source_headline_idx": {
-          "name": "news_source_headline_idx",
-          "columns": [
-            {
-              "expression": "source",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
+    "id": "eb6189ca-04d9-4611-9d64-30ae385ca209",
+    "prevId": "48cce40e-bcff-4464-95a8-4bb6e018f523",
+    "version": "7",
+    "dialect": "postgresql",
+    "tables": {
+        "public.news_impacts": {
+            "name": "news_impacts",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "news_id": {
+                    "name": "news_id",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "sector": {
+                    "name": "sector",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "impact_score": {
+                    "name": "impact_score",
+                    "type": "real",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "impact_type": {
+                    "name": "impact_type",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                }
             },
-            {
-              "expression": "headline",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
+            "indexes": {},
+            "foreignKeys": {
+                "news_impacts_news_id_news_id_fk": {
+                    "name": "news_impacts_news_id_news_id_fk",
+                    "tableFrom": "news_impacts",
+                    "tableTo": "news",
+                    "columnsFrom": ["news_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.news": {
+            "name": "news",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "text",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "published_at": {
+                    "name": "published_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "analyzed_at": {
+                    "name": "analyzed_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "source": {
+                    "name": "source",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "headline": {
+                    "name": "headline",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                }
+            },
+            "indexes": {
+                "news_source_headline_idx": {
+                    "name": "news_source_headline_idx",
+                    "columns": [
+                        {
+                            "expression": "source",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        },
+                        {
+                            "expression": "headline",
+                            "isExpression": false,
+                            "asc": true,
+                            "nulls": "last"
+                        }
+                    ],
+                    "isUnique": true,
+                    "concurrently": false,
+                    "method": "btree",
+                    "with": {}
+                }
+            },
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
+        },
+        "public.sector_scores": {
+            "name": "sector_scores",
+            "schema": "",
+            "columns": {
+                "date": {
+                    "name": "date",
+                    "type": "date",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "sector": {
+                    "name": "sector",
+                    "type": "text",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "punctual_score": {
+                    "name": "punctual_score",
+                    "type": "real",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "structural_score": {
+                    "name": "structural_score",
+                    "type": "real",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                },
+                "news_count": {
+                    "name": "news_count",
+                    "type": "real",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {
+                "sector_scores_date_sector_pk": {
+                    "name": "sector_scores_date_sector_pk",
+                    "columns": ["date", "sector"]
+                }
+            },
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
         }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
     },
-    "public.sector_scores": {
-      "name": "sector_scores",
-      "schema": "",
-      "columns": {
-        "date": {
-          "name": "date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "sector": {
-          "name": "sector",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "punctual_score": {
-          "name": "punctual_score",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "structural_score": {
-          "name": "structural_score",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "news_count": {
-          "name": "news_count",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "sector_scores_date_sector_pk": {
-          "name": "sector_scores_date_sector_pk",
-          "columns": [
-            "date",
-            "sector"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    }
-  },
-  "enums": {},
-  "schemas": {},
-  "sequences": {},
-  "roles": {},
-  "policies": {},
-  "views": {},
-  "_meta": {
-    "columns": {},
+    "enums": {},
     "schemas": {},
-    "tables": {}
-  }
+    "sequences": {},
+    "roles": {},
+    "policies": {},
+    "views": {},
+    "_meta": {
+        "columns": {},
+        "schemas": {},
+        "tables": {}
+    }
 }

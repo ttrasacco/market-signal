@@ -42,34 +42,34 @@ So that a single use case call triggers the full ingestion pipeline for all conf
 ## Tasks / Subtasks
 
 - [x] Task 1: Define `NewsClassification` type and `NewsClassifierPort` interface (AC: #1)
-  - [x] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (EXISTS AS EMPTY STUB — fill it)
-  - [x] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
-  - [x] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
-  - [x] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
-  - [x] No external imports — application layer only
+    - [x] File: `src/lib/server/contexts/news/application/ports/news-classifier.port.ts` (EXISTS AS EMPTY STUB — fill it)
+    - [x] Define `NewsClassification` interface: `{ sector: Sector; impactScore: number; impactType: ImpactType }`
+    - [x] Define `NewsClassifierPort` interface: `{ classify(headline: string): Promise<NewsClassification[]> }`
+    - [x] Import `Sector` from `../../domain/sector` and `ImpactType` from `../../domain/impact-type`
+    - [x] No external imports — application layer only
 
 - [x] Task 2: Implement `FakeNewsClassifier` (AC: #4)
-  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory exists)
-  - [x] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
-  - [x] `public classifications: NewsClassification[]` — configurable per-call return value
-  - [x] `public shouldThrow = false` — simulate Anthropic API failure
-  - [x] `classify()` returns `[...this.classifications]` (copy), throws if `shouldThrow = true`
-  - [x] No HTTP call — pure in-memory
+    - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts` (CREATE NEW — directory exists)
+    - [x] Class `FakeNewsClassifier` implementing `NewsClassifierPort`
+    - [x] `public classifications: NewsClassification[]` — configurable per-call return value
+    - [x] `public shouldThrow = false` — simulate Anthropic API failure
+    - [x] `classify()` returns `[...this.classifications]` (copy), throws if `shouldThrow = true`
+    - [x] No HTTP call — pure in-memory
 
 - [x] Task 3: Implement `IngestNewsUseCase` (AC: #1, #2, #3)
-  - [x] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.ts` (EXISTS AS EMPTY STUB — fill it)
-  - [x] Constructor: `(fetcher: RssFetcherPort, classifier: NewsClassifierPort, repository: NewsImpactRepositoryPort, feedUrls: string[])`
-  - [x] `execute()`: iterate `feedUrls`, catch per-feed errors (log + continue)
-  - [x] For each article from a feed: call `classify(headline)`, catch per-article errors (log + continue)
-  - [x] For each classification result: create `News` + `NewsImpact` with `crypto.randomUUID()` IDs
-  - [x] `analyzedAt = new Date()` at classify time; `publishedAt` from `RawArticle.publishedAt`
-  - [x] Call `repository.save(news, impacts)` once per article (news + all its impacts atomically)
-  - [x] Return `{ articlesIngested: number; impactsStored: number }` summary
-  - [x] Log `[PIPELINE] ingest: X articles fetched, Y impacts stored` on completion
+    - [x] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.ts` (EXISTS AS EMPTY STUB — fill it)
+    - [x] Constructor: `(fetcher: RssFetcherPort, classifier: NewsClassifierPort, repository: NewsImpactRepositoryPort, feedUrls: string[])`
+    - [x] `execute()`: iterate `feedUrls`, catch per-feed errors (log + continue)
+    - [x] For each article from a feed: call `classify(headline)`, catch per-article errors (log + continue)
+    - [x] For each classification result: create `News` + `NewsImpact` with `crypto.randomUUID()` IDs
+    - [x] `analyzedAt = new Date()` at classify time; `publishedAt` from `RawArticle.publishedAt`
+    - [x] Call `repository.save(news, impacts)` once per article (news + all its impacts atomically)
+    - [x] Return `{ articlesIngested: number; impactsStored: number }` summary
+    - [x] Log `[PIPELINE] ingest: X articles fetched, Y impacts stored` on completion
 
 - [x] Task 4: Write unit tests for `IngestNewsUseCase` (AC: #4)
-  - [x] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.test.ts` (CREATE NEW)
-  - [x] Tests: see Dev Notes for exact test cases
+    - [x] File: `src/lib/server/contexts/news/application/use-cases/ingest-news.use-case.test.ts` (CREATE NEW)
+    - [x] Tests: see Dev Notes for exact test cases
 
 ---
 
@@ -115,13 +115,13 @@ import type { Sector } from '../../domain/sector';
 import type { ImpactType } from '../../domain/impact-type';
 
 export interface NewsClassification {
-  sector: Sector;
-  impactScore: number; // range [-1, 1]
-  impactType: ImpactType;
+    sector: Sector;
+    impactScore: number; // range [-1, 1]
+    impactType: ImpactType;
 }
 
 export interface NewsClassifierPort {
-  classify(headline: string): Promise<NewsClassification[]>;
+    classify(headline: string): Promise<NewsClassification[]>;
 }
 ```
 
@@ -132,10 +132,16 @@ export interface NewsClassifierPort {
 ```typescript
 // Sector (sector.ts) — const object pattern
 export const Sector = {
-  TECHNOLOGY: 'TECHNOLOGY', ENERGY: 'ENERGY', HEALTHCARE: 'HEALTHCARE',
-  FINANCIALS: 'FINANCIALS', CONSUMER: 'CONSUMER', INDUSTRIALS: 'INDUSTRIALS',
-  MATERIALS: 'MATERIALS', UTILITIES: 'UTILITIES', REAL_ESTATE: 'REAL_ESTATE',
-  COMMUNICATION: 'COMMUNICATION',
+    TECHNOLOGY: 'TECHNOLOGY',
+    ENERGY: 'ENERGY',
+    HEALTHCARE: 'HEALTHCARE',
+    FINANCIALS: 'FINANCIALS',
+    CONSUMER: 'CONSUMER',
+    INDUSTRIALS: 'INDUSTRIALS',
+    MATERIALS: 'MATERIALS',
+    UTILITIES: 'UTILITIES',
+    REAL_ESTATE: 'REAL_ESTATE',
+    COMMUNICATION: 'COMMUNICATION'
 } as const;
 export type Sector = (typeof Sector)[keyof typeof Sector];
 
@@ -144,18 +150,34 @@ export const ImpactType = { STRUCTURAL: 'STRUCTURAL', PUNCTUAL: 'PUNCTUAL' } as 
 export type ImpactType = (typeof ImpactType)[keyof typeof ImpactType];
 
 // News (news.ts)
-export interface News { id: string; publishedAt: Date; analyzedAt: Date; source: string; headline: string; }
+export interface News {
+    id: string;
+    publishedAt: Date;
+    analyzedAt: Date;
+    source: string;
+    headline: string;
+}
 
 // NewsImpact (news-impact.ts)
-export interface NewsImpact { id: string; newsId: string; sector: Sector; impactScore: number; impactType: ImpactType; }
+export interface NewsImpact {
+    id: string;
+    newsId: string;
+    sector: Sector;
+    impactScore: number;
+    impactType: ImpactType;
+}
 
 // RawArticle (rss-fetcher.port.ts)
-export interface RawArticle { publishedAt: Date; source: string; headline: string; }
+export interface RawArticle {
+    publishedAt: Date;
+    source: string;
+    headline: string;
+}
 
 // NewsImpactRepositoryPort (news-impact.repository.port.ts)
 export interface NewsImpactRepositoryPort {
-  save(news: News, impacts: NewsImpact[]): Promise<void>;
-  findAllImpacts(): Promise<NewsImpact[]>;
+    save(news: News, impacts: NewsImpact[]): Promise<void>;
+    findAllImpacts(): Promise<NewsImpact[]>;
 }
 ```
 
@@ -163,18 +185,21 @@ export interface NewsImpactRepositoryPort {
 
 ```typescript
 // src/lib/server/contexts/news/infrastructure/fakes/fake-news-classifier.ts
-import type { NewsClassifierPort, NewsClassification } from '../../application/ports/news-classifier.port';
+import type {
+    NewsClassifierPort,
+    NewsClassification
+} from '../../application/ports/news-classifier.port';
 
 export class FakeNewsClassifier implements NewsClassifierPort {
-  public classifications: NewsClassification[] = [];
-  public shouldThrow = false;
+    public classifications: NewsClassification[] = [];
+    public shouldThrow = false;
 
-  async classify(_headline: string): Promise<NewsClassification[]> {
-    if (this.shouldThrow) {
-      throw new Error('Anthropic API error');
+    async classify(_headline: string): Promise<NewsClassification[]> {
+        if (this.shouldThrow) {
+            throw new Error('Anthropic API error');
+        }
+        return [...this.classifications];
     }
-    return [...this.classifications];
-  }
 }
 ```
 
@@ -191,71 +216,74 @@ import type { News } from '../../domain/news';
 import type { NewsImpact } from '../../domain/news-impact';
 
 export interface IngestNewsResult {
-  articlesIngested: number;
-  impactsStored: number;
+    articlesIngested: number;
+    impactsStored: number;
 }
 
 export class IngestNewsUseCase {
-  constructor(
-    private readonly fetcher: RssFetcherPort,
-    private readonly classifier: NewsClassifierPort,
-    private readonly repository: NewsImpactRepositoryPort,
-    private readonly feedUrls: string[],
-  ) {}
+    constructor(
+        private readonly fetcher: RssFetcherPort,
+        private readonly classifier: NewsClassifierPort,
+        private readonly repository: NewsImpactRepositoryPort,
+        private readonly feedUrls: string[]
+    ) {}
 
-  async execute(): Promise<IngestNewsResult> {
-    let articlesIngested = 0;
-    let impactsStored = 0;
+    async execute(): Promise<IngestNewsResult> {
+        let articlesIngested = 0;
+        let impactsStored = 0;
 
-    for (const feedUrl of this.feedUrls) {
-      let articles;
-      try {
-        articles = await this.fetcher.fetchArticles(feedUrl);
-      } catch (error) {
-        console.error(`[PIPELINE] ingest: feed failed ${feedUrl}`, error);
-        continue; // skip this feed, process others
-      }
+        for (const feedUrl of this.feedUrls) {
+            let articles;
+            try {
+                articles = await this.fetcher.fetchArticles(feedUrl);
+            } catch (error) {
+                console.error(`[PIPELINE] ingest: feed failed ${feedUrl}`, error);
+                continue; // skip this feed, process others
+            }
 
-      for (const article of articles) {
-        try {
-          const classifications = await this.classifier.classify(article.headline);
+            for (const article of articles) {
+                try {
+                    const classifications = await this.classifier.classify(article.headline);
 
-          if (classifications.length === 0) continue;
+                    if (classifications.length === 0) continue;
 
-          const newsId = crypto.randomUUID();
-          const news: News = {
-            id: newsId,
-            publishedAt: article.publishedAt,
-            analyzedAt: new Date(),
-            source: article.source,
-            headline: article.headline,
-          };
+                    const newsId = crypto.randomUUID();
+                    const news: News = {
+                        id: newsId,
+                        publishedAt: article.publishedAt,
+                        analyzedAt: new Date(),
+                        source: article.source,
+                        headline: article.headline
+                    };
 
-          const impacts: NewsImpact[] = classifications.map((c) => ({
-            id: crypto.randomUUID(),
-            newsId,
-            sector: c.sector,
-            impactScore: c.impactScore,
-            impactType: c.impactType,
-          }));
+                    const impacts: NewsImpact[] = classifications.map((c) => ({
+                        id: crypto.randomUUID(),
+                        newsId,
+                        sector: c.sector,
+                        impactScore: c.impactScore,
+                        impactType: c.impactType
+                    }));
 
-          await this.repository.save(news, impacts);
-          articlesIngested++;
-          impactsStored += impacts.length;
-        } catch (error) {
-          console.error(`[PIPELINE] ingest: article failed "${article.headline}"`, error);
-          // continue to next article — per-article error isolation (NFR6)
+                    await this.repository.save(news, impacts);
+                    articlesIngested++;
+                    impactsStored += impacts.length;
+                } catch (error) {
+                    console.error(`[PIPELINE] ingest: article failed "${article.headline}"`, error);
+                    // continue to next article — per-article error isolation (NFR6)
+                }
+            }
         }
-      }
-    }
 
-    console.log(`[PIPELINE] ingest: ${articlesIngested} articles fetched, ${impactsStored} impacts stored`);
-    return { articlesIngested, impactsStored };
-  }
+        console.log(
+            `[PIPELINE] ingest: ${articlesIngested} articles fetched, ${impactsStored} impacts stored`
+        );
+        return { articlesIngested, impactsStored };
+    }
 }
 ```
 
 **Critical implementation rules:**
+
 - Feed error (`fetcher.fetchArticles` throws) → `continue` to next feed (NFR7)
 - Article error (`classify` throws OR `repository.save` throws) → `console.error` + `continue` to next article (NFR6)
 - `save(news, impacts)` is called once per article with ALL its impacts — single atomic transaction per article
@@ -278,116 +306,124 @@ import { Sector } from '../../domain/sector';
 import { ImpactType } from '../../domain/impact-type';
 
 const makeArticle = (overrides?: Partial<RawArticle>): RawArticle => ({
-  headline: 'Test headline',
-  publishedAt: new Date('2026-03-19'),
-  source: 'Reuters',
-  ...overrides,
+    headline: 'Test headline',
+    publishedAt: new Date('2026-03-19'),
+    source: 'Reuters',
+    ...overrides
 });
 
 const makeClassification = (overrides?: Partial<NewsClassification>): NewsClassification => ({
-  sector: Sector.TECHNOLOGY,
-  impactScore: 0.5,
-  impactType: ImpactType.PUNCTUAL,
-  ...overrides,
+    sector: Sector.TECHNOLOGY,
+    impactScore: 0.5,
+    impactType: ImpactType.PUNCTUAL,
+    ...overrides
 });
 
 describe('IngestNewsUseCase', () => {
-  let fetcher: FakeRssFetcher;
-  let classifier: FakeNewsClassifier;
-  let repository: FakeNewsImpactRepository;
-  let useCase: IngestNewsUseCase;
+    let fetcher: FakeRssFetcher;
+    let classifier: FakeNewsClassifier;
+    let repository: FakeNewsImpactRepository;
+    let useCase: IngestNewsUseCase;
 
-  beforeEach(() => {
-    fetcher = new FakeRssFetcher();
-    classifier = new FakeNewsClassifier();
-    repository = new FakeNewsImpactRepository();
-    useCase = new IngestNewsUseCase(fetcher, classifier, repository, ['https://feed.com/rss']);
-  });
+    beforeEach(() => {
+        fetcher = new FakeRssFetcher();
+        classifier = new FakeNewsClassifier();
+        repository = new FakeNewsImpactRepository();
+        useCase = new IngestNewsUseCase(fetcher, classifier, repository, ['https://feed.com/rss']);
+    });
 
-  it('creates one NewsImpact per classification result', async () => {
-    fetcher.articles = [makeArticle()];
-    classifier.classifications = [makeClassification(), makeClassification({ sector: Sector.ENERGY })];
+    it('creates one NewsImpact per classification result', async () => {
+        fetcher.articles = [makeArticle()];
+        classifier.classifications = [
+            makeClassification(),
+            makeClassification({ sector: Sector.ENERGY })
+        ];
 
-    const result = await useCase.execute();
+        const result = await useCase.execute();
 
-    expect(repository.impacts).toHaveLength(2);
-    expect(repository.news).toHaveLength(1);
-    expect(result.articlesIngested).toBe(1);
-    expect(result.impactsStored).toBe(2);
-  });
+        expect(repository.impacts).toHaveLength(2);
+        expect(repository.news).toHaveLength(1);
+        expect(result.articlesIngested).toBe(1);
+        expect(result.impactsStored).toBe(2);
+    });
 
-  it('persists same newsId on all impacts for one article', async () => {
-    fetcher.articles = [makeArticle()];
-    classifier.classifications = [makeClassification(), makeClassification({ sector: Sector.FINANCIALS })];
+    it('persists same newsId on all impacts for one article', async () => {
+        fetcher.articles = [makeArticle()];
+        classifier.classifications = [
+            makeClassification(),
+            makeClassification({ sector: Sector.FINANCIALS })
+        ];
 
-    await useCase.execute();
+        await useCase.execute();
 
-    const [n] = repository.news;
-    expect(repository.impacts.every((i) => i.newsId === n.id)).toBe(true);
-  });
+        const [n] = repository.news;
+        expect(repository.impacts.every((i) => i.newsId === n.id)).toBe(true);
+    });
 
-  it('processes multiple articles independently', async () => {
-    fetcher.articles = [makeArticle({ headline: 'A' }), makeArticle({ headline: 'B' })];
-    classifier.classifications = [makeClassification()];
+    it('processes multiple articles independently', async () => {
+        fetcher.articles = [makeArticle({ headline: 'A' }), makeArticle({ headline: 'B' })];
+        classifier.classifications = [makeClassification()];
 
-    await useCase.execute();
+        await useCase.execute();
 
-    expect(repository.news).toHaveLength(2);
-    expect(repository.impacts).toHaveLength(2);
-  });
+        expect(repository.news).toHaveLength(2);
+        expect(repository.impacts).toHaveLength(2);
+    });
 
-  it('skips article when classifier throws — does not abort pipeline', async () => {
-    fetcher.articles = [makeArticle({ headline: 'Bad' }), makeArticle({ headline: 'Good' })];
-    let callCount = 0;
-    // Override classify to throw on first call only
-    classifier.classify = async (headline: string) => {
-      callCount++;
-      if (callCount === 1) throw new Error('API error');
-      return [makeClassification()];
-    };
+    it('skips article when classifier throws — does not abort pipeline', async () => {
+        fetcher.articles = [makeArticle({ headline: 'Bad' }), makeArticle({ headline: 'Good' })];
+        let callCount = 0;
+        // Override classify to throw on first call only
+        classifier.classify = async (headline: string) => {
+            callCount++;
+            if (callCount === 1) throw new Error('API error');
+            return [makeClassification()];
+        };
 
-    const result = await useCase.execute();
+        const result = await useCase.execute();
 
-    expect(repository.news).toHaveLength(1); // only "Good" saved
-    expect(result.articlesIngested).toBe(1);
-  });
+        expect(repository.news).toHaveLength(1); // only "Good" saved
+        expect(result.articlesIngested).toBe(1);
+    });
 
-  it('skips feed when fetcher throws — processes other feeds', async () => {
-    const goodFetcher = new FakeRssFetcher([makeArticle()]);
-    // Two feeds: first throws, second works
-    useCase = new IngestNewsUseCase(
-      { fetchArticles: async (url: string) => {
-        if (url.includes('bad')) throw new Error('unreachable');
-        return goodFetcher.fetchArticles(url);
-      }},
-      classifier,
-      repository,
-      ['https://bad-feed.com/rss', 'https://good-feed.com/rss'],
-    );
-    classifier.classifications = [makeClassification()];
+    it('skips feed when fetcher throws — processes other feeds', async () => {
+        const goodFetcher = new FakeRssFetcher([makeArticle()]);
+        // Two feeds: first throws, second works
+        useCase = new IngestNewsUseCase(
+            {
+                fetchArticles: async (url: string) => {
+                    if (url.includes('bad')) throw new Error('unreachable');
+                    return goodFetcher.fetchArticles(url);
+                }
+            },
+            classifier,
+            repository,
+            ['https://bad-feed.com/rss', 'https://good-feed.com/rss']
+        );
+        classifier.classifications = [makeClassification()];
 
-    const result = await useCase.execute();
+        const result = await useCase.execute();
 
-    expect(repository.news).toHaveLength(1);
-    expect(result.articlesIngested).toBe(1);
-  });
+        expect(repository.news).toHaveLength(1);
+        expect(result.articlesIngested).toBe(1);
+    });
 
-  it('returns zero counts when feed is empty', async () => {
-    fetcher.articles = [];
-    const result = await useCase.execute();
-    expect(result.articlesIngested).toBe(0);
-    expect(result.impactsStored).toBe(0);
-  });
+    it('returns zero counts when feed is empty', async () => {
+        fetcher.articles = [];
+        const result = await useCase.execute();
+        expect(result.articlesIngested).toBe(0);
+        expect(result.impactsStored).toBe(0);
+    });
 
-  it('skips article when classifier returns empty array', async () => {
-    fetcher.articles = [makeArticle()];
-    classifier.classifications = []; // zero classifications
+    it('skips article when classifier returns empty array', async () => {
+        fetcher.articles = [makeArticle()];
+        classifier.classifications = []; // zero classifications
 
-    const result = await useCase.execute();
+        const result = await useCase.execute();
 
-    expect(repository.news).toHaveLength(0);
-    expect(result.articlesIngested).toBe(0);
-  });
+        expect(repository.news).toHaveLength(0);
+        expect(result.articlesIngested).toBe(0);
+    });
 });
 ```
 
@@ -402,7 +438,10 @@ import type { News } from '../../domain/news';
 import type { NewsImpact } from '../../domain/news-impact';
 
 // In fake-news-classifier.ts (infrastructure/fakes/):
-import type { NewsClassifierPort, NewsClassification } from '../../application/ports/news-classifier.port';
+import type {
+    NewsClassifierPort,
+    NewsClassification
+} from '../../application/ports/news-classifier.port';
 
 // In ingest-news.use-case.test.ts (application/use-cases/):
 import { FakeRssFetcher } from '../../infrastructure/fakes/fake-rss-fetcher';
@@ -431,11 +470,11 @@ import { ImpactType } from '../../domain/impact-type';
 
 Two distinct error boundaries:
 
-| Error source | Boundary | Action |
-|---|---|---|
-| `fetcher.fetchArticles(url)` throws | Per-feed | `console.error` + `continue` (next feed) |
+| Error source                           | Boundary    | Action                                      |
+| -------------------------------------- | ----------- | ------------------------------------------- |
+| `fetcher.fetchArticles(url)` throws    | Per-feed    | `console.error` + `continue` (next feed)    |
 | `classifier.classify(headline)` throws | Per-article | `console.error` + `continue` (next article) |
-| `repository.save()` throws | Per-article | `console.error` + `continue` (next article) |
+| `repository.save()` throws             | Per-article | `console.error` + `continue` (next article) |
 
 Do NOT catch errors at the `execute()` function level — let the caller (`RunDailyPipelineUseCase` in Story 2.4) decide if a complete failure is fatal.
 

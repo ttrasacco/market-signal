@@ -6,10 +6,10 @@ export const LAMBDA_STRUCTURAL = 0.05;
 export const LAMBDA_PUNCTUAL = 0.3;
 
 export function computeDecay(
-  impactScore: number,
-  impactType: ImpactType,
-  ageInDays: number
+	impactScore: number,
+	impactType: ImpactType,
+	ageInDays: number
 ): number {
-  const lambda = impactType === ImpactType.STRUCTURAL ? LAMBDA_STRUCTURAL : LAMBDA_PUNCTUAL;
-  return impactScore * Math.exp(-lambda * ageInDays);
+	const lambda = impactType === ImpactType.STRUCTURAL ? LAMBDA_STRUCTURAL : LAMBDA_PUNCTUAL;
+	return impactScore * Math.exp(-lambda * ageInDays);
 }

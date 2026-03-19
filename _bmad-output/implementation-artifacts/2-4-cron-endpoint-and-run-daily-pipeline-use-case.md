@@ -30,33 +30,33 @@ so that Vercel Cron triggers the full pipeline autonomously every day without ma
 ## Tasks / Subtasks
 
 - [x] Task 1: Create `RunDailyPipelineUseCase` in `cross-context/pipeline/application/` (AC: #3, #4)
-  - [x] Create directory `src/lib/server/cross-context/pipeline/application/`
-  - [x] File: `src/lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case.ts`
-  - [x] Constructor: `(ingestNewsUseCase: IngestNewsUseCase)` — injected, not instantiated inside
-  - [x] `execute()` calls `ingestNewsUseCase.execute()`, logs `[PIPELINE] ingest: X articles fetched, Y impacts stored`
-  - [x] Returns `{ articlesIngested: number; impactsStored: number }` — re-exposes `IngestNewsResult`
-  - [x] On unhandled error: logs `[PIPELINE] error: <message>`, re-throws so caller can return HTTP 500
+    - [x] Create directory `src/lib/server/cross-context/pipeline/application/`
+    - [x] File: `src/lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case.ts`
+    - [x] Constructor: `(ingestNewsUseCase: IngestNewsUseCase)` — injected, not instantiated inside
+    - [x] `execute()` calls `ingestNewsUseCase.execute()`, logs `[PIPELINE] ingest: X articles fetched, Y impacts stored`
+    - [x] Returns `{ articlesIngested: number; impactsStored: number }` — re-exposes `IngestNewsResult`
+    - [x] On unhandled error: logs `[PIPELINE] error: <message>`, re-throws so caller can return HTTP 500
 
 - [x] Task 2: Create `cron-handler.ts` in `cross-context/pipeline/interface/` (AC: #2, #3, #4)
-  - [x] Create directory `src/lib/server/cross-context/pipeline/interface/`
-  - [x] File: `src/lib/server/cross-context/pipeline/interface/cron-handler.ts`
-  - [x] Export `handleCronRequest(request: Request, useCase: RunDailyPipelineUseCase): Promise<Response>`
-  - [x] Validate `Authorization: Bearer ${CRON_SECRET}` header — return `Response` 401 if invalid
-  - [x] Call `useCase.execute()`, return `Response` 200 with `{ articlesIngested, impactsStored }`
-  - [x] Catch unhandled errors: log `[PIPELINE] error: <message>`, return `Response` 500 with `{ error }`
-  - [x] Import `CRON_SECRET` from `$env/static/private`
+    - [x] Create directory `src/lib/server/cross-context/pipeline/interface/`
+    - [x] File: `src/lib/server/cross-context/pipeline/interface/cron-handler.ts`
+    - [x] Export `handleCronRequest(request: Request, useCase: RunDailyPipelineUseCase): Promise<Response>`
+    - [x] Validate `Authorization: Bearer ${CRON_SECRET}` header — return `Response` 401 if invalid
+    - [x] Call `useCase.execute()`, return `Response` 200 with `{ articlesIngested, impactsStored }`
+    - [x] Catch unhandled errors: log `[PIPELINE] error: <message>`, return `Response` 500 with `{ error }`
+    - [x] Import `CRON_SECRET` from `$env/static/private`
 
 - [x] Task 3: Create `GET /api/cron/daily` route handler (AC: #2, #3, #4)
-  - [x] File: `src/routes/api/cron/daily/+server.ts` (directory `src/routes/api/cron/daily/` already exists as a folder — create the file)
-  - [x] Instantiate: `DrizzleNewsImpactRepository`, `AnthropicClassifier`, `RssFetcher`, then `IngestNewsUseCase`, then `RunDailyPipelineUseCase`
-  - [x] Delegate to `handleCronRequest(event.request, pipeline)`
-  - [x] Exported `GET` handler only — Vercel Cron uses GET
+    - [x] File: `src/routes/api/cron/daily/+server.ts` (directory `src/routes/api/cron/daily/` already exists as a folder — create the file)
+    - [x] Instantiate: `DrizzleNewsImpactRepository`, `AnthropicClassifier`, `RssFetcher`, then `IngestNewsUseCase`, then `RunDailyPipelineUseCase`
+    - [x] Delegate to `handleCronRequest(event.request, pipeline)`
+    - [x] Exported `GET` handler only — Vercel Cron uses GET
 
 - [x] Task 4: Create `vercel.json` at project root (AC: #1)
-  - [x] File: `vercel.json`
-  - [x] Cron schedule: `0 6 * * *` (runs daily at 06:00 UTC)
-  - [x] Path: `/api/cron/daily`
-  - [x] No hardcoded secrets
+    - [x] File: `vercel.json`
+    - [x] Cron schedule: `0 6 * * *` (runs daily at 06:00 UTC)
+    - [x] Path: `/api/cron/daily`
+    - [x] No hardcoded secrets
 
 ## Dev Notes
 
@@ -102,6 +102,7 @@ vercel.json                                     ← CREATE NEW at project root
 Per architecture, `RunDailyPipelineUseCase` lives in `cross-context/pipeline/` because it orchestrates across multiple domain contexts (in this story: just `news/`, but Epic 3 will add `scoring/`). This location is mandated even if the current implementation only calls one use case.
 
 **Dependency rule for cross-context:**
+
 - `cross-context/pipeline/application/` MAY import from `contexts/news/application/use-cases/`
 - `cross-context/pipeline/interface/` handles HTTP wiring only, imports from `application/` layer above
 - `src/routes/api/cron/daily/+server.ts` (interface/routes layer) does all concrete instantiation
@@ -110,31 +111,38 @@ Per architecture, `RunDailyPipelineUseCase` lives in `cross-context/pipeline/` b
 
 ```typescript
 // src/lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case.ts
-import type { IngestNewsUseCase, IngestNewsResult } from '../../../../contexts/news/application/use-cases/ingest-news.use-case';
+import type {
+    IngestNewsUseCase,
+    IngestNewsResult
+} from '../../../../contexts/news/application/use-cases/ingest-news.use-case';
 
 export interface RunDailyPipelineResult {
-  articlesIngested: number;
-  impactsStored: number;
+    articlesIngested: number;
+    impactsStored: number;
 }
 
 export class RunDailyPipelineUseCase {
-  constructor(private readonly ingestNewsUseCase: IngestNewsUseCase) {}
+    constructor(private readonly ingestNewsUseCase: IngestNewsUseCase) {}
 
-  async execute(): Promise<RunDailyPipelineResult> {
-    try {
-      const result: IngestNewsResult = await this.ingestNewsUseCase.execute();
-      // IngestNewsUseCase already logs [PIPELINE] ingest: X articles fetched, Y impacts stored
-      return { articlesIngested: result.articlesIngested, impactsStored: result.impactsStored };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error(`[PIPELINE] error: ${message}`);
-      throw error; // re-throw so cron-handler returns HTTP 500
+    async execute(): Promise<RunDailyPipelineResult> {
+        try {
+            const result: IngestNewsResult = await this.ingestNewsUseCase.execute();
+            // IngestNewsUseCase already logs [PIPELINE] ingest: X articles fetched, Y impacts stored
+            return {
+                articlesIngested: result.articlesIngested,
+                impactsStored: result.impactsStored
+            };
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            console.error(`[PIPELINE] error: ${message}`);
+            throw error; // re-throw so cron-handler returns HTTP 500
+        }
     }
-  }
 }
 ```
 
 **Critical notes:**
+
 - `IngestNewsUseCase.execute()` does NOT throw on per-article/per-feed errors (it catches internally) — only truly unhandled exceptions reach the `catch` here
 - `IngestNewsUseCase` is imported by class reference, not by interface — it IS the dependency here
 - Do not log `[PIPELINE] ingest:` again here — it is already logged inside `IngestNewsUseCase`
@@ -147,31 +155,31 @@ import { CRON_SECRET } from '$env/static/private';
 import type { RunDailyPipelineUseCase } from '../application/run-daily-pipeline.use-case';
 
 export async function handleCronRequest(
-  request: Request,
-  useCase: RunDailyPipelineUseCase
+    request: Request,
+    useCase: RunDailyPipelineUseCase
 ): Promise<Response> {
-  const authHeader = request.headers.get('Authorization');
-  if (authHeader !== `Bearer ${CRON_SECRET}`) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 
-  try {
-    const result = await useCase.execute();
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    // [PIPELINE] error: message already logged in RunDailyPipelineUseCase
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+    try {
+        const result = await useCase.execute();
+        return new Response(JSON.stringify(result), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        // [PIPELINE] error: message already logged in RunDailyPipelineUseCase
+        return new Response(JSON.stringify({ error: message }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 }
 ```
 
@@ -193,22 +201,23 @@ import { RunDailyPipelineUseCase } from '$lib/server/cross-context/pipeline/appl
 import { handleCronRequest } from '$lib/server/cross-context/pipeline/interface/cron-handler';
 
 const FEED_URLS = [
-  'https://feeds.reuters.com/reuters/businessNews',
-  'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',
+    'https://feeds.reuters.com/reuters/businessNews',
+    'https://feeds.a.dj.com/rss/RSSMarketsMain.xml'
 ];
 
 export const GET: RequestHandler = async ({ request }) => {
-  const repository = new DrizzleNewsImpactRepository(db);
-  const classifier = new AnthropicClassifier(ANTHROPIC_API_KEY);
-  const fetcher = new RssFetcher();
-  const ingestUseCase = new IngestNewsUseCase(fetcher, classifier, repository, FEED_URLS);
-  const pipeline = new RunDailyPipelineUseCase(ingestUseCase);
+    const repository = new DrizzleNewsImpactRepository(db);
+    const classifier = new AnthropicClassifier(ANTHROPIC_API_KEY);
+    const fetcher = new RssFetcher();
+    const ingestUseCase = new IngestNewsUseCase(fetcher, classifier, repository, FEED_URLS);
+    const pipeline = new RunDailyPipelineUseCase(ingestUseCase);
 
-  return handleCronRequest(request, pipeline);
+    return handleCronRequest(request, pipeline);
 };
 ```
 
 **Wiring rules:**
+
 - `DATABASE_URL` is used via `db` singleton already — no need to pass it directly; import `db` from shared client
 - `ANTHROPIC_API_KEY` passed directly to `AnthropicClassifier` constructor (confirmed: `constructor(apiKey: string)`)
 - `RssFetcher` constructor takes no arguments (confirmed from Story 2.1)
@@ -221,12 +230,12 @@ export const GET: RequestHandler = async ({ request }) => {
 
 ```json
 {
-  "crons": [
-    {
-      "path": "/api/cron/daily",
-      "schedule": "0 6 * * *"
-    }
-  ]
+    "crons": [
+        {
+            "path": "/api/cron/daily",
+            "schedule": "0 6 * * *"
+        }
+    ]
 }
 ```
 
@@ -272,6 +281,7 @@ Vercel Cron → GET /api/cron/daily
 ### SvelteKit Route Pattern
 
 SvelteKit `+server.ts` handlers must export named functions matching HTTP methods: `GET`, `POST`, etc. For cron:
+
 - Export `export const GET: RequestHandler = async ({ request }) => { ... }`
 - `event.request` gives access to the raw `Request` object — needed to read `Authorization` header
 

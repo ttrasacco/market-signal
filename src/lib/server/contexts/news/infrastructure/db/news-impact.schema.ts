@@ -7,7 +7,7 @@ export const newsTable = pgTable(
 		publishedAt: timestamp('published_at').notNull(),
 		analyzedAt: timestamp('analyzed_at').notNull(),
 		source: text('source').notNull(),
-		headline: text('headline').notNull(),
+		headline: text('headline').notNull()
 	},
 	(t) => [uniqueIndex('news_source_headline_idx').on(t.source, t.headline)]
 );
@@ -20,5 +20,5 @@ export const newsImpactsTable = pgTable('news_impacts', {
 	sector: text('sector').notNull(),
 	impactScore: real('impact_score').notNull(),
 	impactType: text('impact_type').notNull(),
-	scoring: jsonb('scoring'),
+	scoring: jsonb('scoring')
 });

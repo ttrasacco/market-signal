@@ -1,10 +1,16 @@
 ---
-stepsCompleted: ['step-01-validate-prerequisites', 'step-02-design-epics', 'step-03-create-stories', 'step-04-final-validation']
+stepsCompleted:
+    [
+        'step-01-validate-prerequisites',
+        'step-02-design-epics',
+        'step-03-create-stories',
+        'step-04-final-validation'
+    ]
 inputDocuments:
-  - '_bmad-output/planning-artifacts/prd.md'
-  - '_bmad-output/planning-artifacts/architecture.md'
-  - '_bmad-output/planning-artifacts/ux-design-specification.md'
-  - '_bmad-output/planning-artifacts/ux-design-directions.html'
+    - '_bmad-output/planning-artifacts/prd.md'
+    - '_bmad-output/planning-artifacts/architecture.md'
+    - '_bmad-output/planning-artifacts/ux-design-specification.md'
+    - '_bmad-output/planning-artifacts/ux-design-directions.html'
 ---
 
 # market-signal - Epic Breakdown
@@ -101,22 +107,27 @@ FR17: Epic 2/5 — Cron execution logs
 ## Epic List
 
 ### Epic 1: Foundation — Project Infrastructure & Domain Setup
+
 Establish the complete technical foundation: database schema, domain models, ports, fakes, shared infrastructure, and error handling patterns — enabling all subsequent epics to build on a solid, tested base.
 **FRs covered:** FR2, FR7, FR11
 
 ### Epic 2: Autonomous Daily Ingestion Pipeline
+
 The system autonomously fetches financial news from RSS feeds, classifies each article via LLM (sector, impact score, impact type), and persists results as immutable events — zero manual intervention required.
 **FRs covered:** FR1, FR2, FR3, FR4, FR5, FR6, FR7, FR17
 
 ### Epic 3: Sector Scoring Engine
+
 The system computes daily decay-weighted conviction scores per sector using the STRUCTURAL/PUNCTUAL differentiated model and materializes them as queryable snapshots — ready for the dashboard to consume.
 **FRs covered:** FR8, FR9, FR10, FR11, FR15, FR17
 
 ### Epic 4: Dashboard — Sector Conviction at a Glance
+
 The user opens the dashboard on any morning and reads sector conviction in under 30 seconds — on desktop or mobile — with visual highlights, Ripple Cast encoding, reliability indicators, and zero interaction required.
 **FRs covered:** FR12, FR13, FR14, FR15
 
 ### Epic 5: Observability & Production Readiness
+
 The system provides structured logging, deployment configuration, and direct DB inspection capability so the user can diagnose failures, trust autonomous operation, and deploy confidently to Vercel.
 **FRs covered:** FR16, FR17, NFR1–NFR7
 
@@ -569,13 +580,15 @@ So that the ingestion use case can persist a `News` with its N associated `NewsI
 **Given** `news-impact.schema.ts` defines the two Drizzle tables
 **When** `drizzle-kit generate` is run
 **Then** a migration is produced with:
+
 - table `news`: `id`, `published_at`, `analyzed_at`, `source`, `headline`
 - table `news_impacts`: `id`, `news_id` (FK → `news.id`), `sector`, `impact_score`, `impact_type`
-**And** all columns are snake_case
+  **And** all columns are snake_case
 
 **Given** `news-impact.repository.port.ts` defines the port
 **When** imported from `contexts/news/application/`
 **Then** it exposes at minimum:
+
 - `save(news: News, impacts: NewsImpact[]): Promise<void>`
 - `findAllImpacts(): Promise<NewsImpact[]>`
 
@@ -636,4 +649,3 @@ So that the scoring engine can persist and retrieve materialized score snapshots
 **Given** `FakeSectorScoreRepository` exists in `infrastructure/fakes/`
 **When** used in unit tests
 **Then** it satisfies the port interface with an in-memory map, no DB required
-

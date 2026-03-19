@@ -6,7 +6,7 @@ const makeArticle = (overrides?: Partial<RawArticle>): RawArticle => ({
 	headline: 'Test headline',
 	publishedAt: new Date('2026-03-19'),
 	source: 'Reuters',
-	...overrides,
+	...overrides
 });
 
 describe('FakeRssFetcher', () => {
@@ -37,7 +37,9 @@ describe('FakeRssFetcher', () => {
 
 	it('throws when shouldThrow is true', async () => {
 		fake.shouldThrow = true;
-		await expect(fake.fetchArticles('https://any-feed.com/rss')).rejects.toThrow('Feed unavailable');
+		await expect(fake.fetchArticles('https://any-feed.com/rss')).rejects.toThrow(
+			'Feed unavailable'
+		);
 	});
 
 	it('ignores the feedUrl argument (any URL returns same articles)', async () => {

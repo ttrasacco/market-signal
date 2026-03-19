@@ -14,7 +14,7 @@ describe('FakeNewsImpactAdapter', () => {
 		analyzedAt: new Date(),
 		source: 'Reuters',
 		headline: 'Test headline',
-		...overrides,
+		...overrides
 	});
 
 	const makeImpact = (newsId: string, overrides?: Partial<NewsImpact>): NewsImpact => ({
@@ -23,7 +23,7 @@ describe('FakeNewsImpactAdapter', () => {
 		sector: Sector.TECHNOLOGY,
 		impactScore: 0.5,
 		impactType: ImpactType.PUNCTUAL,
-		...overrides,
+		...overrides
 	});
 
 	beforeEach(() => {
@@ -60,7 +60,7 @@ describe('FakeNewsImpactAdapter', () => {
 		const news = makeNews();
 		const impacts = [
 			makeImpact(news.id, { sector: Sector.ENERGY, impactScore: -0.3 }),
-			makeImpact(news.id, { sector: Sector.TECHNOLOGY, impactScore: 0.8 }),
+			makeImpact(news.id, { sector: Sector.TECHNOLOGY, impactScore: 0.8 })
 		];
 
 		await repo.save(news, impacts);

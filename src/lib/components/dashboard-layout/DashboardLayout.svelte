@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { SectorScoreWithReliability } from './dashboard-layout.utils';
-	import { getBullishHighlights, getBearishHighlights, sortForTable } from './dashboard-layout.utils';
+	import {
+		getBullishHighlights,
+		getBearishHighlights,
+		sortForTable
+	} from './dashboard-layout.utils';
 	import { computeReliabilityColor } from '../reliability-indicator/reliability-indicator.utils';
 	import SectorScoreCard from '../sector-score-card/SectorScoreCard.svelte';
 	import SectorRow from '../sector-row/SectorRow.svelte';
@@ -14,33 +18,42 @@
 </script>
 
 <div class="page">
-
 	{#if hasHighlights}
+		<div class="section-label">
+			<span class="dot green"></span>
+			Momentum
+		</div>
 		{#if bullish.length > 0}
-			<div class="section-label">
-				<span class="dot green"></span>
-				Momentum
-			</div>
 			<div class="highlight-grid">
 				{#each bullish as sector (sector.sector)}
 					<SectorScoreCard data={sector} reliabilityData={sector.reliabilityData} />
 				{/each}
 			</div>
+		{:else}
+			<div class="empty-zone" data-testid="empty-zone-momentum">
+				No significant momentum detected
+			</div>
 		{/if}
 
+		<div class="section-label">
+			<span class="dot red"></span>
+			Pressure
+		</div>
 		{#if bearish.length > 0}
-			<div class="section-label">
-				<span class="dot red"></span>
-				Pressure
-			</div>
 			<div class="highlight-grid">
 				{#each bearish as sector (sector.sector)}
 					<SectorScoreCard data={sector} reliabilityData={sector.reliabilityData} />
 				{/each}
 			</div>
+		{:else}
+			<div class="empty-zone" data-testid="empty-zone-pressure">
+				No significant pressure detected
+			</div>
 		{/if}
 	{:else}
-		<div class="empty-zone" data-testid="empty-zone">No significant sectoral momentum or pressure detected</div>
+		<div class="empty-zone" data-testid="empty-zone">
+			No significant sectoral momentum or pressure detected
+		</div>
 	{/if}
 
 	<hr class="divider" />
@@ -89,7 +102,6 @@
 			</div>
 		</div>
 	</div>
-
 </div>
 
 <style>
@@ -118,8 +130,12 @@
 		border-radius: 50%;
 		flex-shrink: 0;
 	}
-	.dot.green  { background: var(--color-green); }
-	.dot.red    { background: var(--color-red); }
+	.dot.green {
+		background: var(--color-green);
+	}
+	.dot.red {
+		background: var(--color-red);
+	}
 
 	/* ─── Highlight grid ── */
 	.highlight-grid {
@@ -130,11 +146,15 @@
 	}
 
 	@media (max-width: 720px) {
-		.highlight-grid { grid-template-columns: repeat(2, 1fr); }
+		.highlight-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
 	}
 
 	@media (max-width: 480px) {
-		.highlight-grid { grid-template-columns: 1fr; }
+		.highlight-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	/* ─── Divider ── */
@@ -182,7 +202,11 @@
 		margin-bottom: 10px;
 	}
 
-	.legend-rows { display: flex; flex-direction: column; gap: 6px; }
+	.legend-rows {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
 
 	.legend-row {
 		display: flex;
@@ -192,7 +216,9 @@
 		color: var(--color-text-secondary);
 	}
 
-	.legend-row strong { color: var(--color-text-primary); }
+	.legend-row strong {
+		color: var(--color-text-primary);
+	}
 
 	.legend-icon {
 		width: 22px;
@@ -243,7 +269,13 @@
 		border-radius: 50%;
 		flex-shrink: 0;
 	}
-	.legend-dot.green  { background: var(--color-green); }
-	.legend-dot.orange { background: var(--color-orange); }
-	.legend-dot.red    { background: var(--color-red); }
+	.legend-dot.green {
+		background: var(--color-green);
+	}
+	.legend-dot.orange {
+		background: var(--color-orange);
+	}
+	.legend-dot.red {
+		background: var(--color-red);
+	}
 </style>

@@ -1,10 +1,26 @@
 ---
-stepsCompleted: ['step-01-init', 'step-02-discovery', 'step-02b-vision', 'step-02c-executive-summary', 'step-03-success', 'step-04-journeys', 'step-05-domain', 'step-06-innovation', 'step-07-project-type', 'step-08-scoping', 'step-09-functional', 'step-10-nonfunctional', 'step-11-polish', 'step-12-complete']
+stepsCompleted:
+    [
+        'step-01-init',
+        'step-02-discovery',
+        'step-02b-vision',
+        'step-02c-executive-summary',
+        'step-03-success',
+        'step-04-journeys',
+        'step-05-domain',
+        'step-06-innovation',
+        'step-07-project-type',
+        'step-08-scoping',
+        'step-09-functional',
+        'step-10-nonfunctional',
+        'step-11-polish',
+        'step-12-complete'
+    ]
 classification:
-  projectType: web_app
-  domain: fintech
-  complexity: high
-  projectContext: greenfield
+    projectType: web_app
+    domain: fintech
+    complexity: high
+    projectContext: greenfield
 inputDocuments: ['CLAUDE.md', 'README.md', 'README.fr.md']
 workflowType: 'prd'
 ---
@@ -94,13 +110,13 @@ A major regulatory announcement hits Healthcare. Thomas sees no dashboard moveme
 
 ### Journey Requirements Summary
 
-| Capability | Journey |
-|---|---|
-| Sector score dashboard (read-only, mobile-friendly) | 1 |
-| Daily cron + autonomous ingestion | 1, 3 |
-| Append-only event store (no data loss on failure) | 3 |
-| LLM classification (sector + type + score) | 4 |
-| Direct DB inspection as ops fallback | 4 |
+| Capability                                          | Journey |
+| --------------------------------------------------- | ------- |
+| Sector score dashboard (read-only, mobile-friendly) | 1       |
+| Daily cron + autonomous ingestion                   | 1, 3    |
+| Append-only event store (no data loss on failure)   | 3       |
+| LLM classification (sector + type + score)          | 4       |
+| Direct DB inspection as ops fallback                | 4       |
 
 ## Domain-Specific Requirements
 
@@ -127,6 +143,7 @@ Bloomberg terminals, sentiment APIs, and news aggregators surface raw sentiment 
 **Validation:** After 30-day warm-up, cross-check sector score trends against known macro events. Spot-check 10–20 LLM classifications per week for coherence.
 
 **Risks:**
+
 - **LLM misclassification:** Structural/punctual distinction depends on prompt quality — fallback is manual DB inspection
 - **Signal sparsity:** Low news volume for a sector → artificially stable score; acceptable MVP limitation
 

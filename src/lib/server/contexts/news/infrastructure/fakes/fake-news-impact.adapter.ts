@@ -1,4 +1,7 @@
-import type { NewsImpactRepositoryPort, NewsImpactWithSource } from '../../application/ports/news-impact.repository.port';
+import type {
+	NewsImpactRepositoryPort,
+	NewsImpactWithSource
+} from '../../application/ports/news-impact.repository.port';
 import type { News } from '../../domain/news';
 import type { NewsImpact } from '../../domain/news-impact';
 
@@ -22,7 +25,7 @@ export class FakeNewsImpactAdapter implements NewsImpactRepositoryPort {
 				sector: impact.sector,
 				impactType: impact.impactType as 'PUNCTUAL' | 'STRUCTURAL',
 				publishedAt: parentNews?.publishedAt ?? new Date(0),
-				source: parentNews?.source ?? '',
+				source: parentNews?.source ?? ''
 			};
 		});
 	}

@@ -3,13 +3,31 @@
 	import ReliabilityIndicator from '../reliability-indicator/ReliabilityIndicator.svelte';
 	import type { ReliabilityData } from '../reliability-indicator/reliability-indicator.utils';
 
-	let { data, reliabilityData, dimmed = false }: { data: SectorScoreCardData; reliabilityData?: ReliabilityData; dimmed?: boolean } = $props();
+	let {
+		data,
+		reliabilityData,
+		dimmed = false
+	}: {
+		data: SectorScoreCardData;
+		reliabilityData?: ReliabilityData;
+		dimmed?: boolean;
+	} = $props();
 </script>
 
 <div class="sector-row" class:has-open-dropdown={false} data-testid="sector-row">
 	<div class="mini-ripple" class:dimmed>
-		<div class="mini-ripple-outer" class:green={data.outerColor === 'green'} class:orange={data.outerColor === 'orange'} class:red={data.outerColor === 'red'}></div>
-		<div class="mini-ripple-inner" class:green={data.innerColor === 'green'} class:orange={data.innerColor === 'orange'} class:red={data.innerColor === 'red'}></div>
+		<div
+			class="mini-ripple-outer"
+			class:green={data.outerColor === 'green'}
+			class:orange={data.outerColor === 'orange'}
+			class:red={data.outerColor === 'red'}
+		></div>
+		<div
+			class="mini-ripple-inner"
+			class:green={data.innerColor === 'green'}
+			class:orange={data.innerColor === 'orange'}
+			class:red={data.innerColor === 'red'}
+		></div>
 	</div>
 	<div class="sector-row-name" class:dimmed>{data.sector}</div>
 	<div class="sector-row-label" class:dimmed>{data.narrativeLabel}</div>
@@ -33,8 +51,12 @@
 	}
 
 	@media (max-width: 480px) {
-		.sector-row { padding: 10px 12px; }
-		.sector-row-label { display: none; }
+		.sector-row {
+			padding: 10px 12px;
+		}
+		.sector-row-label {
+			display: none;
+		}
 	}
 
 	.sector-row-name {
@@ -50,7 +72,9 @@
 		flex: 1;
 	}
 
-	.dimmed { opacity: 0.45; }
+	.dimmed {
+		opacity: 0.45;
+	}
 
 	.mini-ripple {
 		position: relative;
@@ -80,11 +104,23 @@
 		z-index: 1;
 	}
 
-	.mini-ripple-outer.green  { border-color: var(--color-green); }
-	.mini-ripple-outer.orange { border-color: var(--color-orange); }
-	.mini-ripple-outer.red    { border-color: var(--color-red); }
+	.mini-ripple-outer.green {
+		border-color: var(--color-green);
+	}
+	.mini-ripple-outer.orange {
+		border-color: var(--color-orange);
+	}
+	.mini-ripple-outer.red {
+		border-color: var(--color-red);
+	}
 
-	.mini-ripple-inner.green  { border-color: var(--color-green); }
-	.mini-ripple-inner.orange { border-color: var(--color-orange); }
-	.mini-ripple-inner.red    { border-color: var(--color-red); }
+	.mini-ripple-inner.green {
+		border-color: var(--color-green);
+	}
+	.mini-ripple-inner.orange {
+		border-color: var(--color-orange);
+	}
+	.mini-ripple-inner.red {
+		border-color: var(--color-red);
+	}
 </style>

@@ -26,6 +26,7 @@ The event store (news_impacts) is append-only and immutable, making full score
 reproducibility a first-class architectural property.
 
 **Non-Functional Requirements:**
+
 - Performance: dashboard load < 3s (pre-computed scores), full pipeline < 30 min/day
 - Security: all secrets server-side only, never client-exposed
 - Resilience: Anthropic API failure must not crash the pipeline; RSS unavailability
@@ -33,6 +34,7 @@ reproducibility a first-class architectural property.
 - Cost: daily article volume must remain bounded (Anthropic API usage is per-classification)
 
 **Scale & Complexity:**
+
 - Primary domain: full-stack web app (SvelteKit + PostgreSQL + LLM integration)
 - Complexity level: high
 - Estimated architectural components: 3 domain aggregates (NewsImpact, SectorScore,
@@ -124,18 +126,21 @@ at domain modeling, not project setup.
 ### Decision Priority Analysis
 
 **Critical Decisions (Block Implementation):**
+
 - Data layer: Drizzle ORM + Drizzle Kit migrations
 - Cron strategy: Vercel Cron Jobs → SvelteKit scheduled endpoint
 - API error handling: custom ApiError class pattern
 - Deployment target: Vercel + Neon PostgreSQL
 
 **Important Decisions (Shape Architecture):**
+
 - REST API (no GraphQL, no tRPC)
 - Tailwind CSS for UI
 - No caching layer (sector_scores IS the cache)
 - In-memory rate limiting in MVP
 
 **Deferred Decisions (Post-MVP):**
+
 - API authentication
 
 ### Data Architecture
@@ -165,18 +170,20 @@ at domain modeling, not project setup.
 ```typescript
 // src/lib/server/infrastructure/errors/api-error.ts
 export class ApiError extends Error {
-  constructor(
-    public readonly statusCode: number,
-    message: string,
-    public readonly cause?: unknown
-  ) { super(message) }
+    constructor(
+        public readonly statusCode: number,
+        message: string,
+        public readonly cause?: unknown
+    ) {
+        super(message);
+    }
 }
 
 // Used in catch blocks across all infrastructure adapters:
 export function createApiError(error: unknown): ApiError {
-  if (error instanceof ApiError) return error
-  if (error instanceof Error) return new ApiError(500, error.message, error)
-  return new ApiError(500, 'Unknown error', error)
+    if (error instanceof ApiError) return error;
+    if (error instanceof Error) return new ApiError(500, error.message, error);
+    return new ApiError(500, 'Unknown error', error);
 }
 ```
 
@@ -197,16 +204,17 @@ export function createApiError(error: unknown): ApiError {
 - **Hosting:** Vercel (SvelteKit adapter-vercel)
 - **Database:** Neon PostgreSQL (serverless-compatible, Vercel integration)
 - **Cron strategy:** Vercel Cron Jobs → calls `GET /api/cron/daily` on schedule
-  - Configured in `vercel.json` with cron expression
-  - Endpoint validates `Authorization: Bearer $CRON_SECRET` header
-  - Triggers `ingest-news` → `compute-daily-scores` use cases sequentially
-  - One endpoint per concern keeps the pipeline observable and restartable
+    - Configured in `vercel.json` with cron expression
+    - Endpoint validates `Authorization: Bearer $CRON_SECRET` header
+    - Triggers `ingest-news` → `compute-daily-scores` use cases sequentially
+    - One endpoint per concern keeps the pipeline observable and restartable
 - **CI/CD:** Vercel Git integration (push to main → deploy)
 - **Logging:** `console.log` / `console.error` → visible in Vercel function logs
 
 ### Decision Impact Analysis
 
 **Implementation Sequence:**
+
 1. DB schema (Drizzle) + migrations
 2. Domain models + ports
 3. Infrastructure adapters (Drizzle repositories + Anthropic classifier)
@@ -215,6 +223,7 @@ export function createApiError(error: unknown): ApiError {
 6. Dashboard UI (Tailwind)
 
 **Cross-Component Dependencies:**
+
 - Drizzle schema must be defined before repositories can be implemented
 - Ports must be defined before use cases (dependency inversion)
 - Cron endpoint depends on both use cases being complete
@@ -225,17 +234,20 @@ export function createApiError(error: unknown): ApiError {
 ### Naming Patterns
 
 **Database Naming Conventions:**
+
 - Tables: `snake_case` plural — `news_impacts`, `sector_scores`
 - Columns: `snake_case` — `impact_score`, `published_at`, `impact_type`
 - Foreign keys: `{table_singular}_id` — `news_impact_id`
 - Enum values in DB: `UPPER_SNAKE_CASE` — `STRUCTURAL`, `PUNCTUAL`
 
 **API Naming Conventions:**
+
 - Endpoints: kebab-case plural nouns — `/api/news-impacts`, `/api/sector-scores`
 - Query params: camelCase — `?sectorName=technology&limit=10`
 - Cron endpoint: `/api/cron/daily`
 
 **Code Naming Conventions:**
+
 - Files: kebab-case — `news-impact.ts`, `decay-model.ts`
 - Classes/Interfaces/Types: PascalCase — `NewsImpact`, `SectorScore`, `ImpactType`
 - Variables/Functions: camelCase — `impactScore`, `computeDecay()`
@@ -268,6 +280,7 @@ src/lib/server/
 ```
 
 **Dependency Rules:**
+
 - `contexts/*/domain/` — zero external imports, pure business logic only
 - `contexts/*/application/` — imports own domain only, depends on ports
 - `contexts/*/infrastructure/` — implements ports, imports own domain
@@ -283,6 +296,7 @@ route handler or cron trigger). The use case imports domain models from each
 source context but defines its own ports if needed.
 
 Example — `RunDailyPipelineUseCase`:
+
 ```
 cross-context/pipeline/
 ├── application/
@@ -292,12 +306,14 @@ cross-context/pipeline/
 ```
 
 **Test Location:**
+
 - Unit tests: co-located — `news-impact.test.ts` next to `news-impact.ts`
 - Integration tests: `src/lib/server/contexts/**/*.integration.test.ts`
 - E2E tests: `e2e/` at project root (Playwright)
 - Fake/stub port implementations: `src/lib/server/contexts/*/infrastructure/fakes/`
 
 **Configuration Files:**
+
 - DB schema: `src/lib/server/contexts/*/infrastructure/db/schema.ts`
 - DB client: `src/lib/server/infrastructure/db/client.ts` (shared)
 - Drizzle config: `drizzle.config.ts` at root
@@ -307,23 +323,27 @@ cross-context/pipeline/
 ### Format Patterns
 
 **API Response Formats:**
+
 - Success: direct object or array — `{ sectors: SectorScore[] }`
 - Error: `{ error: string, code: number }`
 - No envelope wrapper on success responses
 
 **Data Exchange Formats:**
+
 - Dates: ISO 8601 strings in JSON — `"2026-03-19T00:00:00.000Z"`
 - Scores: number, range [-1, 1] for impact, unbounded for sector score
 - Sector: string enum — `"TECHNOLOGY"`, `"ENERGY"`, `"HEALTHCARE"`, etc.
 - ImpactType: `"STRUCTURAL"` | `"PUNCTUAL"`
 
 **Drizzle ↔ Domain mapping:**
+
 - DB rows use snake_case columns → always mapped to camelCase domain objects
   at the repository boundary — domain layer never sees snake_case
 
 ### Process Patterns
 
 **Error Handling:**
+
 - Infrastructure adapters: wrap all errors with `createApiError()`
 - Use cases: let `ApiError` propagate, catch unknown errors only
 - Route handlers: `try/catch` → return `json({ error, code }, { status })`
@@ -331,11 +351,13 @@ cross-context/pipeline/
 - Pipeline steps: catch per-article errors, log and continue (don't abort batch)
 
 **Logging:**
+
 - Format: `[PIPELINE] step-name: message` for cron pipeline stages
 - Use `console.log` for success milestones, `console.error` for failures
 - Always log: articles fetched count, classified count, scores computed count
 
 **Dependency Injection:**
+
 - Use cases receive ports via constructor — never instantiate adapters inside use cases
 - Route handlers and cron handlers instantiate concrete adapters and inject into use cases
 - No DI container — manual wiring in `+server.ts` and cron interface handlers
@@ -343,6 +365,7 @@ cross-context/pipeline/
 ### Enforcement Guidelines
 
 **All AI Agents MUST:**
+
 - Never import anything from outside `domain/` within a domain file
 - Never put business logic in route handlers — delegate to use cases
 - Never query the DB in route handlers — always via use case → port → repository
@@ -351,6 +374,7 @@ cross-context/pipeline/
 - Only create a `cross-context/` entry when a use case genuinely spans multiple contexts
 
 **Anti-Patterns:**
+
 - ❌ `import { db } from '../../infrastructure/db/client'` inside a domain file
 - ❌ Business logic inside `+server.ts` route handlers
 - ❌ `new DrizzleNewsImpactRepository()` inside a use case
@@ -479,17 +503,20 @@ market-signal/
 ### Architectural Boundaries
 
 **API Boundaries:**
+
 - `/api/cron/daily` — internal only, protected by `CRON_SECRET` header
 - `/api/sector-scores` — read-only, rate-limited, serves dashboard data
 - `/api/news-impacts` — read-only, rate-limited, ops/debug only
 - `/dashboard` — SSR page, no client-side data fetching
 
 **Data Boundaries:**
+
 - `news_impacts` — append-only, written by `IngestNewsUseCase`, read by `ComputeDailyScoresUseCase`
 - `sector_scores` — overwritten daily by `ComputeDailyScoresUseCase`, read by dashboard
 - DB client is shared infrastructure — instantiated once in `shared/db/client.ts`
 
 **Context Boundaries:**
+
 - `contexts/news/` owns: `NewsImpact`, `ImpactType`, `Sector`, ingestion + classification
 - `contexts/scoring/` owns: `SectorScore`, `DecayModel`, score computation
 - `cross-context/pipeline/` owns: daily pipeline orchestration, cron trigger
@@ -497,18 +524,18 @@ market-signal/
 
 ### Requirements to Structure Mapping
 
-| FR | File |
-|---|---|
-| FR1–2 News fetch | `contexts/news/infrastructure/` (RSS adapter) |
-| FR3 Autonomous cron | `cross-context/pipeline/interface/cron-handler.ts` + `vercel.json` |
-| FR4–6 LLM classification | `contexts/news/infrastructure/llm/anthropic-classifier.ts` |
-| FR7 Append-only store | `contexts/news/infrastructure/db/news-impact.repository.ts` |
-| FR8–9 Decay scoring | `contexts/scoring/domain/decay-model.ts` |
-| FR10 Daily snapshot | `contexts/scoring/infrastructure/db/sector-score.repository.ts` |
-| FR11 Recomputation | `run-daily-pipeline.use-case.ts` (replayable from event store) |
-| FR12–15 Dashboard | `src/routes/dashboard/` + `src/lib/components/` |
-| FR16 DB inspection | Direct Neon/psql — no app layer needed |
-| FR17 Cron logging | `console.log/error` in `run-daily-pipeline.use-case.ts` |
+| FR                       | File                                                               |
+| ------------------------ | ------------------------------------------------------------------ |
+| FR1–2 News fetch         | `contexts/news/infrastructure/` (RSS adapter)                      |
+| FR3 Autonomous cron      | `cross-context/pipeline/interface/cron-handler.ts` + `vercel.json` |
+| FR4–6 LLM classification | `contexts/news/infrastructure/llm/anthropic-classifier.ts`         |
+| FR7 Append-only store    | `contexts/news/infrastructure/db/news-impact.repository.ts`        |
+| FR8–9 Decay scoring      | `contexts/scoring/domain/decay-model.ts`                           |
+| FR10 Daily snapshot      | `contexts/scoring/infrastructure/db/sector-score.repository.ts`    |
+| FR11 Recomputation       | `run-daily-pipeline.use-case.ts` (replayable from event store)     |
+| FR12–15 Dashboard        | `src/routes/dashboard/` + `src/lib/components/`                    |
+| FR16 DB inspection       | Direct Neon/psql — no app layer needed                             |
+| FR17 Cron logging        | `console.log/error` in `run-daily-pipeline.use-case.ts`            |
 
 ### Data Flow
 
@@ -551,6 +578,7 @@ wiring aligns with the absence of a DI container (appropriate for project scale)
 
 All 17 functional requirements mapped to specific files in the project structure.
 All 4 NFR categories addressed:
+
 - Performance: pre-computed sector_scores, zero runtime calculation
 - Security: server-only secrets, CRON_SECRET validation, in-memory rate limiter
 - Resilience: per-article error isolation in pipeline, graceful RSS failure handling
@@ -559,6 +587,7 @@ All 4 NFR categories addressed:
 ### Gap Analysis Results
 
 **Important (address in stories):**
+
 - RssFetcherPort not yet named — lives in `contexts/news/application/ports/rss-fetcher.port.ts`,
   adapter in `contexts/news/infrastructure/rss/rss-fetcher.ts`
 - GetSectorDashboard: dedicated use case `GetSectorDashboardUseCase` in
@@ -566,24 +595,28 @@ All 4 NFR categories addressed:
   called from `+page.server.ts` load function
 
 **Minor:**
+
 - Sector enum values not enumerated — define in `sector.ts` story
 - λ values for STRUCTURAL vs PUNCTUAL not specified — define in `decay-model.ts` story
 
 ### Architecture Completeness Checklist
 
 **✅ Requirements Analysis**
+
 - [x] Project context thoroughly analyzed
 - [x] Scale and complexity assessed
 - [x] Technical constraints identified
 - [x] Cross-cutting concerns mapped
 
 **✅ Architectural Decisions**
+
 - [x] Critical decisions documented
 - [x] Technology stack fully specified (SvelteKit, Drizzle, Neon, Vercel, Tailwind)
 - [x] Integration patterns defined
 - [x] Performance considerations addressed
 
 **✅ Implementation Patterns**
+
 - [x] Naming conventions established
 - [x] Structure patterns defined (contexts + cross-context + middleware + decorators)
 - [x] Cross-context use case pattern documented
@@ -591,6 +624,7 @@ All 4 NFR categories addressed:
 - [x] Dependency injection pattern documented
 
 **✅ Project Structure**
+
 - [x] Complete directory structure defined
 - [x] Component boundaries established
 - [x] Integration points mapped
@@ -603,12 +637,14 @@ All 4 NFR categories addressed:
 **Confidence Level:** High
 
 **Key Strengths:**
+
 - Append-only event store guarantees full score reproducibility
 - Hexagonal architecture with strict context isolation enables safe parallel development
 - Cross-context pattern cleanly handles pipeline orchestration without coupling domains
 - Vercel Cron + scheduled endpoint keeps infrastructure simple for solo deployment
 
 **Areas for Future Enhancement:**
+
 - Decorators (retry, circuit-breaker) for Anthropic API resilience — post-MVP
 - API authentication — post-MVP
 - Score history visualization requires schema extension — Phase 3

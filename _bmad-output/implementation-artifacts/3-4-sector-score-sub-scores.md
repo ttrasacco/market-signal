@@ -47,37 +47,37 @@ so that the dashboard can independently color the inner ring (PUNCTUAL) and oute
 ## Tasks / Subtasks
 
 - [x] Task 1 — Extend `SectorScore` domain type (AC: #1)
-  - [x] Edit `src/lib/server/contexts/scoring/domain/sector-score.ts`
-  - [x] Add `punctualScore: number` and `structuralScore: number` fields to the `SectorScore` interface
-  - [x] No imports to add — domain stays pure
+    - [x] Edit `src/lib/server/contexts/scoring/domain/sector-score.ts`
+    - [x] Add `punctualScore: number` and `structuralScore: number` fields to the `SectorScore` interface
+    - [x] No imports to add — domain stays pure
 
 - [x] Task 2 — Update `ComputeDailyScoresUseCase` to compute sub-scores (AC: #2, #3, #4)
-  - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.ts`
-  - [x] In the sector reduce loop, split impacts by `impactType` before summing
-  - [x] Compute `punctualScore` and `structuralScore` separately, then derive `score = punctualScore + structuralScore`
-  - [x] Pass all three fields to `sectorScoreRepo.upsert({ date, sector, score, punctualScore, structuralScore })`
+    - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.ts`
+    - [x] In the sector reduce loop, split impacts by `impactType` before summing
+    - [x] Compute `punctualScore` and `structuralScore` separately, then derive `score = punctualScore + structuralScore`
+    - [x] Pass all three fields to `sectorScoreRepo.upsert({ date, sector, score, punctualScore, structuralScore })`
 
 - [x] Task 3 — Update `FakeSectorScoreRepository` (AC: #8)
-  - [x] Edit `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts`
-  - [x] The `upsert` and `findLatest` methods already accept/return `SectorScore` — no logic change needed, just TS type propagation
+    - [x] Edit `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts`
+    - [x] The `upsert` and `findLatest` methods already accept/return `SectorScore` — no logic change needed, just TS type propagation
 
 - [x] Task 4 — Update DB schema and generate migration (AC: #5, #7)
-  - [x] Edit `src/lib/server/contexts/scoring/infrastructure/db/sector-score.schema.ts`
-  - [x] Add `punctualScore: real('punctual_score').notNull().default(0)` and `structuralScore: real('structural_score').notNull().default(0)`
-  - [x] Run `npx drizzle-kit generate` to create migration file (`0002_bizarre_whistler.sql`)
-  - [x] Run `npx drizzle-kit push` against the Neon DB to apply (migrate hangs with this Neon config — push used instead)
+    - [x] Edit `src/lib/server/contexts/scoring/infrastructure/db/sector-score.schema.ts`
+    - [x] Add `punctualScore: real('punctual_score').notNull().default(0)` and `structuralScore: real('structural_score').notNull().default(0)`
+    - [x] Run `npx drizzle-kit generate` to create migration file (`0002_bizarre_whistler.sql`)
+    - [x] Run `npx drizzle-kit push` against the Neon DB to apply (migrate hangs with this Neon config — push used instead)
 
 - [x] Task 5 — Update `DrizzleSectorScoreRepository` (AC: #5, #6)
-  - [x] Edit `src/lib/server/contexts/scoring/infrastructure/db/sector-score.repository.ts`
-  - [x] `upsert()`: add `punctualScore` and `structuralScore` to `.values()` and `onConflictDoUpdate.set`
-  - [x] `findLatest()`: map `row.punctualScore` and `row.structuralScore` in the returned objects
+    - [x] Edit `src/lib/server/contexts/scoring/infrastructure/db/sector-score.repository.ts`
+    - [x] `upsert()`: add `punctualScore` and `structuralScore` to `.values()` and `onConflictDoUpdate.set`
+    - [x] `findLatest()`: map `row.punctualScore` and `row.structuralScore` in the returned objects
 
 - [x] Task 6 — Update unit tests for `ComputeDailyScoresUseCase` (AC: #8)
-  - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.test.ts`
-  - [x] Add test: PUNCTUAL-only sector → `structuralScore === 0`, `punctualScore > 0`
-  - [x] Add test: STRUCTURAL-only sector → `punctualScore === 0`, `structuralScore > 0`
-  - [x] Add test: mixed sector → `score ≈ punctualScore + structuralScore`
-  - [x] Update existing tests that assert on `SectorScore` shape to include the new fields
+    - [x] Edit `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.test.ts`
+    - [x] Add test: PUNCTUAL-only sector → `structuralScore === 0`, `punctualScore > 0`
+    - [x] Add test: STRUCTURAL-only sector → `punctualScore === 0`, `structuralScore > 0`
+    - [x] Add test: mixed sector → `score ≈ punctualScore + structuralScore`
+    - [x] Update existing tests that assert on `SectorScore` shape to include the new fields
 
 ## Dev Notes
 
@@ -88,11 +88,11 @@ so that the dashboard can independently color the inner ring (PUNCTUAL) and oute
 import type { Sector } from '../../news/domain/sector';
 
 export interface SectorScore {
-  date: Date;
-  sector: Sector;
-  score: number;          // composite = punctualScore + structuralScore
-  punctualScore: number;  // Σ decayed PUNCTUAL impacts
-  structuralScore: number; // Σ decayed STRUCTURAL impacts
+    date: Date;
+    sector: Sector;
+    score: number; // composite = punctualScore + structuralScore
+    punctualScore: number; // Σ decayed PUNCTUAL impacts
+    structuralScore: number; // Σ decayed STRUCTURAL impacts
 }
 ```
 
@@ -101,15 +101,17 @@ Zero imports to add. Domain stays pure.
 ### 2. Use case — how to split the reduce loop
 
 Current pattern:
+
 ```typescript
 const score = sectorImpacts.reduce((sum, impact) => {
-  const ageInDays = (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
-  return sum + computeDecay(impact.impactScore, impact.impactType, ageInDays);
+    const ageInDays = (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
+    return sum + computeDecay(impact.impactScore, impact.impactType, ageInDays);
 }, 0);
 await this.sectorScoreRepo.upsert({ date, sector, score });
 ```
 
 New pattern:
+
 ```typescript
 import { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 
@@ -117,13 +119,13 @@ let punctualScore = 0;
 let structuralScore = 0;
 
 for (const impact of sectorImpacts) {
-  const ageInDays = (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
-  const decayed = computeDecay(impact.impactScore, impact.impactType, ageInDays);
-  if (impact.impactType === ImpactType.PUNCTUAL) {
-    punctualScore += decayed;
-  } else {
-    structuralScore += decayed;
-  }
+    const ageInDays = (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
+    const decayed = computeDecay(impact.impactScore, impact.impactType, ageInDays);
+    if (impact.impactType === ImpactType.PUNCTUAL) {
+        punctualScore += decayed;
+    } else {
+        structuralScore += decayed;
+    }
 }
 
 const score = punctualScore + structuralScore;
@@ -190,15 +192,15 @@ The migration adds two nullable `real` columns with `DEFAULT 0`. Existing rows w
 
 ### 7. Files to modify
 
-| File | Action |
-|---|---|
-| `src/lib/server/contexts/scoring/domain/sector-score.ts` | EDIT — add 2 fields |
-| `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.ts` | EDIT — split reduce loop |
-| `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.test.ts` | EDIT — add 3 tests, update existing |
-| `src/lib/server/contexts/scoring/infrastructure/db/sector-score.schema.ts` | EDIT — add 2 columns |
-| `src/lib/server/contexts/scoring/infrastructure/db/sector-score.repository.ts` | EDIT — upsert + findLatest |
-| `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts` | CHECK — TS will flag if needed |
-| `drizzle/migrations/` | GENERATED — new migration file from `drizzle-kit generate` |
+| File                                                                                          | Action                                                     |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `src/lib/server/contexts/scoring/domain/sector-score.ts`                                      | EDIT — add 2 fields                                        |
+| `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.ts`      | EDIT — split reduce loop                                   |
+| `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.test.ts` | EDIT — add 3 tests, update existing                        |
+| `src/lib/server/contexts/scoring/infrastructure/db/sector-score.schema.ts`                    | EDIT — add 2 columns                                       |
+| `src/lib/server/contexts/scoring/infrastructure/db/sector-score.repository.ts`                | EDIT — upsert + findLatest                                 |
+| `src/lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.repository.ts`        | CHECK — TS will flag if needed                             |
+| `drizzle/migrations/`                                                                         | GENERATED — new migration file from `drizzle-kit generate` |
 
 ### 8. Files NOT to touch
 

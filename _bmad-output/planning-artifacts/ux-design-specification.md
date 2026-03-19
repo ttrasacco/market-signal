@@ -1,6 +1,7 @@
 ---
 stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
-inputDocuments: ['_bmad-output/planning-artifacts/prd.md', '_bmad-output/planning-artifacts/architecture.md']
+inputDocuments:
+    ['_bmad-output/planning-artifacts/prd.md', '_bmad-output/planning-artifacts/architecture.md']
 ---
 
 # UX Design Specification market-signal
@@ -24,7 +25,7 @@ Single user — Thomas, individual investor, personal deployment. Opens the dash
 
 ### Key Design Challenges
 
-1. **Legibility of an abstract score**: The decay-weighted score is not a familiar percentage. The UI must communicate *direction* and *conviction strength* without requiring the user to understand the underlying exponential formula.
+1. **Legibility of an abstract score**: The decay-weighted score is not a familiar percentage. The UI must communicate _direction_ and _conviction strength_ without requiring the user to understand the underlying exponential formula.
 2. **Warm-up period opacity**: For the first ~30 days, scores exist but are not yet reliable. The UI must convey signal maturity without overwhelming the interface.
 3. **Information density on mobile**: ~10 sectors with scores and trend indicators must remain scannable and unambiguous on small screens.
 
@@ -36,15 +37,15 @@ Single user — Thomas, individual investor, personal deployment. Opens the dash
 
 ### Dashboard Layout Decisions
 
-| Topic | Decision |
-|---|---|
-| Structure | Top 3 highlight (bullish) + Bottom 3 highlight (bearish) + full sector table below |
-| Threshold | Top 3 from sectors with score > 0 only · Bottom 3 from sectors with score < 0 only |
-| Order | By descending score within each section |
-| Intensity | Color + score bar |
-| Empty zone | Contextual message (e.g. "No significant sectoral pressure detected") |
-| N | 3 |
-| Neutral zone | Ignored in MVP |
+| Topic        | Decision                                                                           |
+| ------------ | ---------------------------------------------------------------------------------- |
+| Structure    | Top 3 highlight (bullish) + Bottom 3 highlight (bearish) + full sector table below |
+| Threshold    | Top 3 from sectors with score > 0 only · Bottom 3 from sectors with score < 0 only |
+| Order        | By descending score within each section                                            |
+| Intensity    | Color + score bar                                                                  |
+| Empty zone   | Contextual message (e.g. "No significant sectoral pressure detected")              |
+| N            | 3                                                                                  |
+| Neutral zone | Ignored in MVP                                                                     |
 
 ## Core User Experience
 
@@ -85,14 +86,15 @@ The core action is pure reading — open, scan, leave. Thomas spends ~30 seconds
 
 Each sector card displays a reliability icon whose color reflects the worst of 4 criteria:
 
-| Criterion | Red | Orange | Green |
-|---|---|---|---|
-| Total articles analyzed | < 5 | 5–20 | > 20 |
-| Recent articles (last 7 days) | < 2 | 2–5 | > 5 |
-| Source diversity | 1 source | 2–3 sources | > 3 sources |
-| PUNCTUAL proportion | > 70% | 35–70% | 0–35% |
+| Criterion                     | Red      | Orange      | Green       |
+| ----------------------------- | -------- | ----------- | ----------- |
+| Total articles analyzed       | < 5      | 5–20        | > 20        |
+| Recent articles (last 7 days) | < 2      | 2–5         | > 5         |
+| Source diversity              | 1 source | 2–3 sources | > 3 sources |
+| PUNCTUAL proportion           | > 70%    | 35–70%      | 0–35%       |
 
 **Behavior:**
+
 - Icon color = worst criterion color across all 4
 - Desktop: hover → tooltip listing all criteria with individual colors
 - Mobile: icon color only, no tooltip
@@ -111,12 +113,12 @@ Each sector card displays a reliability icon whose color reflects the worst of 4
 
 ### Emotional Journey Mapping
 
-| Moment | Target emotion |
-|---|---|
-| Daily scan — scores coherent | Confidence + satisfaction |
-| Dashboard stable, no movement | Calm — no alarm signal |
+| Moment                            | Target emotion                             |
+| --------------------------------- | ------------------------------------------ |
+| Daily scan — scores coherent      | Confidence + satisfaction                  |
+| Dashboard stable, no movement     | Calm — no alarm signal                     |
 | Pipeline silent (no score change) | Neutral/sober — user checks logs if needed |
-| After 30-day warm-up | Satisfaction ("it matches reality") |
+| After 30-day warm-up              | Satisfaction ("it matches reality")        |
 
 ### Emotions to Avoid
 
@@ -148,6 +150,7 @@ Each sector card displays a reliability icon whose color reflects the worst of 4
 ### Inspiring Products Analysis
 
 **Trade Republic**
+
 - Minimal, calm dashboard with dark background and very discrete color accents (green/red)
 - Clear visual hierarchy: essential information large, details small
 - Generous whitespace — each element has room to breathe
@@ -155,6 +158,7 @@ Each sector card displays a reliability icon whose color reflects the worst of 4
 - Mobile-first by design — the reference for calm financial UX
 
 **GitLab**
+
 - High information density organized into clearly titled sections
 - Status badges (CI pipeline, issues) use simple colored indicators (green/orange/red) — exactly the pattern chosen for the reliability icon
 - Ordered lists with secondary meta-information in attenuated grey
@@ -162,13 +166,13 @@ Each sector card displays a reliability icon whose color reflects the worst of 4
 
 ### Transferable UX Patterns
 
-| Pattern | Source | Application in market-signal |
-|---|---|---|
-| Dark background + discrete color accents | Trade Republic | Dashboard color palette |
-| Primary value large, meta small | Trade Republic | Sector cards |
-| Colored status badges (green/orange/red) | GitLab | Reliability icon system |
-| Clearly titled sections | GitLab | Highlights vs full sector table |
-| Generous spacing around elements | Trade Republic | Mobile card density |
+| Pattern                                  | Source         | Application in market-signal    |
+| ---------------------------------------- | -------------- | ------------------------------- |
+| Dark background + discrete color accents | Trade Republic | Dashboard color palette         |
+| Primary value large, meta small          | Trade Republic | Sector cards                    |
+| Colored status badges (green/orange/red) | GitLab         | Reliability icon system         |
+| Clearly titled sections                  | GitLab         | Highlights vs full sector table |
+| Generous spacing around elements         | Trade Republic | Mobile card density             |
 
 ### Anti-Patterns to Avoid
 
@@ -180,21 +184,24 @@ Each sector card displays a reliability icon whose color reflects the worst of 4
 ### Design Inspiration Strategy
 
 **Adopt:**
+
 - Trade Republic's visual restraint and dark palette — directly supports the calm, confident emotional goal
 - GitLab's colored status badge system — maps directly to the reliability indicator pattern
 
 **Adapt:**
+
 - Trade Republic's card layout → simplify further for read-only context (no tap targets needed in MVP)
 - GitLab's section structure → apply to highlight zones (bullish/bearish) + full table separation
 
 **Avoid:**
+
 - Any pattern that implies urgency, real-time reactivity, or actionable recommendations
 
 ## Core User Experience — Defining Experience
 
 ### 2.1 Defining Experience
 
-> *"Open the dashboard and read in 30 seconds where sectoral conviction is building — and where it is fading."*
+> _"Open the dashboard and read in 30 seconds where sectoral conviction is building — and where it is fading."_
 
 The product is a **read**, not an interaction. Its value is instant directional clarity: the user closes the tab knowing something they didn't before, without having clicked anything. The mental model is weather — open, scan, leave.
 
@@ -217,6 +224,7 @@ The product is a **read**, not an interaction. Its value is instant directional 
 ### 2.4 Novel UX Patterns
 
 **Ripple Cast** — a new visual pattern for encoding two temporal dimensions on a single card:
+
 - **Inner ring** = PUNCTUAL signal (current state, fast decay)
 - **Outer ripples** = STRUCTURAL signal (forward projection, slow decay, 7–30 day horizon)
 - Each dimension carries an independent color (green / orange / red)
@@ -229,6 +237,7 @@ This pattern is novel in financial UX — no existing tool encodes PUNCTUAL vs S
 **Initiation:** User opens the dashboard (no login, no configuration)
 
 **Interaction:** Pure reading — no clicks required in MVP
+
 - Highlights zone: top 3 bullish + bottom 3 bearish (reliable sectors only)
 - Each card: sector name + Ripple Cast visual + narrative label
 - Full sector table below: all sectors ordered by score, low-reliability sectors at bottom with dimmed opacity + reliability icon
@@ -241,33 +250,33 @@ This pattern is novel in financial UX — no existing tool encodes PUNCTUAL vs S
 
 Static labels derived from PUNCTUAL color × STRUCTURAL color — no LLM required at display time:
 
-| Current (PUNCTUAL) | Previsionnel (STRUCTURAL) | Label |
-|---|---|---|
-| 🟢 Green | 🟢 Green | "Confirmed momentum" |
-| 🟢 Green | 🟠 Orange | "Healthy · caution ahead" |
-| 🟢 Green | 🔴 Red | "Healthy · structural deterioration" |
-| 🟠 Orange | 🟢 Green | "Turbulence · rebound expected" |
-| 🟠 Orange | 🟠 Orange | "Mixed signal" |
-| 🟠 Orange | 🔴 Red | "Growing pressure" |
-| 🔴 Red | 🟢 Green | "Current crisis · rebound expected" |
-| 🔴 Red | 🟠 Orange | "Crisis · uncertain stabilization" |
-| 🔴 Red | 🔴 Red | "Widespread deterioration" |
+| Current (PUNCTUAL) | Previsionnel (STRUCTURAL) | Label                                |
+| ------------------ | ------------------------- | ------------------------------------ |
+| 🟢 Green           | 🟢 Green                  | "Confirmed momentum"                 |
+| 🟢 Green           | 🟠 Orange                 | "Healthy · caution ahead"            |
+| 🟢 Green           | 🔴 Red                    | "Healthy · structural deterioration" |
+| 🟠 Orange          | 🟢 Green                  | "Turbulence · rebound expected"      |
+| 🟠 Orange          | 🟠 Orange                 | "Mixed signal"                       |
+| 🟠 Orange          | 🔴 Red                    | "Growing pressure"                   |
+| 🔴 Red             | 🟢 Green                  | "Current crisis · rebound expected"  |
+| 🔴 Red             | 🟠 Orange                 | "Crisis · uncertain stabilization"   |
+| 🔴 Red             | 🔴 Red                    | "Widespread deterioration"           |
 
 ## Visual Design Foundation
 
 ### Color System
 
-| Role | Token | Hex | Usage |
-|---|---|---|---|
-| Background | `--color-bg` | `#0F0F11` | Main page background |
-| Surface | `--color-surface` | `#1A1A1F` | Sector cards |
+| Role             | Token                      | Hex       | Usage                               |
+| ---------------- | -------------------------- | --------- | ----------------------------------- |
+| Background       | `--color-bg`               | `#0F0F11` | Main page background                |
+| Surface          | `--color-surface`          | `#1A1A1F` | Sector cards                        |
 | Surface elevated | `--color-surface-elevated` | `#242429` | Hover states / reliability dropdown |
-| Border | `--color-border` | `#2E2E35` | Card outlines, dividers |
-| Text primary | `--color-text-primary` | `#F0F0F2` | Sector names, headings |
-| Text secondary | `--color-text-secondary` | `#8A8A96` | Narrative labels, meta |
-| Signal green | `--color-green` | `#22C55E` | Bullish / reliable |
-| Signal orange | `--color-orange` | `#F59E0B` | Mixed / caution |
-| Signal red | `--color-red` | `#EF4444` | Bearish / unreliable |
+| Border           | `--color-border`           | `#2E2E35` | Card outlines, dividers             |
+| Text primary     | `--color-text-primary`     | `#F0F0F2` | Sector names, headings              |
+| Text secondary   | `--color-text-secondary`   | `#8A8A96` | Narrative labels, meta              |
+| Signal green     | `--color-green`            | `#22C55E` | Bullish / reliable                  |
+| Signal orange    | `--color-orange`           | `#F59E0B` | Mixed / caution                     |
+| Signal red       | `--color-red`              | `#EF4444` | Bearish / unreliable                |
 
 Color roles are semantic — green/orange/red are used consistently across Ripple Cast rings, reliability icons, and score bars. No other accent colors introduced in MVP.
 
@@ -276,10 +285,10 @@ Color roles are semantic — green/orange/red are used consistently across Rippl
 - **Font family**: `Inter`, with `system-ui` fallback — clean, neutral, optimized for screen readability
 - **No serif or display fonts** — not a financial magazine, a signal tool
 - **Type hierarchy**:
-  - Sector name: `500` weight, `16px`
-  - Narrative label: `400` weight, `12px`, uppercase, text-secondary color
-  - Section headings (Bullish / Bearish): `600` weight, `13px`, uppercase, text-secondary
-  - Reliability dropdown: `400` weight, `12px`
+    - Sector name: `500` weight, `16px`
+    - Narrative label: `400` weight, `12px`, uppercase, text-secondary color
+    - Section headings (Bullish / Bearish): `600` weight, `13px`, uppercase, text-secondary
+    - Reliability dropdown: `400` weight, `12px`
 - **No decorative typography** — legibility over personality
 
 ### Spacing & Layout Foundation
@@ -325,5 +334,3 @@ Color roles are semantic — green/orange/red are used consistently across Rippl
 - Color system: green (bullish/reliable) · red (bearish/unreliable) · orange (warning/moderate) — used consistently across score bars and reliability badges
 - Typography: clean, minimal — prioritize legibility of score values over decorative type choices
 - No animations or transitions beyond minimal hover states — calm is a feature
-
-

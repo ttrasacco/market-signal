@@ -1,4 +1,7 @@
-import type { IngestNewsUseCase, IngestNewsResult } from '$lib/server/contexts/news/application/use-cases/ingest-news.use-case';
+import type {
+	IngestNewsUseCase,
+	IngestNewsResult
+} from '$lib/server/contexts/news/application/use-cases/ingest-news.use-case';
 import type { ComputeDailyScoresUseCase } from '$lib/server/cross-context/compute-daily-scores/application/use-cases/compute-daily-scores.use-case';
 
 export interface RunDailyPipelineResult {

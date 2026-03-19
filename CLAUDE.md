@@ -57,6 +57,7 @@ src/routes/                 ← couche Interface (câblage uniquement)
 ```
 
 **Règles de dépendance :**
+
 - `contexts/*/domain/` — zéro import externe
 - `contexts/*/application/` — importe uniquement son propre domaine
 - `cross-context/*/application/` — seul endroit autorisé à importer plusieurs domaines
@@ -83,6 +84,7 @@ src/routes/                 ← couche Interface (câblage uniquement)
 `date · sector · score`
 
 **Formule de décroissance** : `Score(secteur, T) = Σ impact(newsᵢ) × e^(-λ × (T - tᵢ))`
+
 - STRUCTURAL → λ faible (décroissance lente)
 - PUNCTUAL → λ élevé (décroissance rapide)
 

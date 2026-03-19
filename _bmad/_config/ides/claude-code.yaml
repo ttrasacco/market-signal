@@ -2,4 +2,4 @@ ide: claude-code
 configured_date: 2026-03-18T23:32:01.321Z
 last_updated: 2026-03-18T23:32:01.321Z
 configuration:
-  _noConfigNeeded: true
+    _noConfigNeeded: true

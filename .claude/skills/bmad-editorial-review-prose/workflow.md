@@ -7,10 +7,10 @@
 **CONTENT IS SACROSANCT:** Never challenge ideas — only clarify how they're expressed.
 
 **Inputs:**
+
 - **content** (required) — Cohesive unit of text to review (markdown, plain text, or text-heavy XML)
 - **style_guide** (optional) — Project-specific style guide. When provided, overrides all generic principles in this task (except CONTENT IS SACROSANCT). The style guide is the final authority on tone, structure, and language choices.
 - **reader_type** (optional, default: `humans`) — `humans` for standard editorial, `llm` for precision focus
-
 
 ## PRINCIPLES
 
@@ -24,15 +24,14 @@
 
 > **STYLE GUIDE OVERRIDE:** If a style_guide input is provided, it overrides ALL generic principles in this task (including the Microsoft Writing Style Guide baseline and reader_type-specific priorities). The ONLY exception is CONTENT IS SACROSANCT — never change what ideas say, only how they're expressed. When style guide conflicts with this task, style guide wins.
 
-
 ## STEPS
 
 ### Step 1: Validate Input
 
 - Check if content is empty or contains fewer than 3 words
-  - If empty or fewer than 3 words: **HALT** with error: "Content too short for editorial review (minimum 3 words required)"
+    - If empty or fewer than 3 words: **HALT** with error: "Content too short for editorial review (minimum 3 words required)"
 - Validate reader_type is `humans` or `llm` (or not provided, defaulting to `humans`)
-  - If reader_type is invalid: **HALT** with error: "Invalid reader_type. Must be 'humans' or 'llm'"
+    - If reader_type is invalid: **HALT** with error: "Invalid reader_type. Must be 'humans' or 'llm'"
 - Identify content type (markdown, plain text, XML with text)
 - Note any code blocks, frontmatter, or structural markup to skip
 
@@ -41,8 +40,8 @@
 - Analyze the style, tone, and voice of the input text
 - Note any intentional stylistic choices to preserve (informal tone, technical jargon, rhetorical patterns)
 - Calibrate review approach based on reader_type:
-  - If `llm`: Prioritize unambiguous references, consistent terminology, explicit structure, no hedging
-  - If `humans`: Prioritize clarity, flow, readability, natural progression
+    - If `llm`: Prioritize unambiguous references, consistent terminology, explicit structure, no hedging
+    - If `humans`: Prioritize clarity, flow, readability, natural progression
 
 ### Step 3: Editorial Review (CRITICAL)
 
@@ -62,17 +61,16 @@
 
 **Output format:**
 
-| Original Text | Revised Text | Changes |
-|---------------|--------------|---------|
+| Original Text              | Revised Text           | Changes                                   |
+| -------------------------- | ---------------------- | ----------------------------------------- |
 | The exact original passage | The suggested revision | Brief explanation of what changed and why |
 
 **Example:**
 
-| Original Text | Revised Text | Changes |
-|---------------|--------------|---------|
+| Original Text                                         | Revised Text                                  | Changes                                                                                |
+| ----------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------- |
 | The system will processes data and it handles errors. | The system processes data and handles errors. | Fixed subject-verb agreement ("will processes" to "processes"); removed redundant "it" |
-| Users can chose from options (lines 12, 45, 78) | Users can choose from options | Fixed spelling: "chose" to "choose" (appears in 3 locations) |
-
+| Users can chose from options (lines 12, 45, 78)       | Users can choose from options                 | Fixed spelling: "chose" to "choose" (appears in 3 locations)                           |
 
 ## HALT CONDITIONS
 

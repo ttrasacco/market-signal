@@ -36,7 +36,10 @@ export class IngestNewsUseCase {
 			try {
 				batchResults = await this.classifier.classifyBatch(headlines);
 			} catch (error) {
-				console.error(`[PIPELINE] ingest: batch classification failed for ${feedUrl}`, error);
+				console.error(
+					`[PIPELINE] ingest: batch classification failed for ${feedUrl}`,
+					error
+				);
 				continue;
 			}
 

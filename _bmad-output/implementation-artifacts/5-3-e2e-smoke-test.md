@@ -24,21 +24,21 @@ So that regressions in the full stack (DB → use case → SSR → render) are c
 ## Tasks / Subtasks
 
 - [x] Task 1 — Add `data-testid` attributes to critical dashboard DOM elements (AC: #1, #2)
-  - [x] Add `data-testid="topbar"` to `nav.topbar` in `src/lib/components/topbar/Topbar.svelte`
-  - [x] Add `data-testid="sector-table"` to `div.sector-table` in `src/lib/components/dashboard-layout/DashboardLayout.svelte`
-  - [x] Add `data-testid="empty-zone"` to `div.empty-zone` in `src/lib/components/dashboard-layout/DashboardLayout.svelte`
-  - [x] Add `data-testid="sector-row"` to the root element of `src/lib/components/sector-row/SectorRow.svelte`
+    - [x] Add `data-testid="topbar"` to `nav.topbar` in `src/lib/components/topbar/Topbar.svelte`
+    - [x] Add `data-testid="sector-table"` to `div.sector-table` in `src/lib/components/dashboard-layout/DashboardLayout.svelte`
+    - [x] Add `data-testid="empty-zone"` to `div.empty-zone` in `src/lib/components/dashboard-layout/DashboardLayout.svelte`
+    - [x] Add `data-testid="sector-row"` to the root element of `src/lib/components/sector-row/SectorRow.svelte`
 
 - [x] Task 2 — Create `e2e/dashboard.e2e.ts` smoke test (AC: #1, #2)
-  - [x] Navigate to `/` and assert no console errors during load
-  - [x] Assert `.topbar-name` text equals "market-signal"
-  - [x] Assert `[data-testid="sector-table"]` is visible
-  - [x] Assert either `[data-testid="sector-row"]` count > 0 OR `[data-testid="empty-zone"]` is visible (handles both DB states)
-  - [x] Assert page load time < 3 seconds
+    - [x] Navigate to `/` and assert no console errors during load
+    - [x] Assert `.topbar-name` text equals "market-signal"
+    - [x] Assert `[data-testid="sector-table"]` is visible
+    - [x] Assert either `[data-testid="sector-row"]` count > 0 OR `[data-testid="empty-zone"]` is visible (handles both DB states)
+    - [x] Assert page load time < 3 seconds
 
 - [x] Task 3 — Run full test suite (AC: #1, #2)
-  - [x] Run `npm run test:unit -- --run` — must pass 0 regressions (currently 122 tests)
-  - [x] Run `npm run test:e2e` — new E2E test must pass
+    - [x] Run `npm run test:unit -- --run` — must pass 0 regressions (currently 122 tests)
+    - [x] Run `npm run test:e2e` — new E2E test must pass
 
 ## Dev Notes
 
@@ -63,8 +63,8 @@ A file named `dashboard.spec.ts` will **not be picked up** by Playwright.
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  webServer: { command: 'npm run build && npm run preview', port: 4173 },
-  testMatch: '**/*.e2e.{ts,js}'
+    webServer: { command: 'npm run build && npm run preview', port: 4173 },
+    testMatch: '**/*.e2e.{ts,js}'
 });
 ```
 
@@ -110,17 +110,20 @@ div.page                                ← DashboardLayout root
 The project has no `data-testid` attributes yet. Task 1 adds them to make selectors stable:
 
 **`src/lib/components/topbar/Topbar.svelte`** — add to `<nav>`:
+
 ```svelte
 <nav class="topbar" data-testid="topbar">
 ```
 
 **`src/lib/components/dashboard-layout/DashboardLayout.svelte`** — add to two elements:
+
 ```svelte
 <div class="sector-table" data-testid="sector-table">
 <div class="empty-zone" data-testid="empty-zone">
 ```
 
 **`src/lib/components/sector-row/SectorRow.svelte`** — add to the root `<button>` or `<div>`:
+
 ```svelte
 <!-- Find the root element and add: -->
 data-testid="sector-row"
@@ -135,34 +138,34 @@ data-testid="sector-row"
 import { test, expect } from '@playwright/test';
 
 test.describe('Dashboard smoke test', () => {
-  test('loads without errors and renders sector table', async ({ page }) => {
-    const consoleErrors: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') consoleErrors.push(msg.text());
+    test('loads without errors and renders sector table', async ({ page }) => {
+        const consoleErrors: string[] = [];
+        page.on('console', (msg) => {
+            if (msg.type() === 'error') consoleErrors.push(msg.text());
+        });
+
+        const start = Date.now();
+        await page.goto('/');
+        await page.waitForLoadState('networkidle');
+        const loadTime = Date.now() - start;
+
+        // Brand visible
+        await expect(page.locator('.topbar-name')).toHaveText('market-signal');
+
+        // Sector table always rendered
+        await expect(page.locator('[data-testid="sector-table"]')).toBeVisible();
+
+        // Either rows are visible OR empty zone is shown — both are valid states
+        const rowCount = await page.locator('[data-testid="sector-row"]').count();
+        const emptyZoneVisible = await page.locator('[data-testid="empty-zone"]').isVisible();
+        expect(rowCount > 0 || emptyZoneVisible).toBe(true);
+
+        // No JS console errors
+        expect(consoleErrors).toHaveLength(0);
+
+        // NFR1: load < 3 seconds
+        expect(loadTime).toBeLessThan(3000);
     });
-
-    const start = Date.now();
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    const loadTime = Date.now() - start;
-
-    // Brand visible
-    await expect(page.locator('.topbar-name')).toHaveText('market-signal');
-
-    // Sector table always rendered
-    await expect(page.locator('[data-testid="sector-table"]')).toBeVisible();
-
-    // Either rows are visible OR empty zone is shown — both are valid states
-    const rowCount = await page.locator('[data-testid="sector-row"]').count();
-    const emptyZoneVisible = await page.locator('[data-testid="empty-zone"]').isVisible();
-    expect(rowCount > 0 || emptyZoneVisible).toBe(true);
-
-    // No JS console errors
-    expect(consoleErrors).toHaveLength(0);
-
-    // NFR1: load < 3 seconds
-    expect(loadTime).toBeLessThan(3000);
-  });
 });
 ```
 
@@ -171,6 +174,7 @@ test.describe('Dashboard smoke test', () => {
 ### DB State During E2E Tests
 
 The E2E test runs against the **real database** (via `DATABASE_URL` env var). The test is designed to pass in **both** states:
+
 - DB has data → `.sector-table` has sector rows
 - DB is empty → `.empty-zone` shows, `.sector-table` is rendered but empty
 
@@ -219,12 +223,12 @@ npm run test
 
 ### Files to Create / Modify
 
-| File | Action | Notes |
-|---|---|---|
-| `e2e/dashboard.e2e.ts` | **CREATE** | Playwright smoke test |
-| `src/lib/components/topbar/Topbar.svelte` | **MODIFY** | Add `data-testid="topbar"` to `<nav>` |
+| File                                                         | Action     | Notes                                                |
+| ------------------------------------------------------------ | ---------- | ---------------------------------------------------- |
+| `e2e/dashboard.e2e.ts`                                       | **CREATE** | Playwright smoke test                                |
+| `src/lib/components/topbar/Topbar.svelte`                    | **MODIFY** | Add `data-testid="topbar"` to `<nav>`                |
 | `src/lib/components/dashboard-layout/DashboardLayout.svelte` | **MODIFY** | Add `data-testid` to `sector-table` and `empty-zone` |
-| `src/lib/components/sector-row/SectorRow.svelte` | **MODIFY** | Add `data-testid="sector-row"` to root element |
+| `src/lib/components/sector-row/SectorRow.svelte`             | **MODIFY** | Add `data-testid="sector-row"` to root element       |
 
 ## Dev Agent Record
 

@@ -30,104 +30,189 @@ describe('computeReliabilityColor', () => {
 
 	it('returns red when only totalArticles is red (< 5)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 4, recentArticles: 6, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 4,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('red');
 	});
 
 	it('returns red when only recentArticles is red (< 2)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 1, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 1,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('red');
 	});
 
 	it('returns red when only sourceCount is red (1)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 1, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 1,
+				punctualProportion: 0.2
+			})
 		).toBe('red');
 	});
 
 	it('returns red when only punctualProportion is red (> 0.7)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 4, punctualProportion: 0.71 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.71
+			})
 		).toBe('red');
 	});
 
 	it('returns orange when no red but some orange', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 10, recentArticles: 6, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 10,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('returns orange when recentArticles is orange (2–5)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 5, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 5,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('returns orange when sourceCount is orange (2)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 2, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 2,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('returns orange when punctualProportion is orange (0.35–0.70)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 4, punctualProportion: 0.5 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.5
+			})
 		).toBe('orange');
 	});
 
 	// Boundary values
 	it('totalArticles = 5 → orange (not red)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 5, recentArticles: 6, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 5,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('totalArticles = 20 → orange (not green)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 20, recentArticles: 6, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 20,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('recentArticles = 2 → orange (not red)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 2, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 2,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('recentArticles = 5 → orange (not green)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 5, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 5,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('sourceCount = 2 → orange (not red)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 2, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 2,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('sourceCount = 3 → orange (not green)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 3, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 3,
+				punctualProportion: 0.2
+			})
 		).toBe('orange');
 	});
 
 	it('punctualProportion = 0.35 → orange (not green)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 4, punctualProportion: 0.35 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.35
+			})
 		).toBe('orange');
 	});
 
 	it('punctualProportion = 0.7 → orange (not red)', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 21, recentArticles: 6, sourceCount: 4, punctualProportion: 0.7 })
+			computeReliabilityColor({
+				totalArticles: 21,
+				recentArticles: 6,
+				sourceCount: 4,
+				punctualProportion: 0.7
+			})
 		).toBe('orange');
 	});
 
 	it('red wins over orange — mixed red+orange criteria → red', () => {
 		expect(
-			computeReliabilityColor({ totalArticles: 4, recentArticles: 3, sourceCount: 4, punctualProportion: 0.2 })
+			computeReliabilityColor({
+				totalArticles: 4,
+				recentArticles: 3,
+				sourceCount: 4,
+				punctualProportion: 0.2
+			})
 		).toBe('red');
 	});
 });
@@ -157,9 +242,9 @@ describe('computeAllCriteria', () => {
 
 	it('individual criterion colors are independent', () => {
 		const data: ReliabilityData = {
-			totalArticles: 4,     // red
-			recentArticles: 3,    // orange
-			sourceCount: 4,       // green
+			totalArticles: 4, // red
+			recentArticles: 3, // orange
+			sourceCount: 4, // green
 			punctualProportion: 0.2 // green
 		};
 		const criteria = computeAllCriteria(data);

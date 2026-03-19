@@ -1,10 +1,10 @@
 ---
 stepsCompleted: []
 filesIncluded:
-  prd: "_bmad-output/planning-artifacts/prd.md"
-  architecture: null
-  epics: null
-  ux: null
+    prd: '_bmad-output/planning-artifacts/prd.md'
+    architecture: null
+    epics: null
+    ux: null
 ---
 
 # Implementation Readiness Assessment Report

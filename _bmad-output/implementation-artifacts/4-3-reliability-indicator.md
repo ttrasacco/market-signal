@@ -14,10 +14,10 @@ so that I can instantly assess how much to trust a sector score without reading 
    **When** the reliability icon renders
    **Then** its color = worst of the 4 criteria (red if any criterion is red, else orange if any is orange, else green)
    **And** the 4 criteria thresholds are applied:
-   - **Total articles:** < 5 → red, 5–20 → orange, > 20 → green
-   - **Recent 7-day articles:** < 2 → red, 2–5 → orange, > 5 → green
-   - **Source diversity:** 1 → red, 2–3 → orange, > 3 → green
-   - **PUNCTUAL proportion:** > 70% → red, 35–70% → orange, < 35% → green
+    - **Total articles:** < 5 → red, 5–20 → orange, > 20 → green
+    - **Recent 7-day articles:** < 2 → red, 2–5 → orange, > 5 → green
+    - **Source diversity:** 1 → red, 2–3 → orange, > 3 → green
+    - **PUNCTUAL proportion:** > 70% → red, 35–70% → orange, < 35% → green
 
 2. **Given** the user clicks or hovers the reliability icon on desktop
    **When** the dropdown opens
@@ -32,34 +32,34 @@ so that I can instantly assess how much to trust a sector score without reading 
 ## Tasks / Subtasks
 
 - [x] Task 1 — Define `ReliabilityData` type and pure computation logic (AC: #1)
-  - [x] Create `src/lib/components/reliability-indicator.utils.ts`
-  - [x] Define `ReliabilityData` type (4 numeric fields)
-  - [x] Implement `criterionColor(value, thresholds)` pure function
-  - [x] Implement `computeReliabilityColor(data: ReliabilityData): SignalColor` — worst-of-4
-  - [x] Implement `computeAllCriteria(data: ReliabilityData): CriterionResult[]` — all 4 with individual colors
+    - [x] Create `src/lib/components/reliability-indicator.utils.ts`
+    - [x] Define `ReliabilityData` type (4 numeric fields)
+    - [x] Implement `criterionColor(value, thresholds)` pure function
+    - [x] Implement `computeReliabilityColor(data: ReliabilityData): SignalColor` — worst-of-4
+    - [x] Implement `computeAllCriteria(data: ReliabilityData): CriterionResult[]` — all 4 with individual colors
 
 - [x] Task 2 — Implement `ReliabilityIndicator.svelte` component (AC: #1, #2, #3)
-  - [x] Create `src/lib/components/ReliabilityIndicator.svelte`
-  - [x] Icon: colored circle or shield-like shape matching `SignalColor`
-  - [x] Desktop: click/hover toggle dropdown listing 4 criteria with individual colors
-  - [x] Dropdown background: `--color-surface-elevated` (`#242429`)
-  - [x] Mobile: icon color only, no dropdown (hide via CSS media query ≤480px)
+    - [x] Create `src/lib/components/ReliabilityIndicator.svelte`
+    - [x] Icon: colored circle or shield-like shape matching `SignalColor`
+    - [x] Desktop: click/hover toggle dropdown listing 4 criteria with individual colors
+    - [x] Dropdown background: `--color-surface-elevated` (`#242429`)
+    - [x] Mobile: icon color only, no dropdown (hide via CSS media query ≤480px)
 
 - [x] Task 3 — Keyboard accessibility (AC: #2)
-  - [x] Focus-able element (button or role="button")
-  - [x] Enter/Space to open dropdown
-  - [x] Escape to close dropdown
-  - [x] Proper `aria-expanded`, `aria-haspopup` attributes
+    - [x] Focus-able element (button or role="button")
+    - [x] Enter/Space to open dropdown
+    - [x] Escape to close dropdown
+    - [x] Proper `aria-expanded`, `aria-haspopup` attributes
 
 - [x] Task 4 — Wire `ReliabilityIndicator` into `SectorScoreCard` (AC: #1)
-  - [x] Replace the `<div></div>` placeholder in `SectorScoreCard.svelte` with `<ReliabilityIndicator data={reliabilityData} />`
-  - [x] Pass `ReliabilityData` prop through `SectorScoreCardData` or as a separate prop
+    - [x] Replace the `<div></div>` placeholder in `SectorScoreCard.svelte` with `<ReliabilityIndicator data={reliabilityData} />`
+    - [x] Pass `ReliabilityData` prop through `SectorScoreCardData` or as a separate prop
 
 - [x] Task 5 — Unit tests for pure logic (no DOM)
-  - [x] Create `src/lib/components/reliability-indicator.utils.test.ts`
-  - [x] Test `criterionColor` for each criterion at boundary values
-  - [x] Test `computeReliabilityColor`: worst-of-4 logic (red wins, then orange, then green)
-  - [x] Test `computeAllCriteria`: verify all 4 labels and colors returned correctly
+    - [x] Create `src/lib/components/reliability-indicator.utils.test.ts`
+    - [x] Test `criterionColor` for each criterion at boundary values
+    - [x] Test `computeReliabilityColor`: worst-of-4 logic (red wins, then orange, then green)
+    - [x] Test `computeAllCriteria`: verify all 4 labels and colors returned correctly
 
 ## Dev Notes
 
@@ -70,10 +70,10 @@ Story 4.4 (Dashboard Layout) will pass this data from `+page.server.ts`. For thi
 ```typescript
 // In src/lib/components/reliability-indicator.utils.ts
 export interface ReliabilityData {
-  totalArticles: number;       // Total NewsImpact count for this sector
-  recentArticles: number;      // NewsImpact count with published_at within last 7 days
-  sourceCount: number;         // Distinct source count
-  punctualProportion: number;  // Ratio: PUNCTUAL impacts / total impacts (0–1)
+    totalArticles: number; // Total NewsImpact count for this sector
+    recentArticles: number; // NewsImpact count with published_at within last 7 days
+    sourceCount: number; // Distinct source count
+    punctualProportion: number; // Ratio: PUNCTUAL impacts / total impacts (0–1)
 }
 ```
 
@@ -86,27 +86,27 @@ export type SignalColor = 'green' | 'orange' | 'red'; // reuse or import from se
 
 // Criterion color logic:
 function totalArticlesColor(n: number): SignalColor {
-  if (n > 20) return 'green';
-  if (n >= 5) return 'orange';
-  return 'red';
+    if (n > 20) return 'green';
+    if (n >= 5) return 'orange';
+    return 'red';
 }
 
 function recentArticlesColor(n: number): SignalColor {
-  if (n > 5)  return 'green';
-  if (n >= 2) return 'orange';
-  return 'red';
+    if (n > 5) return 'green';
+    if (n >= 2) return 'orange';
+    return 'red';
 }
 
 function sourceDiversityColor(n: number): SignalColor {
-  if (n > 3)  return 'green';
-  if (n >= 2) return 'orange';
-  return 'red';
+    if (n > 3) return 'green';
+    if (n >= 2) return 'orange';
+    return 'red';
 }
 
 function punctualProportionColor(ratio: number): SignalColor {
-  if (ratio < 0.35) return 'green';
-  if (ratio <= 0.70) return 'orange';
-  return 'red';
+    if (ratio < 0.35) return 'green';
+    if (ratio <= 0.7) return 'orange';
+    return 'red';
 }
 ```
 
@@ -114,15 +114,15 @@ function punctualProportionColor(ratio: number): SignalColor {
 
 ```typescript
 export function computeReliabilityColor(data: ReliabilityData): SignalColor {
-  const colors = [
-    totalArticlesColor(data.totalArticles),
-    recentArticlesColor(data.recentArticles),
-    sourceDiversityColor(data.sourceCount),
-    punctualProportionColor(data.punctualProportion)
-  ];
-  if (colors.includes('red'))    return 'red';
-  if (colors.includes('orange')) return 'orange';
-  return 'green';
+    const colors = [
+        totalArticlesColor(data.totalArticles),
+        recentArticlesColor(data.recentArticles),
+        sourceDiversityColor(data.sourceCount),
+        punctualProportionColor(data.punctualProportion)
+    ];
+    if (colors.includes('red')) return 'red';
+    if (colors.includes('orange')) return 'orange';
+    return 'green';
 }
 ```
 
@@ -132,17 +132,17 @@ Each row shows a label and the criterion's individual color:
 
 ```typescript
 export interface CriterionResult {
-  label: string;
-  color: SignalColor;
+    label: string;
+    color: SignalColor;
 }
 
 export function computeAllCriteria(data: ReliabilityData): CriterionResult[] {
-  return [
-    { label: 'Articles analysés',      color: totalArticlesColor(data.totalArticles) },
-    { label: 'Articles récents (7j)',  color: recentArticlesColor(data.recentArticles) },
-    { label: 'Sources distinctes',     color: sourceDiversityColor(data.sourceCount) },
-    { label: 'Part ponctuelle',        color: punctualProportionColor(data.punctualProportion) }
-  ];
+    return [
+        { label: 'Articles analysés', color: totalArticlesColor(data.totalArticles) },
+        { label: 'Articles récents (7j)', color: recentArticlesColor(data.recentArticles) },
+        { label: 'Sources distinctes', color: sourceDiversityColor(data.sourceCount) },
+        { label: 'Part ponctuelle', color: punctualProportionColor(data.punctualProportion) }
+    ];
 }
 ```
 
@@ -154,53 +154,67 @@ Use Svelte 5 runes (`$props`, `$derived`, `$state`). Example skeleton:
 
 ```svelte
 <script lang="ts">
-  import type { ReliabilityData, SignalColor, CriterionResult } from './reliability-indicator.utils';
-  import { computeReliabilityColor, computeAllCriteria } from './reliability-indicator.utils';
+    import type {
+        ReliabilityData,
+        SignalColor,
+        CriterionResult
+    } from './reliability-indicator.utils';
+    import { computeReliabilityColor, computeAllCriteria } from './reliability-indicator.utils';
 
-  let { data }: { data: ReliabilityData | undefined } = $props();
+    let { data }: { data: ReliabilityData | undefined } = $props();
 
-  const overallColor = $derived(data ? computeReliabilityColor(data) : 'orange');
-  const criteria: CriterionResult[] = $derived(data ? computeAllCriteria(data) : []);
+    const overallColor = $derived(data ? computeReliabilityColor(data) : 'orange');
+    const criteria: CriterionResult[] = $derived(data ? computeAllCriteria(data) : []);
 
-  let isOpen = $state(false);
+    let isOpen = $state(false);
 
-  function toggle() { isOpen = !isOpen; }
-  function close()  { isOpen = false; }
+    function toggle() {
+        isOpen = !isOpen;
+    }
+    function close() {
+        isOpen = false;
+    }
 
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-    if (e.key === 'Escape') close();
-  }
+    function handleKeydown(e: KeyboardEvent) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggle();
+        }
+        if (e.key === 'Escape') close();
+    }
 </script>
 
 <div class="reliability-wrapper">
-  <button
-    class="reliability-icon {overallColor}"
-    aria-expanded={isOpen}
-    aria-haspopup="true"
-    onclick={toggle}
-    onkeydown={handleKeydown}
-  >
-    <!-- Icon shape — circle or dot -->
-  </button>
+    <button
+        class="reliability-icon {overallColor}"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+        onclick={toggle}
+        onkeydown={handleKeydown}
+    >
+        <!-- Icon shape — circle or dot -->
+    </button>
 
-  {#if isOpen}
-    <div class="reliability-dropdown">
-      {#each criteria as criterion}
-        <div class="criterion-row">
-          <span class="criterion-dot {criterion.color}"></span>
-          <span class="criterion-label">{criterion.label}</span>
+    {#if isOpen}
+        <div class="reliability-dropdown">
+            {#each criteria as criterion}
+                <div class="criterion-row">
+                    <span class="criterion-dot {criterion.color}"></span>
+                    <span class="criterion-label">{criterion.label}</span>
+                </div>
+            {/each}
         </div>
-      {/each}
-    </div>
-  {/if}
+    {/if}
 </div>
 ```
 
 **Mobile (≤480px):** hide dropdown via CSS:
+
 ```css
 @media (max-width: 480px) {
-  .reliability-dropdown { display: none !important; }
+    .reliability-dropdown {
+        display: none !important;
+    }
 }
 ```
 
@@ -213,8 +227,7 @@ The UX spec says "Icon shape: decided at implementation." Use a small filled cir
 `SectorScoreCard.svelte` currently has:
 
 ```svelte
-<!-- reliability slot — Story 4.3 will fill this -->
-<div></div>
+<!-- reliability slot — Story 4.3 will fill this --><div></div>
 ```
 
 Replace with:
@@ -228,8 +241,8 @@ And update `SectorScoreCardData` to include `reliabilityData`:
 ```typescript
 // Option A — add ReliabilityData directly to SectorScoreCardData (simplest)
 export interface SectorScoreCardProps {
-  data: SectorScoreCardData;
-  reliabilityData?: ReliabilityData;
+    data: SectorScoreCardData;
+    reliabilityData?: ReliabilityData;
 }
 ```
 
@@ -246,12 +259,12 @@ let { data, reliabilityData }: { data: SectorScoreCardData; reliabilityData?: Re
 All tokens are defined in `src/routes/layout.css` under `@theme`:
 
 ```css
---color-surface-elevated: #242429;  /* dropdown background */
---color-green:            #22C55E;
---color-orange:           #F59E0B;
---color-red:              #EF4444;
---color-border:           #2E2E35;
---color-text-secondary:   #8A8A96;
+--color-surface-elevated: #242429; /* dropdown background */
+--color-green: #22c55e;
+--color-orange: #f59e0b;
+--color-red: #ef4444;
+--color-border: #2e2e35;
+--color-text-secondary: #8a8a96;
 ```
 
 **Tailwind v4 naming:** `--color-surface-elevated` → `bg-surface-elevated` (NOT `bg-color-surface-elevated`). The `--color-` prefix is stripped. Use `var(--color-surface-elevated)` for inline CSS or `bg-surface-elevated` as Tailwind utility.
@@ -276,13 +289,13 @@ Explicitly type all values. Reuse `SignalColor` from `sector-score-card.utils.ts
 
 ### 10. Files to create / modify
 
-| File | Action |
-|---|---|
-| `src/lib/components/reliability-indicator.utils.ts` | CREATE — `ReliabilityData`, `CriterionResult`, threshold functions, `computeReliabilityColor`, `computeAllCriteria` |
-| `src/lib/components/reliability-indicator.utils.test.ts` | CREATE — unit tests for all pure functions |
-| `src/lib/components/ReliabilityIndicator.svelte` | CREATE — icon + dropdown component |
-| `src/lib/components/SectorScoreCard.svelte` | MODIFY — replace `<div></div>` placeholder with `<ReliabilityIndicator>` |
-| `src/lib/components/sector-score-card.utils.ts` | MODIFY (optional) — export `SignalColor` type if `ReliabilityIndicator` needs to reuse it |
+| File                                                     | Action                                                                                                              |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/components/reliability-indicator.utils.ts`      | CREATE — `ReliabilityData`, `CriterionResult`, threshold functions, `computeReliabilityColor`, `computeAllCriteria` |
+| `src/lib/components/reliability-indicator.utils.test.ts` | CREATE — unit tests for all pure functions                                                                          |
+| `src/lib/components/ReliabilityIndicator.svelte`         | CREATE — icon + dropdown component                                                                                  |
+| `src/lib/components/SectorScoreCard.svelte`              | MODIFY — replace `<div></div>` placeholder with `<ReliabilityIndicator>`                                            |
+| `src/lib/components/sector-score-card.utils.ts`          | MODIFY (optional) — export `SignalColor` type if `ReliabilityIndicator` needs to reuse it                           |
 
 ### 11. Anti-patterns to avoid
 
@@ -301,15 +314,36 @@ import { describe, it, expect } from 'vitest';
 import { computeReliabilityColor, computeAllCriteria } from './reliability-indicator.utils';
 
 describe('computeReliabilityColor', () => {
-  it('returns red if any criterion is red', () => {
-    expect(computeReliabilityColor({ totalArticles: 3, recentArticles: 6, sourceCount: 4, punctualProportion: 0.2 })).toBe('red');
-  });
-  it('returns orange if no red but at least one orange', () => {
-    expect(computeReliabilityColor({ totalArticles: 10, recentArticles: 6, sourceCount: 4, punctualProportion: 0.2 })).toBe('orange');
-  });
-  it('returns green when all criteria are green', () => {
-    expect(computeReliabilityColor({ totalArticles: 25, recentArticles: 8, sourceCount: 5, punctualProportion: 0.2 })).toBe('green');
-  });
+    it('returns red if any criterion is red', () => {
+        expect(
+            computeReliabilityColor({
+                totalArticles: 3,
+                recentArticles: 6,
+                sourceCount: 4,
+                punctualProportion: 0.2
+            })
+        ).toBe('red');
+    });
+    it('returns orange if no red but at least one orange', () => {
+        expect(
+            computeReliabilityColor({
+                totalArticles: 10,
+                recentArticles: 6,
+                sourceCount: 4,
+                punctualProportion: 0.2
+            })
+        ).toBe('orange');
+    });
+    it('returns green when all criteria are green', () => {
+        expect(
+            computeReliabilityColor({
+                totalArticles: 25,
+                recentArticles: 8,
+                sourceCount: 5,
+                punctualProportion: 0.2
+            })
+        ).toBe('green');
+    });
 });
 ```
 

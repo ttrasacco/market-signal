@@ -9,7 +9,7 @@ export async function handleCronRequest(
 	if (authHeader !== `Bearer ${CRON_SECRET}`) {
 		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
 			status: 401,
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 
@@ -17,14 +17,14 @@ export async function handleCronRequest(
 		const result = await useCase.execute();
 		return new Response(JSON.stringify(result), {
 			status: 200,
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' }
 		});
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		// [PIPELINE] error: message already logged in RunDailyPipelineUseCase
 		return new Response(JSON.stringify({ error: message }), {
 			status: 500,
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 }

@@ -38,43 +38,43 @@ so that the scoring engine is fully decoupled from the news context and produces
 ## Tasks / Subtasks
 
 - [x] Task 1: Define `NewsImpactForScoring` type and `NewsImpactReadPort` in scoring application ports (AC: #1)
-  - [x] Create `src/lib/server/contexts/scoring/application/ports/news-impact.read.port.ts`
-  - [x] Define `NewsImpactForScoring` interface: `{ id, newsId, sector: Sector, impactScore: number, impactType: ImpactType, publishedAt: Date }`
-  - [x] Define `NewsImpactReadPort` interface: `{ findAllImpacts(): Promise<NewsImpactForScoring[]> }`
-  - [x] Import `Sector` from `contexts/news/domain/sector` and `ImpactType` from `contexts/news/domain/impact-type` (cross-domain type imports at port level are allowed — no business logic, just type sharing)
+    - [x] Create `src/lib/server/contexts/scoring/application/ports/news-impact.read.port.ts`
+    - [x] Define `NewsImpactForScoring` interface: `{ id, newsId, sector: Sector, impactScore: number, impactType: ImpactType, publishedAt: Date }`
+    - [x] Define `NewsImpactReadPort` interface: `{ findAllImpacts(): Promise<NewsImpactForScoring[]> }`
+    - [x] Import `Sector` from `contexts/news/domain/sector` and `ImpactType` from `contexts/news/domain/impact-type` (cross-domain type imports at port level are allowed — no business logic, just type sharing)
 
 - [x] Task 2: Implement `ComputeDailyScoresUseCase` (AC: #2, #3)
-  - [x] File: `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.ts` (currently empty — fill it)
-  - [x] Constructor: `(newsImpactReadPort: NewsImpactReadPort, sectorScoreRepo: SectorScoreRepositoryPort)`
-  - [x] `execute(date: Date): Promise<void>` — reads all impacts, groups by sector, computes decay score, upserts each sector
-  - [x] Age computation: `ageInDays = (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24)`
-  - [x] Call `computeDecay(impact.impactScore, impact.impactType, ageInDays)` from `contexts/scoring/domain/decay-model.ts`
-  - [x] For each sector with at least one impact: `sectorScoreRepo.upsert({ date, sector, score })`
-  - [x] Log: `[PIPELINE] scoring: N sector scores computed` after all upserts
-  - [x] Sectors with zero impacts are omitted (no upsert)
+    - [x] File: `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.ts` (currently empty — fill it)
+    - [x] Constructor: `(newsImpactReadPort: NewsImpactReadPort, sectorScoreRepo: SectorScoreRepositoryPort)`
+    - [x] `execute(date: Date): Promise<void>` — reads all impacts, groups by sector, computes decay score, upserts each sector
+    - [x] Age computation: `ageInDays = (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24)`
+    - [x] Call `computeDecay(impact.impactScore, impact.impactType, ageInDays)` from `contexts/scoring/domain/decay-model.ts`
+    - [x] For each sector with at least one impact: `sectorScoreRepo.upsert({ date, sector, score })`
+    - [x] Log: `[PIPELINE] scoring: N sector scores computed` after all upserts
+    - [x] Sectors with zero impacts are omitted (no upsert)
 
 - [x] Task 3: Write unit tests for `ComputeDailyScoresUseCase` (AC: #4)
-  - [x] File: `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.test.ts`
-  - [x] Use `FakeNewsImpactReadRepository` (new fake — see Task 5) and existing `FakeSectorScoreRepository`
-  - [x] Test: STRUCTURAL impact decays slower than PUNCTUAL for same input score and age
-  - [x] Test: multi-sector aggregation — two impacts in different sectors → two `SectorScore` upserts
-  - [x] Test: idempotency — calling `execute()` twice for same date produces same scores
-  - [x] Test: empty impacts → `findLatest()` returns `[]` (no upserts called)
-  - [x] Test: age=0 → score equals raw impactScore (no decay at day 0)
+    - [x] File: `src/lib/server/contexts/scoring/application/use-cases/compute-daily-scores.use-case.test.ts`
+    - [x] Use `FakeNewsImpactReadRepository` (new fake — see Task 5) and existing `FakeSectorScoreRepository`
+    - [x] Test: STRUCTURAL impact decays slower than PUNCTUAL for same input score and age
+    - [x] Test: multi-sector aggregation — two impacts in different sectors → two `SectorScore` upserts
+    - [x] Test: idempotency — calling `execute()` twice for same date produces same scores
+    - [x] Test: empty impacts → `findLatest()` returns `[]` (no upserts called)
+    - [x] Test: age=0 → score equals raw impactScore (no decay at day 0)
 
 - [x] Task 4: Implement `DrizzleNewsImpactReadRepository` in scoring infrastructure (AC: #5)
-  - [x] Create directory `src/lib/server/contexts/scoring/infrastructure/db/` (may already exist)
-  - [x] File: `src/lib/server/contexts/scoring/infrastructure/db/news-impact.read.repository.ts`
-  - [x] Import `db` from `$lib/server/shared/db/client`
-  - [x] Import `newsTable` and `newsImpactsTable` from `contexts/news/infrastructure/db/news-impact.schema` (infrastructure-to-infrastructure import — acceptable, both are infra layer)
-  - [x] `findAllImpacts()`: `db.select(...).from(newsImpactsTable).innerJoin(newsTable, eq(newsImpactsTable.newsId, newsTable.id))`
-  - [x] Map result to `NewsImpactForScoring`: apply camelCase mapping, cast `sector as Sector`, cast `impactType as ImpactType`
+    - [x] Create directory `src/lib/server/contexts/scoring/infrastructure/db/` (may already exist)
+    - [x] File: `src/lib/server/contexts/scoring/infrastructure/db/news-impact.read.repository.ts`
+    - [x] Import `db` from `$lib/server/shared/db/client`
+    - [x] Import `newsTable` and `newsImpactsTable` from `contexts/news/infrastructure/db/news-impact.schema` (infrastructure-to-infrastructure import — acceptable, both are infra layer)
+    - [x] `findAllImpacts()`: `db.select(...).from(newsImpactsTable).innerJoin(newsTable, eq(newsImpactsTable.newsId, newsTable.id))`
+    - [x] Map result to `NewsImpactForScoring`: apply camelCase mapping, cast `sector as Sector`, cast `impactType as ImpactType`
 
 - [x] Task 5: Create `FakeNewsImpactReadRepository` in scoring fakes (AC: #4)
-  - [x] File: `src/lib/server/contexts/scoring/infrastructure/fakes/fake-news-impact-read.repository.ts`
-  - [x] Implements `NewsImpactReadPort`
-  - [x] Public field: `impacts: NewsImpactForScoring[] = []`
-  - [x] `findAllImpacts()` returns `[...this.impacts]`
+    - [x] File: `src/lib/server/contexts/scoring/infrastructure/fakes/fake-news-impact-read.repository.ts`
+    - [x] Implements `NewsImpactReadPort`
+    - [x] Public field: `impacts: NewsImpactForScoring[] = []`
+    - [x] `findAllImpacts()` returns `[...this.impacts]`
 
 ## Dev Notes
 
@@ -127,16 +127,16 @@ import type { Sector } from '$lib/server/contexts/news/domain/sector';
 import type { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 
 export interface NewsImpactForScoring {
-  id: string;
-  newsId: string;
-  sector: Sector;
-  impactScore: number;
-  impactType: ImpactType;
-  publishedAt: Date; // ← key addition vs NewsImpact domain type
+    id: string;
+    newsId: string;
+    sector: Sector;
+    impactScore: number;
+    impactType: ImpactType;
+    publishedAt: Date; // ← key addition vs NewsImpact domain type
 }
 
 export interface NewsImpactReadPort {
-  findAllImpacts(): Promise<NewsImpactForScoring[]>;
+    findAllImpacts(): Promise<NewsImpactForScoring[]>;
 }
 ```
 
@@ -151,32 +151,33 @@ import { computeDecay } from '../../domain/decay-model';
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
 
 export class ComputeDailyScoresUseCase {
-  constructor(
-    private readonly newsImpactReadPort: NewsImpactReadPort,
-    private readonly sectorScoreRepo: SectorScoreRepositoryPort
-  ) {}
+    constructor(
+        private readonly newsImpactReadPort: NewsImpactReadPort,
+        private readonly sectorScoreRepo: SectorScoreRepositoryPort
+    ) {}
 
-  async execute(date: Date): Promise<void> {
-    const impacts = await this.newsImpactReadPort.findAllImpacts();
+    async execute(date: Date): Promise<void> {
+        const impacts = await this.newsImpactReadPort.findAllImpacts();
 
-    // Group by sector
-    const bySector = new Map<Sector, typeof impacts>();
-    for (const impact of impacts) {
-      const existing = bySector.get(impact.sector) ?? [];
-      bySector.set(impact.sector, [...existing, impact]);
+        // Group by sector
+        const bySector = new Map<Sector, typeof impacts>();
+        for (const impact of impacts) {
+            const existing = bySector.get(impact.sector) ?? [];
+            bySector.set(impact.sector, [...existing, impact]);
+        }
+
+        // Compute and upsert one score per sector
+        for (const [sector, sectorImpacts] of bySector) {
+            const score = sectorImpacts.reduce((sum, impact) => {
+                const ageInDays =
+                    (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
+                return sum + computeDecay(impact.impactScore, impact.impactType, ageInDays);
+            }, 0);
+            await this.sectorScoreRepo.upsert({ date, sector, score });
+        }
+
+        console.log(`[PIPELINE] scoring: ${bySector.size} sector scores computed`);
     }
-
-    // Compute and upsert one score per sector
-    for (const [sector, sectorImpacts] of bySector) {
-      const score = sectorImpacts.reduce((sum, impact) => {
-        const ageInDays = (date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
-        return sum + computeDecay(impact.impactScore, impact.impactType, ageInDays);
-      }, 0);
-      await this.sectorScoreRepo.upsert({ date, sector, score });
-    }
-
-    console.log(`[PIPELINE] scoring: ${bySector.size} sector scores computed`);
-  }
 }
 ```
 
@@ -186,34 +187,40 @@ export class ComputeDailyScoresUseCase {
 // src/lib/server/contexts/scoring/infrastructure/db/news-impact.read.repository.ts
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/shared/db/client';
-import { newsTable, newsImpactsTable } from '$lib/server/contexts/news/infrastructure/db/news-impact.schema';
-import type { NewsImpactReadPort, NewsImpactForScoring } from '../../application/ports/news-impact.read.port';
+import {
+    newsTable,
+    newsImpactsTable
+} from '$lib/server/contexts/news/infrastructure/db/news-impact.schema';
+import type {
+    NewsImpactReadPort,
+    NewsImpactForScoring
+} from '../../application/ports/news-impact.read.port';
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
 import type { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 
 export class DrizzleNewsImpactReadRepository implements NewsImpactReadPort {
-  async findAllImpacts(): Promise<NewsImpactForScoring[]> {
-    const rows = await db
-      .select({
-        id: newsImpactsTable.id,
-        newsId: newsImpactsTable.newsId,
-        sector: newsImpactsTable.sector,
-        impactScore: newsImpactsTable.impactScore,
-        impactType: newsImpactsTable.impactType,
-        publishedAt: newsTable.publishedAt,
-      })
-      .from(newsImpactsTable)
-      .innerJoin(newsTable, eq(newsImpactsTable.newsId, newsTable.id));
+    async findAllImpacts(): Promise<NewsImpactForScoring[]> {
+        const rows = await db
+            .select({
+                id: newsImpactsTable.id,
+                newsId: newsImpactsTable.newsId,
+                sector: newsImpactsTable.sector,
+                impactScore: newsImpactsTable.impactScore,
+                impactType: newsImpactsTable.impactType,
+                publishedAt: newsTable.publishedAt
+            })
+            .from(newsImpactsTable)
+            .innerJoin(newsTable, eq(newsImpactsTable.newsId, newsTable.id));
 
-    return rows.map((row) => ({
-      id: row.id,
-      newsId: row.newsId,
-      sector: row.sector as Sector,
-      impactScore: row.impactScore,
-      impactType: row.impactType as ImpactType,
-      publishedAt: row.publishedAt,
-    }));
-  }
+        return rows.map((row) => ({
+            id: row.id,
+            newsId: row.newsId,
+            sector: row.sector as Sector,
+            impactScore: row.impactScore,
+            impactType: row.impactType as ImpactType,
+            publishedAt: row.publishedAt
+        }));
+    }
 }
 ```
 
@@ -221,8 +228,8 @@ export class DrizzleNewsImpactReadRepository implements NewsImpactReadPort {
 
 ```typescript
 // decay-model.ts — already implemented, do not modify
-LAMBDA_STRUCTURAL = 0.05  // ~14-day half-life
-LAMBDA_PUNCTUAL = 0.3     // ~2.3-day half-life
+LAMBDA_STRUCTURAL = 0.05; // ~14-day half-life
+LAMBDA_PUNCTUAL = 0.3; // ~2.3-day half-life
 // Formula: impactScore × e^(-λ × ageInDays)
 ```
 
@@ -234,14 +241,17 @@ Previous story (2.4) debug log: use `$lib/server/...` alias (not relative paths)
 
 ```typescript
 // src/lib/server/contexts/scoring/infrastructure/fakes/fake-news-impact-read.repository.ts
-import type { NewsImpactReadPort, NewsImpactForScoring } from '../../application/ports/news-impact.read.port';
+import type {
+    NewsImpactReadPort,
+    NewsImpactForScoring
+} from '../../application/ports/news-impact.read.port';
 
 export class FakeNewsImpactReadRepository implements NewsImpactReadPort {
-  public impacts: NewsImpactForScoring[] = [];
+    public impacts: NewsImpactForScoring[] = [];
 
-  async findAllImpacts(): Promise<NewsImpactForScoring[]> {
-    return [...this.impacts];
-  }
+    async findAllImpacts(): Promise<NewsImpactForScoring[]> {
+        return [...this.impacts];
+    }
 }
 ```
 

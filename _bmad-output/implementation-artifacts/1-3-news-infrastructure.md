@@ -13,15 +13,15 @@ so that the ingestion use case can persist a `News` with its N associated `NewsI
 1. **Given** `news-impact.schema.ts` defines the two Drizzle tables
    **When** `drizzle-kit generate` is run
    **Then** a migration is produced with:
-   - table `news`: `id`, `published_at`, `analyzed_at`, `source`, `headline`
-   - table `news_impacts`: `id`, `news_id` (FK → `news.id`), `sector`, `impact_score`, `impact_type`
-   **And** all columns are snake_case
+    - table `news`: `id`, `published_at`, `analyzed_at`, `source`, `headline`
+    - table `news_impacts`: `id`, `news_id` (FK → `news.id`), `sector`, `impact_score`, `impact_type`
+      **And** all columns are snake_case
 
 2. **Given** `news-impact.repository.port.ts` defines the port
    **When** imported from `contexts/news/application/`
    **Then** it exposes at minimum:
-   - `save(news: News, impacts: NewsImpact[]): Promise<void>`
-   - `findAllImpacts(): Promise<NewsImpact[]>`
+    - `save(news: News, impacts: NewsImpact[]): Promise<void>`
+    - `findAllImpacts(): Promise<NewsImpact[]>`
 
 3. **Given** `DrizzleNewsImpactRepository` implements the port
    **When** `save()` is called
@@ -36,37 +36,37 @@ so that the ingestion use case can persist a `News` with its N associated `NewsI
 ## Tasks / Subtasks
 
 - [x] Task 1: Define Drizzle schema `news-impact.schema.ts` (AC: #1)
-  - [x] Define `newsTable` with: `id` (text PK), `publishedAt` (timestamp), `analyzedAt` (timestamp), `source` (text), `headline` (text)
-  - [x] Define `newsImpactsTable` with: `id` (text PK), `newsId` (text FK → news.id), `sector` (text), `impactScore` (numeric/real), `impactType` (text)
-  - [x] All DB columns snake_case; camelCase in Drizzle field names
-  - [x] File location: `src/lib/server/contexts/news/infrastructure/db/news-impact.schema.ts`
+    - [x] Define `newsTable` with: `id` (text PK), `publishedAt` (timestamp), `analyzedAt` (timestamp), `source` (text), `headline` (text)
+    - [x] Define `newsImpactsTable` with: `id` (text PK), `newsId` (text FK → news.id), `sector` (text), `impactScore` (numeric/real), `impactType` (text)
+    - [x] All DB columns snake_case; camelCase in Drizzle field names
+    - [x] File location: `src/lib/server/contexts/news/infrastructure/db/news-impact.schema.ts`
 
 - [x] Task 2: Fill `news-impact.repository.port.ts` (AC: #2)
-  - [x] Define `NewsImpactRepositoryPort` interface
-  - [x] Expose `save(news: News, impacts: NewsImpact[]): Promise<void>`
-  - [x] Expose `findAllImpacts(): Promise<NewsImpact[]>`
-  - [x] Import types only from own domain (`News`, `NewsImpact`)
-  - [x] File location: `src/lib/server/contexts/news/application/ports/news-impact.repository.port.ts` (exists as empty stub — fill it)
+    - [x] Define `NewsImpactRepositoryPort` interface
+    - [x] Expose `save(news: News, impacts: NewsImpact[]): Promise<void>`
+    - [x] Expose `findAllImpacts(): Promise<NewsImpact[]>`
+    - [x] Import types only from own domain (`News`, `NewsImpact`)
+    - [x] File location: `src/lib/server/contexts/news/application/ports/news-impact.repository.port.ts` (exists as empty stub — fill it)
 
 - [x] Task 3: Implement `DrizzleNewsImpactRepository` (AC: #3)
-  - [x] Implement `NewsImpactRepositoryPort`
-  - [x] `save()`: insert `news` row + all `newsImpacts` rows in a single Drizzle transaction
-  - [x] Append-only: never call `update()` or `delete()` in this repository
-  - [x] Map snake_case DB rows ↔ camelCase domain objects at repository boundary
-  - [x] Import `db` from `$lib/server/shared/db/client`
-  - [x] Import schema from `./news-impact.schema` (relative, within same infrastructure/db folder)
-  - [x] File location: `src/lib/server/contexts/news/infrastructure/db/news-impact.repository.ts` (exists as empty stub — fill it)
+    - [x] Implement `NewsImpactRepositoryPort`
+    - [x] `save()`: insert `news` row + all `newsImpacts` rows in a single Drizzle transaction
+    - [x] Append-only: never call `update()` or `delete()` in this repository
+    - [x] Map snake_case DB rows ↔ camelCase domain objects at repository boundary
+    - [x] Import `db` from `$lib/server/shared/db/client`
+    - [x] Import schema from `./news-impact.schema` (relative, within same infrastructure/db folder)
+    - [x] File location: `src/lib/server/contexts/news/infrastructure/db/news-impact.repository.ts` (exists as empty stub — fill it)
 
 - [x] Task 4: Implement `FakeNewsImpactRepository` (AC: #4)
-  - [x] Implement `NewsImpactRepositoryPort` with in-memory arrays
-  - [x] `save()`: push to `this.news` and `this.impacts` arrays — no DB
-  - [x] `findAllImpacts()`: return copy of `this.impacts` array
-  - [x] Expose `impacts` and `news` public arrays for test assertions
-  - [x] File location: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-impact.repository.ts`
+    - [x] Implement `NewsImpactRepositoryPort` with in-memory arrays
+    - [x] `save()`: push to `this.news` and `this.impacts` arrays — no DB
+    - [x] `findAllImpacts()`: return copy of `this.impacts` array
+    - [x] Expose `impacts` and `news` public arrays for test assertions
+    - [x] File location: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-impact.repository.ts`
 
 - [x] Task 5: Write unit tests for `FakeNewsImpactRepository` (AC: #4)
-  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-impact.repository.test.ts`
-  - [x] Tests: starts empty, save stores news+impacts, save with zero impacts, findAllImpacts returns copy, accumulates across multiple saves
+    - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-news-impact.repository.test.ts`
+    - [x] Tests: starts empty, save stores news+impacts, save with zero impacts, findAllImpacts returns copy, accumulates across multiple saves
 
 ## Dev Notes
 
@@ -103,21 +103,21 @@ Do NOT touch `news-classifier.port.ts`, `anthropic-classifier.ts`, `ingest-news.
 import { pgTable, text, real, timestamp } from 'drizzle-orm/pg-core';
 
 export const newsTable = pgTable('news', {
-  id: text('id').primaryKey(),
-  publishedAt: timestamp('published_at').notNull(),
-  analyzedAt: timestamp('analyzed_at').notNull(),
-  source: text('source').notNull(),
-  headline: text('headline').notNull(),
+    id: text('id').primaryKey(),
+    publishedAt: timestamp('published_at').notNull(),
+    analyzedAt: timestamp('analyzed_at').notNull(),
+    source: text('source').notNull(),
+    headline: text('headline').notNull()
 });
 
 export const newsImpactsTable = pgTable('news_impacts', {
-  id: text('id').primaryKey(),
-  newsId: text('news_id')
-    .notNull()
-    .references(() => newsTable.id),
-  sector: text('sector').notNull(),
-  impactScore: real('impact_score').notNull(),
-  impactType: text('impact_type').notNull(),
+    id: text('id').primaryKey(),
+    newsId: text('news_id')
+        .notNull()
+        .references(() => newsTable.id),
+    sector: text('sector').notNull(),
+    impactScore: real('impact_score').notNull(),
+    impactType: text('impact_type').notNull()
 });
 ```
 
@@ -135,8 +135,8 @@ import type { News } from '../../domain/news';
 import type { NewsImpact } from '../../domain/news-impact';
 
 export interface NewsImpactRepositoryPort {
-  save(news: News, impacts: NewsImpact[]): Promise<void>;
-  findAllImpacts(): Promise<NewsImpact[]>;
+    save(news: News, impacts: NewsImpact[]): Promise<void>;
+    findAllImpacts(): Promise<NewsImpact[]>;
 }
 ```
 
@@ -153,43 +153,44 @@ import type { News } from '../../domain/news';
 import type { NewsImpact } from '../../domain/news-impact';
 
 export class DrizzleNewsImpactRepository implements NewsImpactRepositoryPort {
-  async save(news: News, impacts: NewsImpact[]): Promise<void> {
-    await db.transaction(async (tx) => {
-      await tx.insert(newsTable).values({
-        id: news.id,
-        publishedAt: news.publishedAt,
-        analyzedAt: news.analyzedAt,
-        source: news.source,
-        headline: news.headline,
-      });
-      if (impacts.length > 0) {
-        await tx.insert(newsImpactsTable).values(
-          impacts.map((impact) => ({
-            id: impact.id,
-            newsId: impact.newsId,
-            sector: impact.sector,
-            impactScore: impact.impactScore,
-            impactType: impact.impactType,
-          }))
-        );
-      }
-    });
-  }
+    async save(news: News, impacts: NewsImpact[]): Promise<void> {
+        await db.transaction(async (tx) => {
+            await tx.insert(newsTable).values({
+                id: news.id,
+                publishedAt: news.publishedAt,
+                analyzedAt: news.analyzedAt,
+                source: news.source,
+                headline: news.headline
+            });
+            if (impacts.length > 0) {
+                await tx.insert(newsImpactsTable).values(
+                    impacts.map((impact) => ({
+                        id: impact.id,
+                        newsId: impact.newsId,
+                        sector: impact.sector,
+                        impactScore: impact.impactScore,
+                        impactType: impact.impactType
+                    }))
+                );
+            }
+        });
+    }
 
-  async findAllImpacts(): Promise<NewsImpact[]> {
-    const rows = await db.select().from(newsImpactsTable);
-    return rows.map((row) => ({
-      id: row.id,
-      newsId: row.newsId,
-      sector: row.sector as NewsImpact['sector'],  // Sector string enum
-      impactScore: row.impactScore,
-      impactType: row.impactType as NewsImpact['impactType'],  // ImpactType string enum
-    }));
-  }
+    async findAllImpacts(): Promise<NewsImpact[]> {
+        const rows = await db.select().from(newsImpactsTable);
+        return rows.map((row) => ({
+            id: row.id,
+            newsId: row.newsId,
+            sector: row.sector as NewsImpact['sector'], // Sector string enum
+            impactScore: row.impactScore,
+            impactType: row.impactType as NewsImpact['impactType'] // ImpactType string enum
+        }));
+    }
 }
 ```
 
 **Critical notes:**
+
 - Use `db.transaction(async (tx) => { ... })` — single atomic operation; if `news_impacts` insert fails, the `news` row is rolled back
 - `impacts.length > 0` guard prevents empty bulk insert (Drizzle rejects `.values([])`)
 - Mapping in `findAllImpacts()` is mandatory — DB rows have snake_case column names in raw form, but Drizzle with camelCase field names returns camelCase already. Still cast `sector` and `impactType` explicitly since they're stored as plain `text`
@@ -203,17 +204,17 @@ import type { News } from '../../domain/news';
 import type { NewsImpact } from '../../domain/news-impact';
 
 export class FakeNewsImpactRepository implements NewsImpactRepositoryPort {
-  public news: News[] = [];
-  public impacts: NewsImpact[] = [];
+    public news: News[] = [];
+    public impacts: NewsImpact[] = [];
 
-  async save(news: News, impacts: NewsImpact[]): Promise<void> {
-    this.news.push(news);
-    this.impacts.push(...impacts);
-  }
+    async save(news: News, impacts: NewsImpact[]): Promise<void> {
+        this.news.push(news);
+        this.impacts.push(...impacts);
+    }
 
-  async findAllImpacts(): Promise<NewsImpact[]> {
-    return [...this.impacts];
-  }
+    async findAllImpacts(): Promise<NewsImpact[]> {
+        return [...this.impacts];
+    }
 }
 ```
 
@@ -222,20 +223,24 @@ export class FakeNewsImpactRepository implements NewsImpactRepositoryPort {
 ### drizzle.config.ts — Already Configured
 
 `drizzle.config.ts` already uses the glob:
+
 ```typescript
-schema: './src/lib/server/contexts/**/infrastructure/db/schema.ts'
+schema: './src/lib/server/contexts/**/infrastructure/db/schema.ts';
 ```
 
 **IMPORTANT:** The schema file for this story MUST be named `news-impact.schema.ts`, **not** `schema.ts`. The glob will NOT match it.
 
 There are two options:
+
 1. Name the file `schema.ts` (matches the glob but less explicit)
 2. Update `drizzle.config.ts` to use `**/infrastructure/db/*.schema.ts`
 
 **Recommended:** Update `drizzle.config.ts` to use the broader glob so each context can have descriptively named schema files:
+
 ```typescript
 schema: './src/lib/server/contexts/**/infrastructure/db/*.schema.ts',
 ```
+
 This matches `news-impact.schema.ts`, `sector-score.schema.ts` (Story 1.5), etc.
 
 ### ID Generation
@@ -247,6 +252,7 @@ For the integration test, generate IDs manually: `crypto.randomUUID()` (availabl
 ### Import Path — Shared DB Client
 
 Inside `infrastructure/db/news-impact.repository.ts`, import the DB client using the SvelteKit alias:
+
 ```typescript
 import { db } from '$lib/server/shared/db/client';
 ```
@@ -275,40 +281,48 @@ import { Sector } from '../../domain/sector';
 import { ImpactType } from '../../domain/impact-type';
 
 describe('DrizzleNewsImpactRepository (integration)', () => {
-  let repo: DrizzleNewsImpactRepository;
+    let repo: DrizzleNewsImpactRepository;
 
-  beforeEach(() => {
-    repo = new DrizzleNewsImpactRepository();
-  });
+    beforeEach(() => {
+        repo = new DrizzleNewsImpactRepository();
+    });
 
-  it('saves news with impacts and retrieves them', async () => {
-    const news: News = {
-      id: crypto.randomUUID(),
-      publishedAt: new Date(),
-      analyzedAt: new Date(),
-      source: 'Reuters',
-      headline: 'Tech sector surges on AI announcement',
-    };
-    const impacts: NewsImpact[] = [{
-      id: crypto.randomUUID(),
-      newsId: news.id,
-      sector: Sector.TECHNOLOGY,
-      impactScore: 0.8,
-      impactType: ImpactType.PUNCTUAL,
-    }];
+    it('saves news with impacts and retrieves them', async () => {
+        const news: News = {
+            id: crypto.randomUUID(),
+            publishedAt: new Date(),
+            analyzedAt: new Date(),
+            source: 'Reuters',
+            headline: 'Tech sector surges on AI announcement'
+        };
+        const impacts: NewsImpact[] = [
+            {
+                id: crypto.randomUUID(),
+                newsId: news.id,
+                sector: Sector.TECHNOLOGY,
+                impactScore: 0.8,
+                impactType: ImpactType.PUNCTUAL
+            }
+        ];
 
-    await repo.save(news, impacts);
-    const found = await repo.findAllImpacts();
+        await repo.save(news, impacts);
+        const found = await repo.findAllImpacts();
 
-    expect(found).toHaveLength(1);
-    expect(found[0].sector).toBe(Sector.TECHNOLOGY);
-    expect(found[0].impactScore).toBeCloseTo(0.8);
-  });
+        expect(found).toHaveLength(1);
+        expect(found[0].sector).toBe(Sector.TECHNOLOGY);
+        expect(found[0].impactScore).toBeCloseTo(0.8);
+    });
 
-  it('saves news with zero impacts without error', async () => {
-    const news: News = { id: crypto.randomUUID(), publishedAt: new Date(), analyzedAt: new Date(), source: 'AP', headline: 'Test' };
-    await expect(repo.save(news, [])).resolves.not.toThrow();
-  });
+    it('saves news with zero impacts without error', async () => {
+        const news: News = {
+            id: crypto.randomUUID(),
+            publishedAt: new Date(),
+            analyzedAt: new Date(),
+            source: 'AP',
+            headline: 'Test'
+        };
+        await expect(repo.save(news, [])).resolves.not.toThrow();
+    });
 });
 ```
 

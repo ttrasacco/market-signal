@@ -30,24 +30,24 @@ so that I can read sector conviction state at a glance without understanding the
 ## Tasks / Subtasks
 
 - [x] Task 1 — Define `SectorScoreCardProps` type and scoring-to-color logic (AC: #1, #2)
-  - [x] Create `src/lib/components/SectorScoreCard.svelte`
-  - [x] Define prop type: `SectorScoreCardData = Pick<SectorScore, 'sector' | 'score' | 'punctualScore' | 'structuralScore'>` (see Dev Notes — Story 3.4 provides real sub-scores)
-  - [x] Implement `scoreToColor(score: number): 'green' | 'orange' | 'red'` pure function
-  - [x] Implement `getNarrativeLabel(punctualColor, structuralColor): string` 9-state lookup table
+    - [x] Create `src/lib/components/SectorScoreCard.svelte`
+    - [x] Define prop type: `SectorScoreCardData = Pick<SectorScore, 'sector' | 'score' | 'punctualScore' | 'structuralScore'>` (see Dev Notes — Story 3.4 provides real sub-scores)
+    - [x] Implement `scoreToColor(score: number): 'green' | 'orange' | 'red'` pure function
+    - [x] Implement `getNarrativeLabel(punctualColor, structuralColor): string` 9-state lookup table
 
 - [x] Task 2 — Implement Ripple Cast SVG/CSS structure (AC: #1)
-  - [x] Outer ring (`.ripple-outer` + `.ripple-outer-2`) colored by structural color
-  - [x] Inner ring (`.ripple-inner`) colored by punctual color
-  - [x] Apply `ripple-pulse` animation (3s ease-in-out infinite)
-  - [x] Card header: sector name (`.type-sector-name`) + narrative label below
+    - [x] Outer ring (`.ripple-outer` + `.ripple-outer-2`) colored by structural color
+    - [x] Inner ring (`.ripple-inner`) colored by punctual color
+    - [x] Apply `ripple-pulse` animation (3s ease-in-out infinite)
+    - [x] Card header: sector name (`.type-sector-name`) + narrative label below
 
 - [x] Task 3 — Mobile responsiveness (AC: #3)
-  - [x] Card padding: 16px desktop → 12px at ≤480px breakpoint
-  - [x] Match HTML mockup responsive behavior
+    - [x] Card padding: 16px desktop → 12px at ≤480px breakpoint
+    - [x] Match HTML mockup responsive behavior
 
 - [x] Task 4 — Unit test for pure logic (no DOM)
-  - [x] Test `scoreToColor`: boundary values (score > 0.2 → green, -0.2 to 0.2 → orange, < -0.2 → red — see Dev Notes for exact thresholds)
-  - [x] Test `getNarrativeLabel`: all 9 combinations
+    - [x] Test `scoreToColor`: boundary values (score > 0.2 → green, -0.2 to 0.2 → orange, < -0.2 → red — see Dev Notes for exact thresholds)
+    - [x] Test `getNarrativeLabel`: all 9 combinations
 
 ## Dev Notes
 
@@ -56,13 +56,14 @@ so that I can read sector conviction state at a glance without understanding the
 Story 3.4 (`3-4-sector-score-sub-scores`) extends `SectorScore` with two sub-scores. **Story 3.4 must be done before implementing this story.**
 
 `SectorScore` (from `src/lib/server/contexts/scoring/domain/sector-score.ts`) is:
+
 ```typescript
 interface SectorScore {
-  date: Date;
-  sector: Sector;
-  score: number;          // composite = punctualScore + structuralScore
-  punctualScore: number;  // Σ decayed PUNCTUAL impacts → drives inner ring color
-  structuralScore: number; // Σ decayed STRUCTURAL impacts → drives outer ripples color
+    date: Date;
+    sector: Sector;
+    score: number; // composite = punctualScore + structuralScore
+    punctualScore: number; // Σ decayed PUNCTUAL impacts → drives inner ring color
+    structuralScore: number; // Σ decayed STRUCTURAL impacts → drives outer ripples color
 }
 ```
 
@@ -70,7 +71,10 @@ interface SectorScore {
 
 ```typescript
 // In src/lib/components/sector-score-card.utils.ts
-export type SectorScoreCardData = Pick<SectorScore, 'sector' | 'score' | 'punctualScore' | 'structuralScore'>;
+export type SectorScoreCardData = Pick<
+    SectorScore,
+    'sector' | 'score' | 'punctualScore' | 'structuralScore'
+>;
 ```
 
 **Important:** The `SectorScoreCard` is a **UI component** — it lives in `src/lib/components/`, NOT in `src/lib/server/`. Import the `SectorScore` type from `$lib/server/contexts/scoring/domain/sector-score` only to derive the prop type — no server logic in the component.
@@ -81,9 +85,9 @@ From the HTML mockup patterns (green = positive, red = negative, orange = neutra
 
 ```typescript
 function scoreToColor(score: number): 'green' | 'orange' | 'red' {
-  if (score > 0.2)  return 'green';
-  if (score < -0.2) return 'red';
-  return 'orange';
+    if (score > 0.2) return 'green';
+    if (score < -0.2) return 'red';
+    return 'orange';
 }
 ```
 
@@ -93,17 +97,17 @@ function scoreToColor(score: number): 'green' | 'orange' | 'red' {
 
 From UX-DR5 + HTML mockup examples:
 
-| PUNCTUAL color | STRUCTURAL color | Label |
-|---|---|---|
-| green  | green  | "Confirmed momentum" |
-| green  | orange | "Healthy · caution ahead" |
-| green  | red    | "Recovery · structural drag" |
-| orange | green  | "Turbulence · rebound expected" |
-| orange | orange | "Mixed signal" |
-| orange | red    | "Growing pressure" |
-| red    | green  | "Crisis · uncertain stabilization" |
-| red    | orange | "Crisis · uncertain stabilization" |
-| red    | red    | "Widespread deterioration" |
+| PUNCTUAL color | STRUCTURAL color | Label                              |
+| -------------- | ---------------- | ---------------------------------- |
+| green          | green            | "Confirmed momentum"               |
+| green          | orange           | "Healthy · caution ahead"          |
+| green          | red              | "Recovery · structural drag"       |
+| orange         | green            | "Turbulence · rebound expected"    |
+| orange         | orange           | "Mixed signal"                     |
+| orange         | red              | "Growing pressure"                 |
+| red            | green            | "Crisis · uncertain stabilization" |
+| red            | orange           | "Crisis · uncertain stabilization" |
+| red            | red              | "Widespread deterioration"         |
 
 > These labels are derived from the HTML mockup examples. Map them consistently.
 
@@ -114,47 +118,57 @@ The exact CSS class structure to replicate in Svelte:
 ```html
 <!-- Full-size Ripple Cast (for highlight cards) -->
 <div class="ripple-wrapper">
-  <div class="ripple">                          <!-- 72×72px container -->
-    <div class="ripple-outer {structuralColor}"></div>   <!-- 72px, opacity 0.35, animated -->
-    <div class="ripple-outer-2 {structuralColor}"></div> <!-- 52px, opacity 0.2, animated -->
-    <div class="ripple-inner {punctualColor}"></div>     <!-- 32px inner ring -->
-  </div>
+    <div class="ripple">
+        <!-- 72×72px container -->
+        <div class="ripple-outer {structuralColor}"></div>
+        <!-- 72px, opacity 0.35, animated -->
+        <div class="ripple-outer-2 {structuralColor}"></div>
+        <!-- 52px, opacity 0.2, animated -->
+        <div class="ripple-inner {punctualColor}"></div>
+        <!-- 32px inner ring -->
+    </div>
 </div>
 
 <!-- Mini Ripple Cast (for sector table rows in story 4.4) -->
-<div class="mini-ripple">                       <!-- 28×28px container -->
-  <div class="mini-ripple-outer {structuralColor}"></div>
-  <div class="mini-ripple-inner {punctualColor}"></div>
+<div class="mini-ripple">
+    <!-- 28×28px container -->
+    <div class="mini-ripple-outer {structuralColor}"></div>
+    <div class="mini-ripple-inner {punctualColor}"></div>
 </div>
 ```
 
 **CSS values from mockup:**
+
 - `.ripple`: `position: relative; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center;`
 - `.ripple-outer`: `position: absolute; width: 72px; height: 72px; border-radius: 50%; border: 1px solid transparent; opacity: 0.35; animation: ripple-pulse 3s ease-in-out infinite;`
 - `.ripple-outer-2`: same but `width: 52px; height: 52px; border: 0.5px; opacity: 0.2`
 - `.ripple-inner`: `width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid transparent; position: relative; z-index: 1;`
 - Color variants (use Tailwind v4 tokens or inline CSS custom properties):
-  - `green`: `border-color: var(--color-green)` + `box-shadow: 0 0 12px rgba(34,197,94,0.2)` (outer only)
-  - `orange`: `border-color: var(--color-orange)` + `box-shadow: 0 0 12px rgba(245,158,11,0.2)` (outer only)
-  - `red`: `border-color: var(--color-red)` + `box-shadow: 0 0 12px rgba(239,68,68,0.2)` (outer only)
-  - Inner: `green` → `background: rgba(34,197,94,0.08)`, `orange` → `background: rgba(245,158,11,0.08)`, `red` → `background: rgba(239,68,68,0.08)`
+    - `green`: `border-color: var(--color-green)` + `box-shadow: 0 0 12px rgba(34,197,94,0.2)` (outer only)
+    - `orange`: `border-color: var(--color-orange)` + `box-shadow: 0 0 12px rgba(245,158,11,0.2)` (outer only)
+    - `red`: `border-color: var(--color-red)` + `box-shadow: 0 0 12px rgba(239,68,68,0.2)` (outer only)
+    - Inner: `green` → `background: rgba(34,197,94,0.08)`, `orange` → `background: rgba(245,158,11,0.08)`, `red` → `background: rgba(239,68,68,0.08)`
 - `ripple-pulse` animation: `0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.04); }`
 
 ### 5. Full card structure from the mockup
 
 ```html
-<div class="ripple-card">              <!-- bg-surface, border, border-radius: 12px, padding: 16px -->
-  <div class="ripple-card-header">    <!-- flex justify-between items-start -->
-    <div>
-      <div class="sector-name">Technology</div>          <!-- .type-sector-name: 15px/500 in mockup, AC says 16px -->
-      <div class="narrative-label">Confirmed momentum</div>  <!-- 11px/400, text-secondary in mockup -->
+<div class="ripple-card">
+    <!-- bg-surface, border, border-radius: 12px, padding: 16px -->
+    <div class="ripple-card-header">
+        <!-- flex justify-between items-start -->
+        <div>
+            <div class="sector-name">Technology</div>
+            <!-- .type-sector-name: 15px/500 in mockup, AC says 16px -->
+            <div class="narrative-label">Confirmed momentum</div>
+            <!-- 11px/400, text-secondary in mockup -->
+        </div>
+        <!-- reliability-btn slot → Story 4.3 will fill this -->
+        <div></div>
     </div>
-    <!-- reliability-btn slot → Story 4.3 will fill this -->
-    <div></div>
-  </div>
-  <div class="ripple-wrapper">
-    <!-- Ripple Cast visual here -->
-  </div>
+    <div class="ripple-wrapper">
+        <!-- Ripple Cast visual here -->
+    </div>
 </div>
 ```
 
@@ -163,6 +177,7 @@ The exact CSS class structure to replicate in Svelte:
 ### 6. Tailwind v4 naming convention (critical — from Story 4.1)
 
 In Tailwind v4, `--color-bg` → `bg-bg` (NOT `bg-color-bg`). The `--color-` prefix is stripped:
+
 - `--color-surface` → `bg-surface`
 - `--color-border` → `border-border`
 - `--color-text-primary` → `text-text-primary`
@@ -172,8 +187,8 @@ For the Ripple Cast colors (border-color, box-shadow), use **inline CSS with CSS
 
 ```svelte
 <div
-  class="ripple-outer"
-  style="border-color: var(--color-{structuralColor}); box-shadow: 0 0 12px {shadowColor};"
+    class="ripple-outer"
+    style="border-color: var(--color-{structuralColor}); box-shadow: 0 0 12px {shadowColor};"
 ></div>
 ```
 
@@ -182,6 +197,7 @@ Or use `class:green={structuralColor === 'green'}` with pre-defined CSS classes 
 ### 7. Component location and naming
 
 Per architecture (`architecture.md` → Project Structure section):
+
 - `src/lib/components/SectorScoreCard.svelte` ← THIS story
 - `src/lib/components/SectorScoreGrid.svelte` ← Story 4.2/4.4 (can skip for now)
 - `src/lib/components/DashboardLayout.svelte` ← Story 4.4
@@ -194,13 +210,13 @@ Project uses `svelte: ^5.51.0`. Use Svelte 5 runes:
 
 ```svelte
 <script lang="ts">
-  import type { SectorScoreCardData } from './types';
+    import type { SectorScoreCardData } from './types';
 
-  let { data }: { data: SectorScoreCardData } = $props();
+    let { data }: { data: SectorScoreCardData } = $props();
 
-  const punctualColor = $derived(scoreToColor(data.punctualScore));
-  const structuralColor = $derived(scoreToColor(data.structuralScore));
-  const narrativeLabel = $derived(getNarrativeLabel(punctualColor, structuralColor));
+    const punctualColor = $derived(scoreToColor(data.punctualScore));
+    const structuralColor = $derived(scoreToColor(data.structuralScore));
+    const narrativeLabel = $derived(getNarrativeLabel(punctualColor, structuralColor));
 </script>
 ```
 
@@ -223,11 +239,11 @@ OR export the helpers from the `.svelte` file and test in a co-located `.test.ts
 
 ### 11. Files to create
 
-| File | Action |
-|---|---|
-| `src/lib/components/SectorScoreCard.svelte` | CREATE |
-| `src/lib/components/sector-score-card.utils.ts` | CREATE (scoreToColor, getNarrativeLabel, SectorScoreCardData type) |
-| `src/lib/components/sector-score-card.utils.test.ts` | CREATE (unit tests) |
+| File                                                 | Action                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------ |
+| `src/lib/components/SectorScoreCard.svelte`          | CREATE                                                             |
+| `src/lib/components/sector-score-card.utils.ts`      | CREATE (scoreToColor, getNarrativeLabel, SectorScoreCardData type) |
+| `src/lib/components/sector-score-card.utils.test.ts` | CREATE (unit tests)                                                |
 
 ### Project Structure Notes
 

@@ -34,30 +34,30 @@ So that the ingestion use case can fetch articles without depending on a specifi
 ## Tasks / Subtasks
 
 - [x] Task 1: Define `RawArticle` type and `RssFetcherPort` interface (AC: #1)
-  - [x] File: `src/lib/server/contexts/news/application/ports/rss-fetcher.port.ts` (CREATE NEW)
-  - [x] Define `RawArticle` interface: `{ publishedAt: Date; source: string; headline: string }`
-  - [x] Define `RssFetcherPort` interface: `{ fetchArticles(feedUrl: string): Promise<RawArticle[]> }`
-  - [x] Zero imports outside `application/` layer (no Drizzle, no SDK)
+    - [x] File: `src/lib/server/contexts/news/application/ports/rss-fetcher.port.ts` (CREATE NEW)
+    - [x] Define `RawArticle` interface: `{ publishedAt: Date; source: string; headline: string }`
+    - [x] Define `RssFetcherPort` interface: `{ fetchArticles(feedUrl: string): Promise<RawArticle[]> }`
+    - [x] Zero imports outside `application/` layer (no Drizzle, no SDK)
 
 - [x] Task 2: Install RSS parsing library and implement `RssFetcher` (AC: #2)
-  - [x] Install `rss-parser` (npm) — see Dev Notes for exact command and version
-  - [x] File: `src/lib/server/contexts/news/infrastructure/rss/rss-fetcher.ts` (CREATE NEW — directory does not exist yet)
-  - [x] Class `RssFetcher` implementing `RssFetcherPort`
-  - [x] Parse `feed.items` → map to `RawArticle[]`: extract `title` → `headline`, `isoDate`/`pubDate` → `publishedAt` (as `Date`), `feed.title` or feed domain → `source`
-  - [x] On fetch/parse failure: throw a catchable `Error` (not `ApiError` — this is infrastructure-level)
-  - [x] Do NOT catch errors internally — let the use case handle them (NFR6/NFR7 pattern)
+    - [x] Install `rss-parser` (npm) — see Dev Notes for exact command and version
+    - [x] File: `src/lib/server/contexts/news/infrastructure/rss/rss-fetcher.ts` (CREATE NEW — directory does not exist yet)
+    - [x] Class `RssFetcher` implementing `RssFetcherPort`
+    - [x] Parse `feed.items` → map to `RawArticle[]`: extract `title` → `headline`, `isoDate`/`pubDate` → `publishedAt` (as `Date`), `feed.title` or feed domain → `source`
+    - [x] On fetch/parse failure: throw a catchable `Error` (not `ApiError` — this is infrastructure-level)
+    - [x] Do NOT catch errors internally — let the use case handle them (NFR6/NFR7 pattern)
 
 - [x] Task 3: Implement `FakeRssFetcher` (AC: #3)
-  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-rss-fetcher.ts` (CREATE NEW — directory already exists)
-  - [x] Class `FakeRssFetcher` implementing `RssFetcherPort`
-  - [x] Constructor takes optional `articles: RawArticle[]` — defaults to `[]`
-  - [x] Expose public `articles: RawArticle[]` for test assertions
-  - [x] `fetchArticles()` returns `[...this.articles]` — no HTTP call
-  - [x] Support configuring a `shouldThrow` flag to simulate feed failure in tests
+    - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-rss-fetcher.ts` (CREATE NEW — directory already exists)
+    - [x] Class `FakeRssFetcher` implementing `RssFetcherPort`
+    - [x] Constructor takes optional `articles: RawArticle[]` — defaults to `[]`
+    - [x] Expose public `articles: RawArticle[]` for test assertions
+    - [x] `fetchArticles()` returns `[...this.articles]` — no HTTP call
+    - [x] Support configuring a `shouldThrow` flag to simulate feed failure in tests
 
 - [x] Task 4: Write unit tests for `FakeRssFetcher` (no DB required)
-  - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-rss-fetcher.test.ts` (CREATE NEW)
-  - [x] Tests: returns configured articles, returns empty array by default, throws when `shouldThrow = true`
+    - [x] File: `src/lib/server/contexts/news/infrastructure/fakes/fake-rss-fetcher.test.ts` (CREATE NEW)
+    - [x] Tests: returns configured articles, returns empty array by default, throws when `shouldThrow = true`
 
 ---
 
@@ -98,6 +98,7 @@ src/lib/server/contexts/news/
 ### RSS Library — `rss-parser`
 
 **Install command:**
+
 ```bash
 npm install rss-parser
 ```
@@ -105,6 +106,7 @@ npm install rss-parser
 **Why `rss-parser`?** It is the most-used Node.js RSS/Atom feed parsing library (400k+ weekly downloads), has TypeScript types bundled (`@types/rss-parser` not needed), handles both RSS 2.0 and Atom feeds, and works in Node.js (server-side only — not browser). It fetches and parses in one call.
 
 **Basic usage pattern:**
+
 ```typescript
 import Parser from 'rss-parser';
 
@@ -118,18 +120,21 @@ const feed = await parser.parseURL(feedUrl);
 ```
 
 **Type declaration — what to import:**
+
 ```typescript
 import Parser from 'rss-parser';
 // The Parser class is the default export
 ```
 
 **Date parsing:**
+
 ```typescript
 // Always prefer isoDate, fall back to pubDate
 const publishedAt = new Date(item.isoDate ?? item.pubDate ?? new Date().toISOString());
 ```
 
 **Source extraction:**
+
 ```typescript
 // Use feed title as source — most reliable
 const source = feed.title ?? new URL(feedUrl).hostname;
@@ -141,13 +146,13 @@ const source = feed.title ?? new URL(feedUrl).hostname;
 // src/lib/server/contexts/news/application/ports/rss-fetcher.port.ts
 
 export interface RawArticle {
-  publishedAt: Date;
-  source: string;
-  headline: string;
+    publishedAt: Date;
+    source: string;
+    headline: string;
 }
 
 export interface RssFetcherPort {
-  fetchArticles(feedUrl: string): Promise<RawArticle[]>;
+    fetchArticles(feedUrl: string): Promise<RawArticle[]>;
 }
 ```
 
@@ -163,22 +168,23 @@ import type { RssFetcherPort, RawArticle } from '../../application/ports/rss-fet
 const parser = new Parser();
 
 export class RssFetcher implements RssFetcherPort {
-  async fetchArticles(feedUrl: string): Promise<RawArticle[]> {
-    const feed = await parser.parseURL(feedUrl);
-    const source = feed.title ?? new URL(feedUrl).hostname;
+    async fetchArticles(feedUrl: string): Promise<RawArticle[]> {
+        const feed = await parser.parseURL(feedUrl);
+        const source = feed.title ?? new URL(feedUrl).hostname;
 
-    return (feed.items ?? [])
-      .filter((item) => !!item.title)
-      .map((item) => ({
-        headline: item.title!,
-        publishedAt: new Date(item.isoDate ?? item.pubDate ?? new Date().toISOString()),
-        source,
-      }));
-  }
+        return (feed.items ?? [])
+            .filter((item) => !!item.title)
+            .map((item) => ({
+                headline: item.title!,
+                publishedAt: new Date(item.isoDate ?? item.pubDate ?? new Date().toISOString()),
+                source
+            }));
+    }
 }
 ```
 
 **Key implementation rules:**
+
 - Instantiate `Parser` at module level (singleton) — avoids re-creating on every call
 - Filter items without `title` — headline is required (`RawArticle.headline` is non-nullable)
 - Let `parseURL` throw naturally — the caller (`IngestNewsUseCase` in Story 2.3) catches per-feed errors
@@ -191,23 +197,24 @@ export class RssFetcher implements RssFetcherPort {
 import type { RssFetcherPort, RawArticle } from '../../application/ports/rss-fetcher.port';
 
 export class FakeRssFetcher implements RssFetcherPort {
-  public articles: RawArticle[];
-  public shouldThrow = false;
+    public articles: RawArticle[];
+    public shouldThrow = false;
 
-  constructor(articles: RawArticle[] = []) {
-    this.articles = articles;
-  }
-
-  async fetchArticles(_feedUrl: string): Promise<RawArticle[]> {
-    if (this.shouldThrow) {
-      throw new Error('Feed unavailable');
+    constructor(articles: RawArticle[] = []) {
+        this.articles = articles;
     }
-    return [...this.articles];
-  }
+
+    async fetchArticles(_feedUrl: string): Promise<RawArticle[]> {
+        if (this.shouldThrow) {
+            throw new Error('Feed unavailable');
+        }
+        return [...this.articles];
+    }
 }
 ```
 
 **Why `public articles` and `public shouldThrow`?** Tests set and assert on these directly:
+
 ```typescript
 const fake = new FakeRssFetcher();
 fake.articles = [{ headline: 'Big news', publishedAt: new Date(), source: 'Reuters' }];
@@ -223,50 +230,52 @@ import { FakeRssFetcher } from './fake-rss-fetcher';
 import type { RawArticle } from '../../application/ports/rss-fetcher.port';
 
 const makeArticle = (overrides?: Partial<RawArticle>): RawArticle => ({
-  headline: 'Test headline',
-  publishedAt: new Date('2026-03-19'),
-  source: 'Reuters',
-  ...overrides,
+    headline: 'Test headline',
+    publishedAt: new Date('2026-03-19'),
+    source: 'Reuters',
+    ...overrides
 });
 
 describe('FakeRssFetcher', () => {
-  let fake: FakeRssFetcher;
+    let fake: FakeRssFetcher;
 
-  beforeEach(() => {
-    fake = new FakeRssFetcher();
-  });
+    beforeEach(() => {
+        fake = new FakeRssFetcher();
+    });
 
-  it('returns empty array by default', async () => {
-    const result = await fake.fetchArticles('https://any-feed.com/rss');
-    expect(result).toHaveLength(0);
-  });
+    it('returns empty array by default', async () => {
+        const result = await fake.fetchArticles('https://any-feed.com/rss');
+        expect(result).toHaveLength(0);
+    });
 
-  it('returns configured articles', async () => {
-    fake.articles = [makeArticle(), makeArticle({ headline: 'Other news' })];
-    const result = await fake.fetchArticles('https://any-feed.com/rss');
-    expect(result).toHaveLength(2);
-    expect(result[0].headline).toBe('Test headline');
-  });
+    it('returns configured articles', async () => {
+        fake.articles = [makeArticle(), makeArticle({ headline: 'Other news' })];
+        const result = await fake.fetchArticles('https://any-feed.com/rss');
+        expect(result).toHaveLength(2);
+        expect(result[0].headline).toBe('Test headline');
+    });
 
-  it('returns a copy — mutating result does not affect internal state', async () => {
-    fake.articles = [makeArticle()];
-    const result = await fake.fetchArticles('https://any-feed.com/rss');
-    result.pop();
-    expect(fake.articles).toHaveLength(1);
-  });
+    it('returns a copy — mutating result does not affect internal state', async () => {
+        fake.articles = [makeArticle()];
+        const result = await fake.fetchArticles('https://any-feed.com/rss');
+        result.pop();
+        expect(fake.articles).toHaveLength(1);
+    });
 
-  it('throws when shouldThrow is true', async () => {
-    fake.shouldThrow = true;
-    await expect(fake.fetchArticles('https://any-feed.com/rss')).rejects.toThrow('Feed unavailable');
-  });
+    it('throws when shouldThrow is true', async () => {
+        fake.shouldThrow = true;
+        await expect(fake.fetchArticles('https://any-feed.com/rss')).rejects.toThrow(
+            'Feed unavailable'
+        );
+    });
 
-  it('ignores the feedUrl argument (any URL returns same articles)', async () => {
-    fake.articles = [makeArticle()];
-    const r1 = await fake.fetchArticles('https://feed-a.com/rss');
-    const r2 = await fake.fetchArticles('https://feed-b.com/rss');
-    expect(r1).toHaveLength(1);
-    expect(r2).toHaveLength(1);
-  });
+    it('ignores the feedUrl argument (any URL returns same articles)', async () => {
+        fake.articles = [makeArticle()];
+        const r1 = await fake.fetchArticles('https://feed-a.com/rss');
+        const r2 = await fake.fetchArticles('https://feed-b.com/rss');
+        expect(r1).toHaveLength(1);
+        expect(r2).toHaveLength(1);
+    });
 });
 ```
 
@@ -297,6 +306,7 @@ No `$lib/server/` alias needed for these files — all paths are relative within
 ### Error Handling Contract
 
 Per architecture (NFR6 / NFR7), error isolation happens in the **use case**, not the adapter:
+
 - `RssFetcher.fetchArticles()` → throws `Error` on feed unavailability (network error, parse error)
 - Story 2.3 (`IngestNewsUseCase`) will wrap each feed fetch in a `try/catch`, log the error, and continue with other feeds
 - Do NOT use `try/catch` in `RssFetcher` to swallow errors — callers must see them
