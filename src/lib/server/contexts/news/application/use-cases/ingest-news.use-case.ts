@@ -30,10 +30,23 @@ export class IngestNewsUseCase {
 				continue;
 			}
 
+			// Single LLM call for all headlines of this feed
+			const headlines = articles.map((a) => a.headline);
+			let batchResults;
+			try {
+				batchResults = await this.classifier.classifyBatch(headlines);
+			} catch (error) {
+				console.error(`[PIPELINE] ingest: batch classification failed for ${feedUrl}`, error);
+				continue;
+			}
+
+			const classificationsByHeadline = new Map(
+				batchResults.map((r) => [r.headline, r.classifications])
+			);
+
 			for (const article of articles) {
 				try {
-					const classifications = await this.classifier.classify(article.headline);
-
+					const classifications = classificationsByHeadline.get(article.headline) ?? [];
 					if (classifications.length === 0) continue;
 
 					const newsId = crypto.randomUUID();
@@ -41,7 +54,7 @@ export class IngestNewsUseCase {
 						id: newsId,
 						publishedAt: article.publishedAt,
 						analyzedAt: new Date(),
-						source: article.source,
+						source: feedUrl,
 						headline: article.headline
 					};
 

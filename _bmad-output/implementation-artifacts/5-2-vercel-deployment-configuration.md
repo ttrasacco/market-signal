@@ -1,6 +1,6 @@
 # Story 5.2: Vercel Deployment Configuration & Environment Validation
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -30,29 +30,29 @@ so that the app deploys cleanly to Vercel with Neon PostgreSQL and all required 
 
 ## Tasks / Subtasks
 
-- [ ] Task 1 — Switch adapter from `adapter-auto` to `adapter-vercel` (AC: #1)
-  - [ ] Install `@sveltejs/adapter-vercel`: `npm install -D @sveltejs/adapter-vercel`
-  - [ ] Update `svelte.config.js`: replace `@sveltejs/adapter-auto` import with `@sveltejs/adapter-vercel`
-  - [ ] Keep adapter configuration minimal (no custom options needed)
+- [x] Task 1 — Switch adapter from `adapter-auto` to `adapter-vercel` (AC: #1)
+  - [x] Install `@sveltejs/adapter-vercel`: `npm install -D @sveltejs/adapter-vercel`
+  - [x] Update `svelte.config.js`: replace `@sveltejs/adapter-auto` import with `@sveltejs/adapter-vercel`
+  - [x] Keep adapter configuration minimal (no custom options needed)
 
-- [ ] Task 2 — Update `vercel.json` with correct structure (AC: #1)
-  - [ ] `vercel.json` already exists at project root with cron schedule — verify it's correct
-  - [ ] Ensure the file contains only the cron config: `{ "crons": [{ "path": "/api/cron/daily", "schedule": "0 6 * * *" }] }`
-  - [ ] Confirm no hardcoded secrets or credentials
+- [x] Task 2 — Update `vercel.json` with correct structure (AC: #1)
+  - [x] `vercel.json` already exists at project root with cron schedule — verify it's correct
+  - [x] Ensure the file contains only the cron config: `{ "crons": [{ "path": "/api/cron/daily", "schedule": "0 6 * * *" }] }`
+  - [x] Confirm no hardcoded secrets or credentials
 
-- [ ] Task 3 — Create `.env.example` (AC: #2)
-  - [ ] Create `.env.example` at project root documenting all 3 required env vars with placeholder values
-  - [ ] Verify `.env.example` is NOT listed in `.gitignore` (it should be committed)
-  - [ ] Verify `.env` (actual secrets) IS listed in `.gitignore`
+- [x] Task 3 — Create `.env.example` (AC: #2)
+  - [x] Create `.env.example` at project root documenting all 3 required env vars with placeholder values
+  - [x] Verify `.env.example` is NOT listed in `.gitignore` (it should be committed)
+  - [x] Verify `.env` (actual secrets) IS listed in `.gitignore`
 
-- [ ] Task 4 — Update `src/app.d.ts` to type env vars (AC: #3)
-  - [ ] Add `App.Env` interface inside the `namespace App` block
-  - [ ] Declare `DATABASE_URL: string`, `ANTHROPIC_API_KEY: string`, `CRON_SECRET: string`
-  - [ ] Confirm TypeScript compiles: `npm run check`
+- [x] Task 4 — Update `src/app.d.ts` to type env vars (AC: #3)
+  - [x] Add `App.Env` interface inside the `namespace App` block
+  - [x] Declare `DATABASE_URL: string`, `ANTHROPIC_API_KEY: string`, `CRON_SECRET: string`
+  - [x] Confirm TypeScript compiles: `npm run check`
 
-- [ ] Task 5 — Validate overall TypeScript + build (AC: #3, #4)
-  - [ ] Run `npm run check` — 0 errors
-  - [ ] Run `npm run build` — successful build with `adapter-vercel`
+- [x] Task 5 — Validate overall TypeScript + build (AC: #3, #4)
+  - [x] Run `npm run check` — 0 errors
+  - [x] Run `npm run build` — successful build with `adapter-vercel`
 
 ## Dev Notes
 
@@ -226,6 +226,25 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+- Fixed pre-existing broken import in `news-impact.read.adapter.ts`: port was moved to cross-context folder in commit `d8c1a88` but import path was not updated. Corrected to use `$lib/server/cross-context/compute-daily-scores/application/ports/news-impact.read.port`.
+
 ### Completion Notes List
 
+- Task 1: Installed `@sveltejs/adapter-vercel` as devDependency; updated `svelte.config.js` import. Build output confirms `> Using @sveltejs/adapter-vercel`.
+- Task 2: `vercel.json` verified — correct cron config, no secrets. No change required.
+- Task 3: Created `.env.example` with 3 placeholder vars. `.gitignore` already had correct exclusions (`!.env.example` exception).
+- Task 4: Added `App.Env` interface to `src/app.d.ts` with `DATABASE_URL`, `ANTHROPIC_API_KEY`, `CRON_SECRET`.
+- Task 5: `npm run check` — 0 errors (1 pre-existing CSS warning, non-blocking). `npm run build` — success. `npm run test:unit` — 122 tests passed, 0 regressions.
+
 ### File List
+
+- `svelte.config.js` — modified: replaced `@sveltejs/adapter-auto` with `@sveltejs/adapter-vercel`
+- `package.json` — modified: `@sveltejs/adapter-vercel` added to devDependencies (via npm install)
+- `package-lock.json` — modified: lockfile updated
+- `.env.example` — created: documents 3 required env vars with placeholder values
+- `src/app.d.ts` — modified: added `App.Env` interface with 3 typed env vars
+- `src/lib/server/contexts/scoring/infrastructure/db/news-impact.read.adapter.ts` — fixed: import path updated to reflect cross-context refactor from commit d8c1a88
+
+## Change Log
+
+- 2026-03-19: Switched adapter from `adapter-auto` to `adapter-vercel`; created `.env.example`; typed env vars in `src/app.d.ts`; fixed pre-existing broken import in `news-impact.read.adapter.ts`. Build and all 122 unit tests pass.

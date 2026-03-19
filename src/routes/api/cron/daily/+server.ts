@@ -4,7 +4,7 @@ import { DrizzleNewsImpactAdapter } from '$lib/server/contexts/news/infrastructu
 import { AnthropicClassifier } from '$lib/server/contexts/news/infrastructure/llm/anthropic-classifier';
 import { RssFetcher } from '$lib/server/contexts/news/infrastructure/rss/rss-fetcher';
 import { IngestNewsUseCase } from '$lib/server/contexts/news/application/use-cases/ingest-news.use-case';
-import { DrizzleNewsImpactReadAdapter } from '$lib/server/contexts/scoring/infrastructure/db/news-impact.read.adapter';
+import { DrizzleNewsImpactReadAdapter } from '$lib/server/cross-context/compute-daily-scores/infrastructure/db/news-impact.read.adapter';
 import { DrizzleSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/db/sector-score.adapter';
 import { ComputeDailyScoresUseCase } from '$lib/server/cross-context/compute-daily-scores/application/use-cases/compute-daily-scores.use-case';
 import { RunDailyPipelineUseCase } from '$lib/server/cross-context/pipeline/application/run-daily-pipeline.use-case';

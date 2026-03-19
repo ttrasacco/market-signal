@@ -10,7 +10,7 @@
 	const narrativeLabel = $derived(getNarrativeLabel(punctualColor, structuralColor));
 </script>
 
-<div class="sector-row" class:has-open-dropdown={false}>
+<div class="sector-row" class:has-open-dropdown={false} data-testid="sector-row">
 	<div class="mini-ripple" class:dimmed>
 		<div class="mini-ripple-outer" class:green={structuralColor === 'green'} class:orange={structuralColor === 'orange'} class:red={structuralColor === 'red'}></div>
 		<div class="mini-ripple-inner" class:green={punctualColor === 'green'} class:orange={punctualColor === 'orange'} class:red={punctualColor === 'red'}></div>

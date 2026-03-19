@@ -2,6 +2,11 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+		interface Env {
+			DATABASE_URL: string;
+			ANTHROPIC_API_KEY: string;
+			CRON_SECRET: string;
+		}
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}

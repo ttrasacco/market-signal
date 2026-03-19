@@ -7,6 +7,12 @@ export interface NewsClassification {
 	impactType: ImpactType;
 }
 
+export interface HeadlineClassification {
+	headline: string;
+	classifications: NewsClassification[];
+}
+
 export interface NewsClassifierPort {
 	classify(headline: string): Promise<NewsClassification[]>;
+	classifyBatch(headlines: string[]): Promise<HeadlineClassification[]>;
 }

@@ -2,7 +2,7 @@
 	let { date }: { date?: string } = $props();
 </script>
 
-<nav class="topbar">
+<nav class="topbar" data-testid="topbar">
 	<div class="topbar-left">
 		<div class="topbar-logo-dot"></div>
 		<span class="topbar-name">market-signal</span>

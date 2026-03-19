@@ -4,7 +4,7 @@ import {
   newsTable,
   newsImpactsTable,
 } from '$lib/server/contexts/news/infrastructure/db/news-impact.schema';
-import type { NewsImpactReadPort, NewsImpactForScoring } from '../../application/ports/news-impact.read.port';
+import type { NewsImpactReadPort, NewsImpactForScoring } from '$lib/server/cross-context/compute-daily-scores/application/ports/news-impact.read.port';
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
 import type { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
 

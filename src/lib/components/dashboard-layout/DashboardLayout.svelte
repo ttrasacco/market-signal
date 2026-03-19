@@ -40,14 +40,14 @@
 			</div>
 		{/if}
 	{:else}
-		<div class="empty-zone">No significant sectoral momentum or pressure detected</div>
+		<div class="empty-zone" data-testid="empty-zone">No significant sectoral momentum or pressure detected</div>
 	{/if}
 
 	<hr class="divider" />
 
 	<div class="section-label">All sectors</div>
 
-	<div class="sector-table">
+	<div class="sector-table" data-testid="sector-table">
 		{#each tableRows as sector (sector.sector)}
 			<SectorRow
 				data={sector}

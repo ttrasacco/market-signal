@@ -78,6 +78,6 @@ development_status:
   # Epic 5: Observability & Production Readiness
   epic-5: in-progress
   5-1-get-api-news-impacts-endpoint: review
-  5-2-vercel-deployment-configuration: ready-for-dev
-  5-3-e2e-smoke-test: backlog
+  5-2-vercel-deployment-configuration: review
+  5-3-e2e-smoke-test: review
   epic-5-retrospective: optional
