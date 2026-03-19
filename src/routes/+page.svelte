@@ -5,11 +5,18 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const dateLabel = new Date().toLocaleDateString('en-US', {
+	const now = new Date();
+	const datePart = now.toLocaleDateString('en-US', {
 		weekday: 'long',
 		month: 'long',
 		day: 'numeric'
 	});
+	const timePart = now.toLocaleTimeString('en-US', {
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false
+	});
+	const dateLabel = `${datePart} · Scores computed at ${timePart}`;
 </script>
 
 <Topbar date={dateLabel} />

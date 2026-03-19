@@ -45,7 +45,6 @@
   .type-narrative-label {
     font-size: 12px;
     font-weight: 400;
-    text-transform: uppercase;
     letter-spacing: 0.01em;
     color: var(--muted-foreground);
   }

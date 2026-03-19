@@ -4,5 +4,10 @@
       "path": "/api/cron/daily",
       "schedule": "0 6 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "src/routes/api/cron/daily/+server.ts": {
+      "maxDuration": 60
+    }
+  }
 }

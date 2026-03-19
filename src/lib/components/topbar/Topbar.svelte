@@ -63,5 +63,7 @@
 		font-size: 12px;
 		color: var(--color-text-secondary);
 		padding: 12px 24px 0;
+		max-width: 960px;
+		margin: 0 auto;
 	}
 </style>
