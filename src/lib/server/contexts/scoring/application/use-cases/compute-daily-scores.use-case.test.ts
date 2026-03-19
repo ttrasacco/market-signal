@@ -53,6 +53,72 @@ describe('ComputeDailyScoresUseCase', () => {
     expect(structural.score).toBeGreaterThan(punctual.score);
   });
 
+  it('PUNCTUAL-only sector → punctualScore > 0, structuralScore = 0', async () => {
+    newsRepo.impacts = [
+      {
+        id: '1',
+        newsId: 'n1',
+        sector: Sector.TECHNOLOGY,
+        impactScore: 5,
+        impactType: ImpactType.PUNCTUAL,
+        publishedAt: today,
+      },
+    ];
+
+    await useCase.execute(today);
+
+    const [result] = Array.from(scoreRepo.scores.values());
+    expect(result.punctualScore).toBeGreaterThan(0);
+    expect(result.structuralScore).toBe(0);
+  });
+
+  it('STRUCTURAL-only sector → structuralScore > 0, punctualScore = 0', async () => {
+    newsRepo.impacts = [
+      {
+        id: '1',
+        newsId: 'n1',
+        sector: Sector.ENERGY,
+        impactScore: 4,
+        impactType: ImpactType.STRUCTURAL,
+        publishedAt: today,
+      },
+    ];
+
+    await useCase.execute(today);
+
+    const [result] = Array.from(scoreRepo.scores.values());
+    expect(result.structuralScore).toBeGreaterThan(0);
+    expect(result.punctualScore).toBe(0);
+  });
+
+  it('mixed sector → score ≈ punctualScore + structuralScore', async () => {
+    newsRepo.impacts = [
+      {
+        id: '1',
+        newsId: 'n1',
+        sector: Sector.FINANCIALS,
+        impactScore: 6,
+        impactType: ImpactType.PUNCTUAL,
+        publishedAt: today,
+      },
+      {
+        id: '2',
+        newsId: 'n2',
+        sector: Sector.FINANCIALS,
+        impactScore: 3,
+        impactType: ImpactType.STRUCTURAL,
+        publishedAt: today,
+      },
+    ];
+
+    await useCase.execute(today);
+
+    const [result] = Array.from(scoreRepo.scores.values());
+    expect(result.score).toBeCloseTo(result.punctualScore + result.structuralScore, 10);
+    expect(result.punctualScore).toBeGreaterThan(0);
+    expect(result.structuralScore).toBeGreaterThan(0);
+  });
+
   it('multi-sector aggregation — two impacts in different sectors → two upserts', async () => {
     newsRepo.impacts = [
       {

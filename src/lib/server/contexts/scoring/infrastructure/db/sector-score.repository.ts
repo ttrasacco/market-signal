@@ -14,10 +14,16 @@ export class DrizzleSectorScoreRepository implements SectorScoreRepositoryPort {
         date: dateStr,
         sector: score.sector,
         score: score.score,
+        punctualScore: score.punctualScore,
+        structuralScore: score.structuralScore,
       })
       .onConflictDoUpdate({
         target: [sectorScoresTable.date, sectorScoresTable.sector],
-        set: { score: score.score },
+        set: {
+          score: score.score,
+          punctualScore: score.punctualScore,
+          structuralScore: score.structuralScore,
+        },
       });
   }
 
@@ -31,6 +37,8 @@ export class DrizzleSectorScoreRepository implements SectorScoreRepositoryPort {
       date: new Date(row.date),
       sector: row.sector as Sector,
       score: row.score,
+      punctualScore: row.punctualScore ?? 0,
+      structuralScore: row.structuralScore ?? 0,
     }));
   }
 }

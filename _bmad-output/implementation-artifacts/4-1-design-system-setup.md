@@ -1,6 +1,6 @@
 # Story 4.1 — Design System Setup
 
-**Status:** ready-for-dev
+**Status:** review
 **Epic:** 4 — Dashboard: Sector Conviction at a Glance
 **Story ID:** 4.1
 **Date:** 2026-03-19
@@ -210,11 +210,40 @@ This story is pure configuration — Tailwind setup, shadcn-svelte init, font se
 
 ## Completion Checklist
 
-- [ ] `src/routes/layout.css` updated with `@theme` block (9 tokens)
-- [ ] Inter font configured (fontsource npm OR Google Fonts link in `<svelte:head>`)
-- [ ] `body` receives `background: #0F0F11` and `font-family: 'Inter', system-ui`
-- [ ] shadcn-svelte init completed (`components.json` present)
-- [ ] shadcn-svelte dark theme tokens mapped to our color system
-- [ ] `src/routes/+page.svelte` cleared of default SvelteKit content
-- [ ] Build passes: `npm run build`
-- [ ] Type check passes: `npm run check`
+- [x] `src/routes/layout.css` updated with `@theme` block (9 tokens)
+- [x] Inter font configured (fontsource npm OR Google Fonts link in `<svelte:head>`)
+- [x] `body` receives `background: #0F0F11` and `font-family: 'Inter', system-ui`
+- [x] shadcn-svelte init completed (`components.json` present)
+- [x] shadcn-svelte dark theme tokens mapped to our color system
+- [x] `src/routes/+page.svelte` cleared of default SvelteKit content
+- [x] Build passes: `npm run build`
+- [x] Type check passes: `npm run check`
+
+---
+
+## Dev Agent Record
+
+### Implementation Notes
+
+- Tailwind v4 `@theme` block added to `layout.css` with 9 color tokens (exact values from UX design spec)
+- `@fontsource/inter` installed (400/500/600 weights) — no external network requests
+- shadcn-svelte v1.2.0 CLI requires interactive preset selection; `components.json` and `src/lib/utils.ts` created manually with equivalent output (clsx + tailwind-merge installed)
+- shadcn CSS variables (`:root` block) mapped to custom dark theme in `layout.css`
+- Typography utility classes added: `.type-sector-name`, `.type-narrative-label`, `.type-section-heading`
+- Tailwind v4 naming: `--color-bg` → `bg-bg` (NOT `bg-color-bg`) — used consistently in `+layout.svelte`
+- `+page.svelte` cleared of default SvelteKit content, replaced with minimal dark-theme placeholder
+- Build: ✅ 0 errors | Type check: ✅ 0 errors, 0 warnings
+
+### File List
+
+- `src/routes/layout.css` — modified: @theme tokens, font imports, base styles, typography utilities
+- `src/routes/+layout.svelte` — modified: added bg-bg wrapper div
+- `src/routes/+page.svelte` — modified: cleared default content
+- `src/lib/utils.ts` — created: cn() helper (clsx + tailwind-merge)
+- `src/lib/components/ui/` — created: empty directory for future shadcn components
+- `components.json` — created: shadcn-svelte config
+- `package.json` — modified: added @fontsource/inter, clsx, tailwind-merge
+
+### Change Log
+
+- 2026-03-19: Story 4.1 implemented — Design system foundation setup (Tailwind v4 tokens, Inter font, shadcn-svelte config, cn() helper)

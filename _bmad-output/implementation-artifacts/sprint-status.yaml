@@ -64,12 +64,13 @@ development_status:
   3-1-news-impact-read-port-and-compute-daily-scores-use-case: review
   3-2-get-sector-dashboard-use-case-and-api-route: review
   3-3-run-daily-pipeline-use-case-scoring-step-wired: review
+  3-4-sector-score-sub-scores: review
   epic-3-retrospective: optional
 
   # Epic 4: Dashboard — Sector Conviction at a Glance
   epic-4: in-progress
-  4-1-design-system-setup: ready-for-dev
-  4-2-sector-score-card-component: backlog
+  4-1-design-system-setup: review
+  4-2-sector-score-card-component: ready-for-dev
   4-3-reliability-indicator: backlog
   4-4-dashboard-layout: backlog
   epic-4-retrospective: optional

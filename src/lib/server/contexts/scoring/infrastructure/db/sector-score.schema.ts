@@ -6,6 +6,8 @@ export const sectorScoresTable = pgTable(
     date: date('date').notNull(),
     sector: text('sector').notNull(),
     score: real('score').notNull(),
+    punctualScore: real('punctual_score').notNull().default(0),
+    structuralScore: real('structural_score').notNull().default(0),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.date, table.sector] }),
