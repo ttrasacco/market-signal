@@ -30,6 +30,7 @@ export class DrizzleNewsImpactAdapter implements NewsImpactRepositoryPort {
 						sector: impact.sector,
 						impactScore: impact.impactScore,
 						impactType: impact.impactType,
+						scoring: impact.scoring ?? null,
 					}))
 				);
 			}
@@ -42,8 +43,9 @@ export class DrizzleNewsImpactAdapter implements NewsImpactRepositoryPort {
 			id: row.id,
 			newsId: row.newsId,
 			sector: row.sector as NewsImpact['sector'],
-			impactScore: row.impactScore,
+			impactScore: Math.round(row.impactScore * 10000) / 10000,
 			impactType: row.impactType as NewsImpact['impactType'],
+			scoring: row.scoring ?? undefined,
 		}));
 	}
 

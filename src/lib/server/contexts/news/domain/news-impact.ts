@@ -7,6 +7,7 @@ export interface NewsImpact {
   sector: Sector;
   impactScore: number; // range: [-1, 1]
   impactType: ImpactType;
+  scoring?: unknown;
 }
 
 export function validateNewsImpact(impact: NewsImpact): void {

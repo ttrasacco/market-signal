@@ -4,7 +4,7 @@ import { ApiError } from '../../../../infrastructure/errors/api-error';
 import type { NewsClassification } from '../../application/ports/news-classifier.port';
 
 const makeClassification = (overrides?: Partial<NewsClassification>): NewsClassification => ({
-	sector: 'TECHNOLOGY',
+	sector: 'Technology',
 	impactScore: 0.5,
 	impactType: 'STRUCTURAL',
 	...overrides,
@@ -23,10 +23,10 @@ describe('FakeNewsClassifier', () => {
 	});
 
 	it('returns configured classifications', async () => {
-		fake.classifications = [makeClassification(), makeClassification({ sector: 'ENERGY' })];
+		fake.classifications = [makeClassification(), makeClassification({ sector: 'Energy' })];
 		const result = await fake.classify('Any headline');
 		expect(result).toHaveLength(2);
-		expect(result[0].sector).toBe('TECHNOLOGY');
+		expect(result[0].sector).toBe('Technology');
 	});
 
 	it('returns a copy — mutating result does not affect internal state', async () => {

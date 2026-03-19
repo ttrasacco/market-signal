@@ -1,0 +1,1 @@
+ALTER TABLE "news_impacts" ADD COLUMN "scoring" jsonb;

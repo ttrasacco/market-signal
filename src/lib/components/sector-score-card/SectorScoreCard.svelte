@@ -1,9 +1,5 @@
 <script lang="ts">
-	import {
-		scoreToColor,
-		getNarrativeLabel,
-		type SectorScoreCardData
-	} from './sector-score-card.utils';
+	import type { SectorScoreCardData } from './sector-score-card.utils';
 	import ReliabilityIndicator from '../reliability-indicator/ReliabilityIndicator.svelte';
 	import type { ReliabilityData } from '../reliability-indicator/reliability-indicator.utils';
 
@@ -11,10 +7,6 @@
 		data,
 		reliabilityData
 	}: { data: SectorScoreCardData; reliabilityData?: ReliabilityData } = $props();
-
-	const punctualColor = $derived(scoreToColor(data.punctualScore));
-	const structuralColor = $derived(scoreToColor(data.structuralScore));
-	const narrativeLabel = $derived(getNarrativeLabel(punctualColor, structuralColor));
 
 	const shadowColors = {
 		green: 'rgba(34,197,94,0.2)',
@@ -27,7 +19,7 @@
 	<div class="ripple-card-header">
 		<div>
 			<div class="type-sector-name">{data.sector}</div>
-			<div class="type-narrative-label">{narrativeLabel}</div>
+			<div class="type-narrative-label">{data.narrativeLabel}</div>
 		</div>
 		<ReliabilityIndicator data={reliabilityData} />
 	</div>
@@ -35,22 +27,22 @@
 		<div class="ripple">
 			<div
 				class="ripple-outer"
-				class:green={structuralColor === 'green'}
-				class:orange={structuralColor === 'orange'}
-				class:red={structuralColor === 'red'}
-				style="box-shadow: 0 0 12px {shadowColors[structuralColor]};"
+				class:green={data.outerColor === 'green'}
+				class:orange={data.outerColor === 'orange'}
+				class:red={data.outerColor === 'red'}
+				style="box-shadow: 0 0 12px {shadowColors[data.outerColor]};"
 			></div>
 			<div
 				class="ripple-outer-2"
-				class:green={structuralColor === 'green'}
-				class:orange={structuralColor === 'orange'}
-				class:red={structuralColor === 'red'}
+				class:green={data.outerColor === 'green'}
+				class:orange={data.outerColor === 'orange'}
+				class:red={data.outerColor === 'red'}
 			></div>
 			<div
 				class="ripple-inner"
-				class:green={punctualColor === 'green'}
-				class:orange={punctualColor === 'orange'}
-				class:red={punctualColor === 'red'}
+				class:green={data.innerColor === 'green'}
+				class:orange={data.innerColor === 'orange'}
+				class:red={data.innerColor === 'red'}
 			></div>
 		</div>
 	</div>

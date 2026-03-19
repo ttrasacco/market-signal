@@ -1,22 +1,18 @@
 <script lang="ts">
-	import { scoreToColor, getNarrativeLabel, type SectorScoreCardData } from '../sector-score-card/sector-score-card.utils';
+	import type { SectorScoreCardData } from '../sector-score-card/sector-score-card.utils';
 	import ReliabilityIndicator from '../reliability-indicator/ReliabilityIndicator.svelte';
 	import type { ReliabilityData } from '../reliability-indicator/reliability-indicator.utils';
 
 	let { data, reliabilityData, dimmed = false }: { data: SectorScoreCardData; reliabilityData?: ReliabilityData; dimmed?: boolean } = $props();
-
-	const punctualColor = $derived(scoreToColor(data.punctualScore));
-	const structuralColor = $derived(scoreToColor(data.structuralScore));
-	const narrativeLabel = $derived(getNarrativeLabel(punctualColor, structuralColor));
 </script>
 
 <div class="sector-row" class:has-open-dropdown={false} data-testid="sector-row">
 	<div class="mini-ripple" class:dimmed>
-		<div class="mini-ripple-outer" class:green={structuralColor === 'green'} class:orange={structuralColor === 'orange'} class:red={structuralColor === 'red'}></div>
-		<div class="mini-ripple-inner" class:green={punctualColor === 'green'} class:orange={punctualColor === 'orange'} class:red={punctualColor === 'red'}></div>
+		<div class="mini-ripple-outer" class:green={data.outerColor === 'green'} class:orange={data.outerColor === 'orange'} class:red={data.outerColor === 'red'}></div>
+		<div class="mini-ripple-inner" class:green={data.innerColor === 'green'} class:orange={data.innerColor === 'orange'} class:red={data.innerColor === 'red'}></div>
 	</div>
 	<div class="sector-row-name" class:dimmed>{data.sector}</div>
-	<div class="sector-row-label" class:dimmed>{narrativeLabel}</div>
+	<div class="sector-row-label" class:dimmed>{data.narrativeLabel}</div>
 	<ReliabilityIndicator data={reliabilityData} />
 </div>
 

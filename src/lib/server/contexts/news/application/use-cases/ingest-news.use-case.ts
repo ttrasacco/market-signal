@@ -63,7 +63,8 @@ export class IngestNewsUseCase {
 						newsId,
 						sector: c.sector,
 						impactScore: c.impactScore,
-						impactType: c.impactType
+						impactType: c.impactType,
+						scoring: c.scoring
 					}));
 
 					await this.repository.save(news, impacts);

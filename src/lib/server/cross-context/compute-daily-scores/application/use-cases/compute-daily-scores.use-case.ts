@@ -40,8 +40,8 @@ export class ComputeDailyScoresUseCase {
       await this.sectorScoreRepo.upsert({
 		date,
 		sector,
-		punctualScore,
-		structuralScore,
+		punctualScore: Math.round(punctualScore * 10000) / 10000,
+		structuralScore: Math.round(structuralScore * 10000) / 10000,
 		newsCount: sectorImpacts.length
 	});
     }

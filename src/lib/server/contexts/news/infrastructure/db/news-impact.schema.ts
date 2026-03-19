@@ -1,4 +1,4 @@
-import { pgTable, text, real, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, text, real, timestamp, uniqueIndex, jsonb } from 'drizzle-orm/pg-core';
 
 export const newsTable = pgTable(
 	'news',
@@ -20,4 +20,5 @@ export const newsImpactsTable = pgTable('news_impacts', {
 	sector: text('sector').notNull(),
 	impactScore: real('impact_score').notNull(),
 	impactType: text('impact_type').notNull(),
+	scoring: jsonb('scoring'),
 });

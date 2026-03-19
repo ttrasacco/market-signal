@@ -81,3 +81,7 @@ development_status:
   5-2-vercel-deployment-configuration: review
   5-3-e2e-smoke-test: review
   epic-5-retrospective: optional
+
+  # Epic 6: Scoring Refinements
+  epic-6: in-progress
+  6-1-ripple-color-computation: review

@@ -43,6 +43,13 @@
       "when": 1773945047699,
       "tag": "0005_flaky_blink",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1773945613845,
+      "tag": "0006_round_whizzer",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,7 @@ export interface NewsClassification {
 	sector: Sector;
 	impactScore: number;
 	impactType: ImpactType;
+	scoring?: unknown;
 }
 
 export interface HeadlineClassification {

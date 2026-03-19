@@ -42,10 +42,11 @@ export class AnthropicClassifier implements NewsClassifierPort {
 					headline,
 					classifications: classifications
 						.filter(isRawClassification)
-						.map(({ sector, impactScore, impactType }) => ({
+						.map(({ sector, impactScore, impactType, scoring }) => ({
 							sector,
-							impactScore: Math.max(-1, Math.min(1, impactScore)),
+							impactScore: Math.round(impactScore * 10000) / 10000,
 							impactType,
+							scoring
 						})),
 				}));
 		} catch (error) {
@@ -122,6 +123,11 @@ interface RawClassification {
 	sector: Sector;
 	impactScore: number;
 	impactType: ImpactType;
+	scoring: {
+		scope: number;
+		certainty: number;
+		magnitude: number;
+	};
 }
 
 interface RawHeadlineClassification {
@@ -138,6 +144,10 @@ function isRawClassification(item: unknown): item is RawClassification {
 		typeof obj.impactScore === 'number' &&
 		typeof obj.impactType === 'string' &&
 		Object.values(ImpactType).includes(obj.impactType as ImpactType)
+		&& typeof obj.scoring === 'object' && obj.scoring !== null &&
+		typeof (obj.scoring as Record<string, unknown>).scope === 'number' &&
+		typeof (obj.scoring as Record<string, unknown>).certainty === 'number' &&
+		typeof (obj.scoring as Record<string, unknown>).magnitude === 'number'
 	);
 }
 

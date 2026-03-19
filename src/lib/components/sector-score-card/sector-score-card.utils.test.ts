@@ -48,12 +48,12 @@ describe('getNarrativeLabel', () => {
 		expect(getNarrativeLabel('orange', 'red')).toBe('Growing pressure');
 	});
 
-	it('returns "Crisis · uncertain stabilization" for red × green', () => {
-		expect(getNarrativeLabel('red', 'green')).toBe('Crisis · uncertain stabilization');
+	it('returns "Crisis · early recovery signs" for red × green', () => {
+		expect(getNarrativeLabel('red', 'green')).toBe('Crisis · early recovery signs');
 	});
 
-	it('returns "Crisis · uncertain stabilization" for red × orange', () => {
-		expect(getNarrativeLabel('red', 'orange')).toBe('Crisis · uncertain stabilization');
+	it('returns "Crisis · fragile rebound" for red × orange', () => {
+		expect(getNarrativeLabel('red', 'orange')).toBe('Crisis · fragile rebound');
 	});
 
 	it('returns "Widespread deterioration" for red × red', () => {

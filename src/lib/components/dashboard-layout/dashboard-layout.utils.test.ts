@@ -11,19 +11,20 @@ import type { ReliabilityData } from '../reliability-indicator/reliability-indic
 import type { NewsImpactWithSource } from '$lib/types/news';
 
 // Helpers
-function makeReliable(sector: string, score: number): SectorScoreWithReliability {
+function makeReliable(sector: string, innerScore: number): SectorScoreWithReliability {
 	return {
 		sector: sector as SectorScoreWithReliability['sector'],
-		score,
-		punctualScore: score,
-		structuralScore: 0,
+		innerScore,
+		innerColor: innerScore > 0.2 ? 'green' : innerScore < -0.2 ? 'red' : 'orange',
+		outerColor: 'orange',
+		narrativeLabel: 'Mixed signal',
 		reliabilityData: { totalArticles: 25, recentArticles: 8, sourceCount: 5, punctualProportion: 0.2 }
 	};
 }
 
-function makeUnreliable(sector: string, score: number): SectorScoreWithReliability {
+function makeUnreliable(sector: string, innerScore: number): SectorScoreWithReliability {
 	return {
-		...makeReliable(sector, score),
+		...makeReliable(sector, innerScore),
 		// triggers red: totalArticles < 5 → red, recentArticles = 0 → red
 		reliabilityData: { totalArticles: 2, recentArticles: 0, sourceCount: 1, punctualProportion: 0 }
 	};

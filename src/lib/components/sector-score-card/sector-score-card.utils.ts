@@ -1,9 +1,12 @@
-import type { SectorScore } from '$lib/types/scoring';
+import type { Sector } from '$lib/server/contexts/news/domain/sector';
 
-export type SectorScoreCardData = Pick<
-	SectorScore,
-	'sector' | 'score' | 'punctualScore' | 'structuralScore'
->;
+export type SectorScoreCardData = {
+  sector: Sector;
+  innerScore: number;      // normalized latest score — used for sorting
+  innerColor: SignalColor; // scoreToColor(innerScore)
+  outerColor: SignalColor; // scoreToColor(outerScore)
+  narrativeLabel: string;  // getNarrativeLabel(innerColor, outerColor)
+};
 
 export type SignalColor = 'green' | 'orange' | 'red';
 

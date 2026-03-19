@@ -50,7 +50,7 @@ describe('ComputeDailyScoresUseCase', () => {
     await useCase.execute(today);
     const [punctual] = Array.from(scoreRepo.scores.values());
 
-    expect(structural.score).toBeGreaterThan(punctual.score);
+    expect(structural.punctualScore + structural.structuralScore).toBeGreaterThan(punctual.punctualScore + punctual.structuralScore);
   });
 
   it('PUNCTUAL-only sector → punctualScore > 0, structuralScore = 0', async () => {
@@ -114,7 +114,6 @@ describe('ComputeDailyScoresUseCase', () => {
     await useCase.execute(today);
 
     const [result] = Array.from(scoreRepo.scores.values());
-    expect(result.score).toBeCloseTo(result.punctualScore + result.structuralScore, 10);
     expect(result.punctualScore).toBeGreaterThan(0);
     expect(result.structuralScore).toBeGreaterThan(0);
   });
@@ -166,7 +165,8 @@ describe('ComputeDailyScoresUseCase', () => {
     const secondRun = Array.from(scoreRepo.scores.values());
 
     expect(secondRun).toHaveLength(1);
-    expect(secondRun[0].score).toBeCloseTo(firstRun[0].score, 10);
+    expect(secondRun[0].punctualScore).toBeCloseTo(firstRun[0].punctualScore, 10);
+    expect(secondRun[0].structuralScore).toBeCloseTo(firstRun[0].structuralScore, 10);
   });
 
   it('empty impacts → no upserts called', async () => {
@@ -191,7 +191,7 @@ describe('ComputeDailyScoresUseCase', () => {
     await useCase.execute(today);
 
     const [result] = Array.from(scoreRepo.scores.values());
-    expect(result.score).toBeCloseTo(computeDecay(impactScore, ImpactType.STRUCTURAL, 0), 10);
-    expect(result.score).toBeCloseTo(impactScore, 10);
+    expect(result.structuralScore).toBeCloseTo(computeDecay(impactScore, ImpactType.STRUCTURAL, 0), 10);
+    expect(result.structuralScore).toBeCloseTo(impactScore, 10);
   });
 });
