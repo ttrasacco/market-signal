@@ -2,6 +2,8 @@
 
 > AI-powered financial news analysis to detect mid-term sector trends using event sourcing and decay scoring.
 
+**Live:** https://market-signal-seven.vercel.app/
+
 ---
 
 ## What it does

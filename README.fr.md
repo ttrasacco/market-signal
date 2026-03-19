@@ -2,6 +2,8 @@
 
 > Analyse quotidienne de news financières par IA pour détecter les tendances sectorielles de moyen terme.
 
+**Live :** https://market-signal-seven.vercel.app/
+
 ---
 
 ## Ce que ça fait
