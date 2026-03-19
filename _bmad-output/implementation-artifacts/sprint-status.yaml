@@ -56,19 +56,19 @@ development_status:
   2-1-rss-fetcher-port-and-adapter: review
   2-2-anthropic-classifier-port-and-adapter: review
   2-3-ingest-news-use-case: review
-  2-4-cron-endpoint-and-run-daily-pipeline-use-case: backlog
+  2-4-cron-endpoint-and-run-daily-pipeline-use-case: review
   epic-2-retrospective: optional
 
   # Epic 3: Sector Scoring Engine
-  epic-3: backlog
-  3-1-news-impact-read-port-and-compute-daily-scores-use-case: backlog
-  3-2-get-sector-dashboard-use-case-and-api-route: backlog
-  3-3-run-daily-pipeline-use-case-scoring-step-wired: backlog
+  epic-3: in-progress
+  3-1-news-impact-read-port-and-compute-daily-scores-use-case: review
+  3-2-get-sector-dashboard-use-case-and-api-route: review
+  3-3-run-daily-pipeline-use-case-scoring-step-wired: review
   epic-3-retrospective: optional
 
   # Epic 4: Dashboard — Sector Conviction at a Glance
-  epic-4: backlog
-  4-1-design-system-setup: backlog
+  epic-4: in-progress
+  4-1-design-system-setup: ready-for-dev
   4-2-sector-score-card-component: backlog
   4-3-reliability-indicator: backlog
   4-4-dashboard-layout: backlog
