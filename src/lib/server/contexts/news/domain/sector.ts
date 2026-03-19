@@ -1,14 +1,14 @@
 export const Sector = {
-  TECHNOLOGY: 'TECHNOLOGY',
-  ENERGY: 'ENERGY',
-  HEALTHCARE: 'HEALTHCARE',
-  FINANCIALS: 'FINANCIALS',
-  CONSUMER: 'CONSUMER',
-  INDUSTRIALS: 'INDUSTRIALS',
-  MATERIALS: 'MATERIALS',
-  UTILITIES: 'UTILITIES',
-  REAL_ESTATE: 'REAL_ESTATE',
-  COMMUNICATION: 'COMMUNICATION',
+  TECHNOLOGY: 'Technology',
+  ENERGY: 'Energy',
+  HEALTHCARE: 'Healthcare',
+  FINANCIALS: 'Financials',
+  CONSUMER: 'Consumer',
+  INDUSTRIALS: 'Industrials',
+  MATERIALS: 'Materials',
+  UTILITIES: 'Utilities',
+  REAL_ESTATE: 'Real Estate',
+  COMMUNICATION: 'Communication',
 } as const;
 
 export type Sector = (typeof Sector)[keyof typeof Sector];

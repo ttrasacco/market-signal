@@ -1,0 +1,21 @@
+UPDATE news_impacts SET sector = 'Technology'    WHERE sector = 'TECHNOLOGY';
+UPDATE news_impacts SET sector = 'Energy'         WHERE sector = 'ENERGY';
+UPDATE news_impacts SET sector = 'Healthcare'     WHERE sector = 'HEALTHCARE';
+UPDATE news_impacts SET sector = 'Financials'     WHERE sector = 'FINANCIALS';
+UPDATE news_impacts SET sector = 'Consumer'       WHERE sector = 'CONSUMER';
+UPDATE news_impacts SET sector = 'Industrials'    WHERE sector = 'INDUSTRIALS';
+UPDATE news_impacts SET sector = 'Materials'      WHERE sector = 'MATERIALS';
+UPDATE news_impacts SET sector = 'Utilities'      WHERE sector = 'UTILITIES';
+UPDATE news_impacts SET sector = 'Real Estate'    WHERE sector = 'REAL_ESTATE';
+UPDATE news_impacts SET sector = 'Communication'  WHERE sector = 'COMMUNICATION';
+
+UPDATE sector_scores SET sector = 'Technology'    WHERE sector = 'TECHNOLOGY';
+UPDATE sector_scores SET sector = 'Energy'        WHERE sector = 'ENERGY';
+UPDATE sector_scores SET sector = 'Healthcare'    WHERE sector = 'HEALTHCARE';
+UPDATE sector_scores SET sector = 'Financials'    WHERE sector = 'FINANCIALS';
+UPDATE sector_scores SET sector = 'Consumer'      WHERE sector = 'CONSUMER';
+UPDATE sector_scores SET sector = 'Industrials'   WHERE sector = 'INDUSTRIALS';
+UPDATE sector_scores SET sector = 'Materials'     WHERE sector = 'MATERIALS';
+UPDATE sector_scores SET sector = 'Utilities'     WHERE sector = 'UTILITIES';
+UPDATE sector_scores SET sector = 'Real Estate'   WHERE sector = 'REAL_ESTATE';
+UPDATE sector_scores SET sector = 'Communication' WHERE sector = 'COMMUNICATION';

@@ -25,8 +25,8 @@ const NARRATIVE_LABELS: Record<SignalColor, Record<SignalColor, string>> = {
 		red: 'Growing pressure'
 	},
 	red: {
-		green: 'Crisis · uncertain stabilization',
-		orange: 'Crisis · uncertain stabilization',
+		green: 'Crisis · early recovery signs',
+		orange: 'Crisis · fragile rebound',
 		red: 'Widespread deterioration'
 	}
 };

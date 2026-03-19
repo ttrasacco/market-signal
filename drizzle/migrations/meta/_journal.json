@@ -29,6 +29,13 @@
       "when": 1773919783041,
       "tag": "0003_luxuriant_black_widow",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742389200000,
+      "tag": "0004_sector_display_names",
+      "breakpoints": true
     }
   ]
 }
