@@ -48,6 +48,7 @@
 
 	{#if isOpen}
 		<div class="reliability-dropdown" role="tooltip">
+			<span class="dropdown-title">Reliability indices</span>
 			{#each criteria as criterion (criterion.label)}
 				<div class="criterion-row">
 					<span
@@ -130,6 +131,16 @@
 
 	.criterion-dot.red {
 		background-color: var(--color-red);
+	}
+
+	.dropdown-title {
+		font-size: 11px;
+		font-weight: 600;
+		color: var(--color-text-secondary);
+		letter-spacing: 0.01em;
+		padding-bottom: 4px;
+		border-bottom: 1px solid var(--color-border);
+		margin-bottom: 2px;
 	}
 
 	.criterion-label {
