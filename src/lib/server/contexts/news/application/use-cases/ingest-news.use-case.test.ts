@@ -73,14 +73,13 @@ describe('IngestNewsUseCase', () => {
 		expect(repository.impacts).toHaveLength(2);
 	});
 
-	it('skips article when classifier throws — does not abort pipeline', async () => {
+	it('skips article when classifier returns no classifications — does not abort pipeline', async () => {
 		fetcher.articles = [makeArticle({ headline: 'Bad' }), makeArticle({ headline: 'Good' })];
-		let callCount = 0;
-		classifier.classify = async (_headline: string) => {
-			callCount++;
-			if (callCount === 1) throw new Error('API error');
-			return [makeClassification()];
-		};
+		classifier.classifyBatch = async (headlines: string[]) =>
+			headlines.map((headline) => ({
+				headline,
+				classifications: headline === 'Bad' ? [] : [makeClassification()]
+			}));
 
 		const result = await useCase.execute();
 
