@@ -1,36 +1,40 @@
 <script lang="ts">
-	import type { SectorScoreCardData } from '../sector-score-card/sector-score-card.utils';
+	import { scoreToColor, getNarrativeLabel } from '../sector-score-card/sector-score-card.utils';
 	import ReliabilityIndicator from '../reliability-indicator/ReliabilityIndicator.svelte';
-	import type { ReliabilityData } from '../reliability-indicator/reliability-indicator.utils';
+	import type { SectorScoreWithReliability } from '../dashboard-layout/dashboard-layout.utils';
 
 	let {
 		data,
-		reliabilityData,
+		reliabilityData = data.reliabilityData,
 		dimmed = false
 	}: {
-		data: SectorScoreCardData;
-		reliabilityData?: ReliabilityData;
+		data: SectorScoreWithReliability;
+		reliabilityData?: SectorScoreWithReliability['reliabilityData'];
 		dimmed?: boolean;
 	} = $props();
+
+	const innerColor = $derived(scoreToColor(data.currentScore));
+	const outerColor = $derived(scoreToColor(data.trendingScore));
+	const narrativeLabel = $derived(getNarrativeLabel(innerColor, outerColor));
 </script>
 
 <div class="sector-row" class:has-open-dropdown={false} data-testid="sector-row">
 	<div class="mini-ripple" class:dimmed>
 		<div
 			class="mini-ripple-outer"
-			class:green={data.outerColor === 'green'}
-			class:orange={data.outerColor === 'orange'}
-			class:red={data.outerColor === 'red'}
+			class:green={outerColor === 'green'}
+			class:orange={outerColor === 'orange'}
+			class:red={outerColor === 'red'}
 		></div>
 		<div
 			class="mini-ripple-inner"
-			class:green={data.innerColor === 'green'}
-			class:orange={data.innerColor === 'orange'}
-			class:red={data.innerColor === 'red'}
+			class:green={innerColor === 'green'}
+			class:orange={innerColor === 'orange'}
+			class:red={innerColor === 'red'}
 		></div>
 	</div>
 	<div class="sector-row-name" class:dimmed>{data.sector}</div>
-	<div class="sector-row-label" class:dimmed>{data.narrativeLabel}</div>
+	<div class="sector-row-label" class:dimmed>{narrativeLabel}</div>
 	<ReliabilityIndicator data={reliabilityData} />
 </div>
 

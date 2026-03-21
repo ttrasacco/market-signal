@@ -1,7 +1,7 @@
 import type { NewsImpactReadPort, NewsImpactForScoring } from '../ports/news-impact.read.port';
 import type { SectorScoreRepositoryPort } from '$lib/server/contexts/scoring/application/ports/sector-score.repository.port';
-import { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
-import { computeDecay } from '$lib/server/contexts/scoring/domain/decay-model';
+import { ImpactType } from "$lib/server/contexts/news/domain/impact-type";
+import { computeDecay } from "$lib/server/contexts/scoring/domain/decay-model";
 
 import type { Sector } from '$lib/server/contexts/news/domain/sector';
 
@@ -21,27 +21,25 @@ export class ComputeDailyScoresUseCase {
 		}
 
 		for (const [sector, sectorImpacts] of bySector) {
-			let punctualScore = 0;
-			let structuralScore = 0;
+			let currentScore = 0;
+			let trendingScore = 0;
 
 			for (const impact of sectorImpacts) {
 				const ageInDays =
 					(date.getTime() - impact.publishedAt.getTime()) / (1000 * 60 * 60 * 24);
 				const decayed = computeDecay(impact.impactScore, impact.impactType, ageInDays);
 				if (impact.impactType === ImpactType.PUNCTUAL) {
-					punctualScore += decayed;
+					currentScore += decayed;
 				} else {
-					structuralScore += decayed;
+					trendingScore += decayed;
 				}
 			}
 
-			//const score = (punctualScore + structuralScore) / sectorImpacts.length;
-			//TODO: score devient computed dans le front/dans l'objet renvoyé pour le useCase
 			await this.sectorScoreRepo.upsert({
 				date,
 				sector,
-				punctualScore: Math.round(punctualScore * 10000) / 10000,
-				structuralScore: Math.round(structuralScore * 10000) / 10000,
+				currentScore: Math.round(currentScore * 10000) / 10000,
+				trendingScore: Math.round(trendingScore	 * 10000) / 10000,
 				newsCount: sectorImpacts.length
 			});
 		}

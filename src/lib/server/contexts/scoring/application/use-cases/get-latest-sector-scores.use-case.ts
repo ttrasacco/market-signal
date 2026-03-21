@@ -1,18 +1,18 @@
 import type { SectorScoreRepositoryPort } from '../ports/sector-score.repository.port';
 import type { SectorScore } from '../../domain/sector-score';
-import { Sector } from '$lib/server/contexts/news/domain/sector';
+import { Sector } from "$lib/server/contexts/news/domain/sector";
 
 export interface SectorScoreView extends SectorScore {
-	innerScore: number; // (punctualScore + structuralScore) / newsCount — latest snapshot
-	outerScore: number; // ∑((punctualScore + structuralScore) / newsCount) — cumulative sum of historical normalized scores
+	currentScore: number; // (punctualScore + structuralScore) / newsCount — latest snapshot
+	trendingScore: number; // ∑((punctualScore + structuralScore) / newsCount) — cumulative sum of historical normalized scores
 }
 
 function normalizedScore(score: SectorScore): number {
 	if (score.newsCount === 0) return 0;
-	return (score.punctualScore + score.structuralScore) / score.newsCount;
+	return (score.currentScore + score.trendingScore) / score.newsCount;
 }
 
-export class GetLatestSectorScoresUseCase {
+export class GetSectorScoresUseCase {
 	constructor(private readonly sectorScoreRepo: SectorScoreRepositoryPort) {}
 
 	async execute(): Promise<SectorScoreView[]> {
@@ -27,8 +27,8 @@ export class GetLatestSectorScoresUseCase {
 			const sectorScoresHistory = await this.sectorScoreRepo.findHistory(sector);
 			sectorScoreViews.push({
 				...latestSectorScore,
-				innerScore: normalizedScore(latestSectorScore),
-				outerScore: sectorScoresHistory.reduce((sum, s) => sum + normalizedScore(s), 0)
+				currentScore: normalizedScore(latestSectorScore),
+				trendingScore: sectorScoresHistory.reduce((sum, s) => sum + normalizedScore(s), 0)
 			});
 		}
 		return sectorScoreViews;

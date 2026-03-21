@@ -1,15 +1,21 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { GetLatestSectorScoresUseCase } from './get-latest-sector-scores.use-case';
-import { FakeSectorScoreAdapter } from '../../infrastructure/fakes/fake-sector-score.adapter';
-import { Sector } from '$lib/server/contexts/news/domain/sector';
+import { Sector } from "$lib/server/contexts/news/domain/sector";
+import {
+	beforeEach,
+	describe,
+	expect,
+	it
+} from "vitest";
 
-describe('GetLatestSectorScoresUseCase', () => {
+import { FakeSectorScoreAdapter } from "../../infrastructure/fakes/fake-sector-score.adapter";
+import { GetSectorScoresUseCase } from "./get-latest-sector-scores.use-case";
+
+describe('GetSectorScoresUseCase', () => {
 	let fake: FakeSectorScoreAdapter;
-	let useCase: GetLatestSectorScoresUseCase;
+	let useCase: GetSectorScoresUseCase;
 
 	beforeEach(() => {
 		fake = new FakeSectorScoreAdapter();
-		useCase = new GetLatestSectorScoresUseCase(fake);
+		useCase = new GetSectorScoresUseCase(fake);
 	});
 
 	it('returns empty array when no scores exist', async () => {
@@ -17,104 +23,104 @@ describe('GetLatestSectorScoresUseCase', () => {
 		expect(result).toEqual([]);
 	});
 
-	it('returns a score with innerScore and outerScore', async () => {
+	it('returns a score with currentScore and trendingScore', async () => {
 		const today = new Date('2026-03-19');
 		await fake.upsert({
 			date: today,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.2,
-			structuralScore: 0.3,
+			currentScore: 0.2,
+			trendingScore: 0.3,
 			newsCount: 2
 		});
 		const result = await useCase.execute();
-		expect(result[0].innerScore).toBeDefined();
-		expect(result[0].outerScore).toBeDefined();
+		expect(result[0].currentScore).toBeDefined();
+		expect(result[0].trendingScore).toBeDefined();
 	});
 
-	it('computes innerScore as (punctualScore + structuralScore) / newsCount', async () => {
+	it('computes currentScore as (punctualScore + structuralScore) / newsCount', async () => {
 		const today = new Date('2026-03-19');
 		await fake.upsert({
 			date: today,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.2,
-			structuralScore: 0.3,
+			currentScore: 0.2,
+			trendingScore: 0.3,
 			newsCount: 2
 		});
 		const [result] = await useCase.execute();
-		expect(result.innerScore).toBeCloseTo((0.2 + 0.3) / 2, 10);
+		expect(result.currentScore).toBeCloseTo((0.2 + 0.3) / 2, 10);
 	});
 
-	it('computes outerScore as cumulative sum of normalized historical scores', async () => {
+	it('computes trendingScore as cumulative sum of normalized historical scores', async () => {
 		const yesterday = new Date('2026-03-18');
 		const today = new Date('2026-03-19');
 		await fake.upsert({
 			date: yesterday,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.1,
-			structuralScore: 0.1,
+			currentScore: 0.1,
+			trendingScore: 0.1,
 			newsCount: 2
 		});
 		await fake.upsert({
 			date: today,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.2,
-			structuralScore: 0.3,
+			currentScore: 0.2,
+			trendingScore: 0.3,
 			newsCount: 2
 		});
 		const [result] = await useCase.execute();
-		// innerScore = (0.2 + 0.3) / 2 = 0.25
-		expect(result.innerScore).toBeCloseTo(0.25, 10);
-		// outerScore = (0.1+0.1)/2 + (0.2+0.3)/2 = 0.1 + 0.25 = 0.35 (sum, not mean)
-		expect(result.outerScore).toBeCloseTo(0.35, 10);
+		// currentScore = (0.2 + 0.3) / 2 = 0.25
+		expect(result.currentScore).toBeCloseTo(0.25, 10);
+		// trendingScore = (0.1+0.1)/2 + (0.2+0.3)/2 = 0.1 + 0.25 = 0.35 (sum, not mean)
+		expect(result.trendingScore).toBeCloseTo(0.35, 10);
 	});
 
-	it('computes outerScore === innerScore when only one historical snapshot exists', async () => {
+	it('computes trendingScore === currentScore when only one historical snapshot exists', async () => {
 		const today = new Date('2026-03-19');
 		await fake.upsert({
 			date: today,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.2,
-			structuralScore: 0.3,
+			currentScore: 0.2,
+			trendingScore: 0.3,
 			newsCount: 2
 		});
 		const [result] = await useCase.execute();
-		expect(result.outerScore).toBeCloseTo(result.innerScore, 10);
+		expect(result.trendingScore).toBeCloseTo(result.currentScore, 10);
 	});
 
-	it('computes outerScore as sum of two normalized snapshots', async () => {
+	it('computes trendingScore as sum of two normalized snapshots', async () => {
 		const day1 = new Date('2026-03-17');
 		const day2 = new Date('2026-03-19');
 		await fake.upsert({
 			date: day1,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.4,
-			structuralScore: 0.2,
+			currentScore: 0.4,
+			trendingScore: 0.2,
 			newsCount: 4
 		});
 		await fake.upsert({
 			date: day2,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.6,
-			structuralScore: 0.0,
+			currentScore: 0.6,
+			trendingScore: 0.0,
 			newsCount: 3
 		});
 		const [result] = await useCase.execute();
 		// normalizedScore(day1) = (0.4 + 0.2) / 4 = 0.15
 		// normalizedScore(day2) = (0.6 + 0.0) / 3 = 0.2
-		// outerScore = 0.15 + 0.2 = 0.35
-		expect(result.outerScore).toBeCloseTo(0.35, 10);
+		// trendingScore = 0.15 + 0.2 = 0.35
+		expect(result.trendingScore).toBeCloseTo(0.35, 10);
 	});
 
-	it('returns 0 for innerScore when newsCount is 0', async () => {
+	it('returns 0 for currentScore when newsCount is 0', async () => {
 		const today = new Date('2026-03-19');
 		await fake.upsert({
 			date: today,
 			sector: Sector.TECHNOLOGY,
-			punctualScore: 0.5,
-			structuralScore: 0.5,
+			currentScore: 0.5,
+			trendingScore: 0.5,
 			newsCount: 0
 		});
 		const [result] = await useCase.execute();
-		expect(result.innerScore).toBe(0);
+		expect(result.currentScore).toBe(0);
 	});
 });

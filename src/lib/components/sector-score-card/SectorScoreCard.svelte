@@ -1,12 +1,16 @@
 <script lang="ts">
-	import type { SectorScoreCardData } from './sector-score-card.utils';
+	import { scoreToColor, getNarrativeLabel } from './sector-score-card.utils';
 	import ReliabilityIndicator from '../reliability-indicator/ReliabilityIndicator.svelte';
-	import type { ReliabilityData } from '../reliability-indicator/reliability-indicator.utils';
+	import type { SectorScoreWithReliability } from '../dashboard-layout/dashboard-layout.utils';
 
 	let {
 		data,
-		reliabilityData
-	}: { data: SectorScoreCardData; reliabilityData?: ReliabilityData } = $props();
+		reliabilityData = data.reliabilityData
+	}: { data: SectorScoreWithReliability; reliabilityData?: SectorScoreWithReliability['reliabilityData'] } = $props();
+
+	const innerColor = $derived(scoreToColor(data.currentScore));
+	const outerColor = $derived(scoreToColor(data.trendingScore));
+	const narrativeLabel = $derived(getNarrativeLabel(innerColor, outerColor));
 
 	const shadowColors = {
 		green: 'rgba(34,197,94,0.2)',
@@ -19,7 +23,7 @@
 	<div class="ripple-card-header">
 		<div>
 			<div class="type-sector-name">{data.sector}</div>
-			<div class="type-narrative-label">{data.narrativeLabel}</div>
+			<div class="type-narrative-label">{narrativeLabel}</div>
 		</div>
 		<ReliabilityIndicator data={reliabilityData} />
 	</div>
@@ -27,22 +31,22 @@
 		<div class="ripple">
 			<div
 				class="ripple-outer"
-				class:green={data.outerColor === 'green'}
-				class:orange={data.outerColor === 'orange'}
-				class:red={data.outerColor === 'red'}
-				style="box-shadow: 0 0 12px {shadowColors[data.outerColor]};"
+				class:green={outerColor === 'green'}
+				class:orange={outerColor === 'orange'}
+				class:red={outerColor === 'red'}
+				style="box-shadow: 0 0 12px {shadowColors[outerColor]};"
 			></div>
 			<div
 				class="ripple-outer-2"
-				class:green={data.outerColor === 'green'}
-				class:orange={data.outerColor === 'orange'}
-				class:red={data.outerColor === 'red'}
+				class:green={outerColor === 'green'}
+				class:orange={outerColor === 'orange'}
+				class:red={outerColor === 'red'}
 			></div>
 			<div
 				class="ripple-inner"
-				class:green={data.innerColor === 'green'}
-				class:orange={data.innerColor === 'orange'}
-				class:red={data.innerColor === 'red'}
+				class:green={innerColor === 'green'}
+				class:orange={innerColor === 'orange'}
+				class:red={innerColor === 'red'}
 			></div>
 		</div>
 	</div>

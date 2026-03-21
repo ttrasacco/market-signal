@@ -26,7 +26,7 @@
 		{#if bullish.length > 0}
 			<div class="highlight-grid">
 				{#each bullish as sector (sector.sector)}
-					<SectorScoreCard data={sector} reliabilityData={sector.reliabilityData} />
+					<SectorScoreCard data={sector} />
 				{/each}
 			</div>
 		{:else}
@@ -42,7 +42,7 @@
 		{#if bearish.length > 0}
 			<div class="highlight-grid">
 				{#each bearish as sector (sector.sector)}
-					<SectorScoreCard data={sector} reliabilityData={sector.reliabilityData} />
+					<SectorScoreCard data={sector} />
 				{/each}
 			</div>
 		{:else}
@@ -64,7 +64,6 @@
 		{#each tableRows as sector (sector.sector)}
 			<SectorRow
 				data={sector}
-				reliabilityData={sector.reliabilityData}
 				dimmed={computeReliabilityColor(sector.reliabilityData) === 'red'}
 			/>
 		{/each}

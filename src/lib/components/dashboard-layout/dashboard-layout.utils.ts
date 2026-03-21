@@ -1,9 +1,14 @@
 import { computeReliabilityColor } from '../reliability-indicator/reliability-indicator.utils';
 import type { ReliabilityData } from '../reliability-indicator/reliability-indicator.utils';
-import type { SectorScoreCardData } from '../sector-score-card/sector-score-card.utils';
+import type { Sector } from '$lib/server/contexts/news/domain/sector';
 import type { NewsImpactWithSource } from '$lib/types/news';
 
-export type SectorScoreWithReliability = SectorScoreCardData & { reliabilityData: ReliabilityData };
+export type SectorScoreWithReliability = {
+	sector: Sector;
+	currentScore: number;
+	trendingScore: number;
+	reliabilityData: ReliabilityData;
+};
 
 export function computeReliabilityDataPerSector(
 	impacts: NewsImpactWithSource[]
@@ -40,8 +45,9 @@ export function getBullishHighlights(
 ): SectorScoreWithReliability[] {
 	return sectors
 		.filter(
-			(s) => s.outerColor === 'green' && computeReliabilityColor(s.reliabilityData) !== 'red'
+			(s) => s.currentScore > 0 && computeReliabilityColor(s.reliabilityData) !== 'red'
 		)
+		.sort((a, b) => b.currentScore - a.currentScore)
 		.slice(0, 3);
 }
 
@@ -50,13 +56,18 @@ export function getBearishHighlights(
 ): SectorScoreWithReliability[] {
 	return sectors
 		.filter(
-			(s) => s.innerColor === 'red' && computeReliabilityColor(s.reliabilityData) !== 'red'
+			(s) => s.currentScore < 0 && computeReliabilityColor(s.reliabilityData) !== 'red'
 		)
+		.sort((a, b) => a.currentScore - b.currentScore)
 		.slice(0, 3);
 }
 
 export function sortForTable(sectors: SectorScoreWithReliability[]): SectorScoreWithReliability[] {
-	const reliable = sectors.filter((s) => computeReliabilityColor(s.reliabilityData) !== 'red');
-	const unreliable = sectors.filter((s) => computeReliabilityColor(s.reliabilityData) === 'red');
+	const reliable = sectors
+		.filter((s) => computeReliabilityColor(s.reliabilityData) !== 'red')
+		.sort((a, b) => b.currentScore - a.currentScore);
+	const unreliable = sectors
+		.filter((s) => computeReliabilityColor(s.reliabilityData) === 'red')
+		.sort((a, b) => b.currentScore - a.currentScore);
 	return [...reliable, ...unreliable];
 }

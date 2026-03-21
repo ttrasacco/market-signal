@@ -1,10 +1,16 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { ComputeDailyScoresUseCase } from './compute-daily-scores.use-case';
-import { FakeNewsImpactReadAdapter } from '../../infrastructure/fakes/fake-news-impact-read.adapter';
-import { FakeSectorScoreAdapter } from '$lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.adapter';
-import { ImpactType } from '$lib/server/contexts/news/domain/impact-type';
-import { Sector } from '$lib/server/contexts/news/domain/sector';
-import { computeDecay } from '$lib/server/contexts/scoring/domain/decay-model';
+import { ImpactType } from "$lib/server/contexts/news/domain/impact-type";
+import { Sector } from "$lib/server/contexts/news/domain/sector";
+import { computeDecay } from "$lib/server/contexts/scoring/domain/decay-model";
+import { FakeSectorScoreAdapter } from "$lib/server/contexts/scoring/infrastructure/fakes/fake-sector-score.adapter";
+import {
+	beforeEach,
+	describe,
+	expect,
+	it
+} from "vitest";
+
+import { FakeNewsImpactReadAdapter } from "../../infrastructure/fakes/fake-news-impact-read.adapter";
+import { ComputeDailyScoresUseCase } from "./compute-daily-scores.use-case";
 
 describe('ComputeDailyScoresUseCase', () => {
 	let newsRepo: FakeNewsImpactReadAdapter;
@@ -50,12 +56,12 @@ describe('ComputeDailyScoresUseCase', () => {
 		await useCase.execute(today);
 		const [punctual] = Array.from(scoreRepo.scores.values());
 
-		expect(structural.punctualScore + structural.structuralScore).toBeGreaterThan(
-			punctual.punctualScore + punctual.structuralScore
+		expect(structural.currentScore + structural.trendingScore).toBeGreaterThan(
+			punctual.currentScore + punctual.trendingScore
 		);
 	});
 
-	it('PUNCTUAL-only sector → punctualScore > 0, structuralScore = 0', async () => {
+	it('PUNCTUAL-only sector → currentScore > 0, trendingScore = 0', async () => {
 		newsRepo.impacts = [
 			{
 				id: '1',
@@ -70,11 +76,11 @@ describe('ComputeDailyScoresUseCase', () => {
 		await useCase.execute(today);
 
 		const [result] = Array.from(scoreRepo.scores.values());
-		expect(result.punctualScore).toBeGreaterThan(0);
-		expect(result.structuralScore).toBe(0);
+		expect(result.currentScore).toBeGreaterThan(0);
+		expect(result.trendingScore).toBe(0);
 	});
 
-	it('STRUCTURAL-only sector → structuralScore > 0, punctualScore = 0', async () => {
+	it('STRUCTURAL-only sector → trendingScore > 0, currentScore = 0', async () => {
 		newsRepo.impacts = [
 			{
 				id: '1',
@@ -89,11 +95,11 @@ describe('ComputeDailyScoresUseCase', () => {
 		await useCase.execute(today);
 
 		const [result] = Array.from(scoreRepo.scores.values());
-		expect(result.structuralScore).toBeGreaterThan(0);
-		expect(result.punctualScore).toBe(0);
+		expect(result.trendingScore).toBeGreaterThan(0);
+		expect(result.currentScore).toBe(0);
 	});
 
-	it('mixed sector → score ≈ punctualScore + structuralScore', async () => {
+	it('mixed sector → score ≈ currentScore + trendingScore', async () => {
 		newsRepo.impacts = [
 			{
 				id: '1',
@@ -116,8 +122,8 @@ describe('ComputeDailyScoresUseCase', () => {
 		await useCase.execute(today);
 
 		const [result] = Array.from(scoreRepo.scores.values());
-		expect(result.punctualScore).toBeGreaterThan(0);
-		expect(result.structuralScore).toBeGreaterThan(0);
+		expect(result.currentScore).toBeGreaterThan(0);
+		expect(result.trendingScore).toBeGreaterThan(0);
 	});
 
 	it('multi-sector aggregation — two impacts in different sectors → two upserts', async () => {
@@ -167,8 +173,8 @@ describe('ComputeDailyScoresUseCase', () => {
 		const secondRun = Array.from(scoreRepo.scores.values());
 
 		expect(secondRun).toHaveLength(1);
-		expect(secondRun[0].punctualScore).toBeCloseTo(firstRun[0].punctualScore, 10);
-		expect(secondRun[0].structuralScore).toBeCloseTo(firstRun[0].structuralScore, 10);
+		expect(secondRun[0].currentScore).toBeCloseTo(firstRun[0].currentScore, 10);
+		expect(secondRun[0].trendingScore).toBeCloseTo(firstRun[0].trendingScore, 10);
 	});
 
 	it('empty impacts → no upserts called', async () => {
@@ -193,10 +199,10 @@ describe('ComputeDailyScoresUseCase', () => {
 		await useCase.execute(today);
 
 		const [result] = Array.from(scoreRepo.scores.values());
-		expect(result.structuralScore).toBeCloseTo(
+		expect(result.trendingScore).toBeCloseTo(
 			computeDecay(impactScore, ImpactType.STRUCTURAL, 0),
 			10
 		);
-		expect(result.structuralScore).toBeCloseTo(impactScore, 10);
+		expect(result.trendingScore).toBeCloseTo(impactScore, 10);
 	});
 });

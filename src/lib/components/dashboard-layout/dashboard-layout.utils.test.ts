@@ -1,23 +1,27 @@
-import { describe, it, expect } from 'vitest';
 import {
-	getBullishHighlights,
-	getBearishHighlights,
-	sortForTable,
+	describe,
+	expect,
+	it
+} from "vitest";
+
+import {
 	computeReliabilityDataPerSector,
 	defaultReliabilityData,
+	getBearishHighlights,
+	getBullishHighlights,
+	sortForTable,
 	type SectorScoreWithReliability
-} from './dashboard-layout.utils';
+} from "./dashboard-layout.utils";
+
 import type { ReliabilityData } from '../reliability-indicator/reliability-indicator.utils';
 import type { NewsImpactWithSource } from '$lib/types/news';
 
 // Helpers
-function makeReliable(sector: string, innerScore: number): SectorScoreWithReliability {
+function makeReliable(sector: string, currentScore: number): SectorScoreWithReliability {
 	return {
 		sector: sector as SectorScoreWithReliability['sector'],
-		innerScore,
-		innerColor: innerScore > 0.2 ? 'green' : innerScore < -0.2 ? 'red' : 'orange',
-		outerColor: 'orange',
-		narrativeLabel: 'Mixed signal',
+		currentScore,
+		trendingScore: 0,
 		reliabilityData: {
 			totalArticles: 25,
 			recentArticles: 8,
@@ -27,10 +31,9 @@ function makeReliable(sector: string, innerScore: number): SectorScoreWithReliab
 	};
 }
 
-function makeUnreliable(sector: string, innerScore: number): SectorScoreWithReliability {
+function makeUnreliable(sector: string, currentScore: number): SectorScoreWithReliability {
 	return {
-		...makeReliable(sector, innerScore),
-		// triggers red: totalArticles < 5 → red, recentArticles = 0 → red
+		...makeReliable(sector, currentScore),
 		reliabilityData: {
 			totalArticles: 2,
 			recentArticles: 0,

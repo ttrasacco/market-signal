@@ -1,7 +1,10 @@
-import { db } from '$lib/server/shared/db/client';
-import { eq, sql } from 'drizzle-orm';
+import { db } from "$lib/server/shared/db/client";
+import {
+	eq,
+	sql
+} from "drizzle-orm";
 
-import { sectorScoresTable } from './sector-score.schema';
+import { sectorScoresTable } from "./sector-score.schema";
 
 import type { SectorScoreRepositoryPort } from '../../application/ports/sector-score.repository.port';
 import type { SectorScore } from '../../domain/sector-score';
@@ -15,15 +18,15 @@ export class DrizzleSectorScoreAdapter implements SectorScoreRepositoryPort {
 			.values({
 				date: dateStr,
 				sector: score.sector,
-				punctualScore: score.punctualScore,
-				structuralScore: score.structuralScore,
+				punctualScore: score.currentScore,
+				structuralScore: score.trendingScore,
 				newsCount: score.newsCount
 			})
 			.onConflictDoUpdate({
 				target: [sectorScoresTable.date, sectorScoresTable.sector],
 				set: {
-					punctualScore: score.punctualScore,
-					structuralScore: score.structuralScore,
+					punctualScore: score.currentScore,
+					structuralScore: score.trendingScore,
 					newsCount: score.newsCount
 				}
 			});
@@ -42,8 +45,8 @@ export class DrizzleSectorScoreAdapter implements SectorScoreRepositoryPort {
 		return {
 			date: new Date(row.date),
 			sector: row.sector as Sector,
-			punctualScore: row.punctualScore ?? 0,
-			structuralScore: row.structuralScore ?? 0,
+			currentScore: row.punctualScore ?? 0,
+			trendingScore: row.structuralScore ?? 0,
 			newsCount: row.newsCount ?? 0
 		};
 	}
@@ -53,8 +56,8 @@ export class DrizzleSectorScoreAdapter implements SectorScoreRepositoryPort {
 		return rows.map((row) => ({
 			date: new Date(row.date),
 			sector: row.sector as Sector,
-			punctualScore: row.punctualScore ?? 0,
-			structuralScore: row.structuralScore ?? 0,
+			currentScore: row.punctualScore ?? 0,
+			trendingScore: row.structuralScore ?? 0,
 			newsCount: row.newsCount ?? 0
 		}));
 	}

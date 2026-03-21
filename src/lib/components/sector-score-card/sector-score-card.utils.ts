@@ -1,17 +1,8 @@
-import type { Sector } from '$lib/server/contexts/news/domain/sector';
-
-export type SectorScoreCardData = {
-	sector: Sector;
-	innerColor: SignalColor; // scoreToColor(innerScore)
-	outerColor: SignalColor; // scoreToColor(outerScore)
-	narrativeLabel: string; // getNarrativeLabel(innerColor, outerColor)
-};
-
 export type SignalColor = 'green' | 'orange' | 'red';
 
 export function scoreToColor(score: number): SignalColor {
-	if (score > 0.2) return 'green';
-	if (score < -0.2) return 'red';
+	if (score > 0.4) return 'green';
+	if (score < -0.4) return 'red';
 	return 'orange';
 }
 
